@@ -32,7 +32,7 @@
         <dependency>
             <groupId>com.github.Makesystem</groupId>
             <artifactId>MWC</artifactId>
-            <version>4af6e4c42f</version>
+            <version>4e4d30b175</version>
         </dependency>
         
     </dependencies>

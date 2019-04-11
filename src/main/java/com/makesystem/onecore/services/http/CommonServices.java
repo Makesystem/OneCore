@@ -5,15 +5,13 @@
  */
 package com.makesystem.onecore.services.http;
 
-import java.io.Serializable;
+import com.makesystem.mwc.http.server.AbstractServiceServlet;
 import javax.ejb.Stateless;
-import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
-import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
 /**
@@ -22,10 +20,7 @@ import javax.ws.rs.core.MediaType;
  */
 @Stateless
 @Path("/commons")
-public class CommonServices implements Serializable {
-
-    @Context
-    private HttpServletRequest httpServletRequest;
+public class CommonServices extends AbstractServiceServlet {
 
     @POST
     @Produces(MediaType.TEXT_PLAIN)
