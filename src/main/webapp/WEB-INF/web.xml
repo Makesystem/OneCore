@@ -61,17 +61,7 @@
         <exception-type>javax.servlet.ServletException</exception-type>
         <location>/error_servlet</location>
     </error-page>   
-    
-    <!-- +++++++++++++++++++++++++ -->
-    <!-- Websocket server settings -->
-    <!-- +++++++++++++++++++++++++ -->
-    
-    <listener>
-        <listener-class>
-            com.makesystem.onecore.services.websocket.OneDoorServer
-        </listener-class>
-    </listener>
-    
+        
     <!-- +++++++++++++++++++++++++ -->
     <!-- Basic settings            -->
     <!-- +++++++++++++++++++++++++ -->
