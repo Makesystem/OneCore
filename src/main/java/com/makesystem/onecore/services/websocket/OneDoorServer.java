@@ -18,7 +18,8 @@ public class OneDoorServer extends AbstractServerSocket {
 
     @Override
     public void onOpen(final Session session) {
-        sendMessaage(session, "on open");
+        System.out.println("On open >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
+        sendMessage(session, "on open");
     }
 
     @Override
@@ -27,7 +28,7 @@ public class OneDoorServer extends AbstractServerSocket {
 
     @Override
     public void onMessage(final Session session, final String message) {
-        sendMessaage(session, "on message: " + message);
+        System.out.println("message: " + message);
     }
 
     @Override
