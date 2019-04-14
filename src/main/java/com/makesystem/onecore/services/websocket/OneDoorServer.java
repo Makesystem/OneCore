@@ -6,6 +6,11 @@
 package com.makesystem.onecore.services.websocket;
 
 import com.makesystem.mwc.websocket.server.AbstractServerSocket;
+import com.makesystem.mwc.websocket.server.OnCloseHandler;
+import com.makesystem.mwc.websocket.server.OnErrorHandler;
+import com.makesystem.mwc.websocket.server.OnMessageHandler;
+import com.makesystem.mwc.websocket.server.OnOpenHandler;
+import com.makesystem.mwc.websocket.server.OnOpenParameter;
 import javax.websocket.Session;
 import javax.websocket.server.ServerEndpoint;
 
@@ -16,23 +21,25 @@ import javax.websocket.server.ServerEndpoint;
 @ServerEndpoint("/one_door/{login}/{password}")
 public class OneDoorServer extends AbstractServerSocket {
 
-    @Override
-    public void onOpen(final Session session) {
+    @OnOpenHandler
+    public void onOpen(final Session session, 
+            @OnOpenParameter("login") final String login, 
+            @OnOpenParameter("password") final String password) {
         System.out.println("On open >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
         sendMessage(session, "on open");
     }
 
-    @Override
+    @OnCloseHandler
     public void onClose(final Session session) throws Throwable {        
     }
 
-    @Override
+    @OnMessageHandler
     public void onMessage(final Session session, final String message) {
         System.out.println("message: " + message);
     }
 
-    @Override
-    public void onError(final Throwable throwable, final Session session) {
+    @OnErrorHandler
+    public void onError(final Session session, final Throwable throwable) {
     }
     
 }
