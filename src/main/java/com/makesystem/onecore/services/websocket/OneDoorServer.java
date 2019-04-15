@@ -50,6 +50,7 @@ public class OneDoorServer extends AbstractServerSocket {
     @OnMessageHandler
     public void onMessage(final Session session, final String message) {
         System.out.println("message: " + message);
+        sendMessage(session, message);
     }
 
     @OnErrorHandler

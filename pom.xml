@@ -30,10 +30,16 @@
         </dependency>
         
         <dependency>
-            <groupId>com.github.Makesystem</groupId>
-            <artifactId>MWC</artifactId>
-            <version>d4f31eff7d</version>
-        </dependency>
+	    <groupId>com.github.Makesystem</groupId>
+	    <artifactId>XeonCore</artifactId>
+	    <version>a2c354d67d</version>
+	</dependency>
+        
+        <dependency>
+	    <groupId>com.github.richelivargas</groupId>
+	    <artifactId>OneEntity</artifactId>
+	    <version>1.0.0</version>
+	</dependency>
         
     </dependencies>
 
