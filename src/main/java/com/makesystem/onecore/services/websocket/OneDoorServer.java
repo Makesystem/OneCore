@@ -22,15 +22,23 @@ import javax.websocket.server.ServerEndpoint;
 public class OneDoorServer extends AbstractServerSocket {
 
     @OnOpenHandler
-    public void onOpen(final Session session, 
-            @OnOpenParameter("login") final String login, 
+    public void onOpen(final Session session,
+            @OnOpenParameter("login") final String login,
             @OnOpenParameter("password") final String password) {
-        System.out.println("On open >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
-        sendMessage(session, "on open");
+        
+        final String echo = "on open: "
+                + session.getRequestURI().getHost()
+                + ":"
+                + session.getRequestURI().getPort()
+                + ":user_info:"
+                + session.getRequestURI().getUserInfo();
+        System.out.println(echo);
+        sendMessage(session, echo);
+
     }
 
     @OnCloseHandler
-    public void onClose(final Session session) throws Throwable {        
+    public void onClose(final Session session) throws Throwable {
     }
 
     @OnMessageHandler
@@ -41,5 +49,5 @@ public class OneDoorServer extends AbstractServerSocket {
     @OnErrorHandler
     public void onError(final Session session, final Throwable throwable) {
     }
-    
+
 }
