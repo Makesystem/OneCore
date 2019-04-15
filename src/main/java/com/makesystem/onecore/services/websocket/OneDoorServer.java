@@ -11,6 +11,7 @@ import com.makesystem.mwc.websocket.server.OnErrorHandler;
 import com.makesystem.mwc.websocket.server.OnMessageHandler;
 import com.makesystem.mwc.websocket.server.OnOpenHandler;
 import com.makesystem.mwc.websocket.server.OnOpenParameter;
+import java.util.stream.Collectors;
 import javax.websocket.Session;
 import javax.websocket.server.ServerEndpoint;
 
@@ -18,20 +19,25 @@ import javax.websocket.server.ServerEndpoint;
  *
  * @author Richeli.vargas
  */
-@ServerEndpoint("/one_door/{login}/{password}")
+@ServerEndpoint("/one_door/{login}/{password}/{some_int}")
 public class OneDoorServer extends AbstractServerSocket {
 
     @OnOpenHandler
     public void onOpen(final Session session,
             @OnOpenParameter("login") final String login,
-            @OnOpenParameter("password") final String password) {
+            @OnOpenParameter("password") final String password,
+            @OnOpenParameter("some_int") final Integer someInt) {
         
-        final String echo = "on open: "
-                + session.getRequestURI().getHost()
+        final String userInfo = session.getUserProperties().entrySet().stream().map(entry -> "[" + entry.getKey() + ":" + entry.getValue() + "]").collect(Collectors.joining(" "));
+        
+        final String echo = "login: "
+                + login
                 + ":"
-                + session.getRequestURI().getPort()
+                + password
+                + ":"
+                + someInt
                 + ":user_info:"
-                + session.getRequestURI().getUserInfo();
+                + userInfo;
         System.out.println(echo);
         sendMessage(session, echo);
 
