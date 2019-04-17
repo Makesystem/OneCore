@@ -5,13 +5,12 @@
  */
 package com.makesystem.onecore.services.websocket;
 
+import com.makesystem.mwc.servlet.ContextDestroyedListeners;
 import com.makesystem.mwc.websocket.server.AbstractServerSocket;
-import com.makesystem.mwc.websocket.server.OnCloseHandler;
-import com.makesystem.mwc.websocket.server.OnErrorHandler;
-import com.makesystem.mwc.websocket.server.OnMessageHandler;
-import com.makesystem.mwc.websocket.server.OnOpenHandler;
-import com.makesystem.mwc.websocket.server.OnOpenParameter;
-import java.util.stream.Collectors;
+import com.makesystem.pidgey.json.JsonConverter;
+import java.io.Serializable;
+import javax.websocket.CloseReason;
+import javax.websocket.EndpointConfig;
 import javax.websocket.Session;
 import javax.websocket.server.ServerEndpoint;
 
@@ -20,41 +19,37 @@ import javax.websocket.server.ServerEndpoint;
  * @author Richeli.vargas
  */
 @ServerEndpoint("/one_door/{login}/{password}/{some_int}")
-public class OneDoorServer extends AbstractServerSocket {
+public class OneDoorServer extends AbstractServerSocket<Message> {
 
-    @OnOpenHandler
-    public void onOpen(final Session session,
-            @OnOpenParameter("login") final String login,
-            @OnOpenParameter("password") final String password,
-            @OnOpenParameter("some_int") final Integer someInt) {
-        
-        final String userInfo = session.getUserProperties().entrySet().stream().map(entry -> "[" + entry.getKey() + ":" + entry.getValue() + "]").collect(Collectors.joining(" "));
-        
-        final String echo = "login: "
-                + login
-                + ":"
-                + password
-                + ":"
-                + someInt
-                + ":user_info:"
-                + userInfo;
-        System.out.println(echo);
-        sendMessage(session, echo);
-
+    @Override
+    protected void onOpen(final Session session, final EndpointConfig config) {
+        System.out.println("OnOpen");
     }
 
-    @OnCloseHandler
-    public void onClose(final Session session) throws Throwable {
+    @Override
+    protected void onClose(Session session, CloseReason closeReason) {
+        System.out.println("OnClose");
     }
 
-    @OnMessageHandler
-    public void onMessage(final Session session, final String message) {
-        System.out.println("message: " + message);
+    @Override
+    protected void onMessage(final Session session, final Message message) {
+        System.out.println("OnMessage: " + message.getData());
         sendMessage(session, message);
     }
 
-    @OnErrorHandler
-    public void onError(final Session session, final Throwable throwable) {
+    @Override
+    protected void onError(final Session session, final Throwable throwable) {
+        System.out.println("OnError: " + throwable.getMessage());
     }
 
+    @Override
+    protected Message decodeMessage(final String string) throws Throwable {
+        return JsonConverter.read(string, Message.class);
+    }
+
+    @Override
+    protected String encodeMessage(final Message message) throws Throwable {
+        return JsonConverter.write(message);
+    }
+ 
 }
