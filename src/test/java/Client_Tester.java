@@ -6,6 +6,7 @@ import com.makesystem.mwc.http.client.HttpClient;
 import com.makesystem.mwc.types.Protocol;
 import com.makesystem.mwc.websocket.client.WebsocketClient;
 import com.makesystem.onecore.services.websocket.Message;
+import com.makesystem.onecore.services.websocket.OneDoorServer;
 import com.makesystem.pidgey.console.Console;
 import com.makesystem.pidgey.console.ConsoleColor;
 import com.makesystem.pidgey.json.JsonConverter;
@@ -29,7 +30,9 @@ import java.security.NoSuchAlgorithmException;
 public class Client_Tester extends AbstractTester {
 
     public static void main(String[] args) {
-        new Client_Tester().run();
+       // new Client_Tester().run();
+        System.out.println(OneDoorServer.class.getPackage().getName() + "." + OneDoorServer.class.getSimpleName());
+        System.out.println(OneDoorServer.class.getName());
     }
 
     private HttpClient httpClient;

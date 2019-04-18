@@ -5,10 +5,8 @@
  */
 package com.makesystem.onecore.services.websocket;
 
-import com.makesystem.mwc.servlet.ContextDestroyedListeners;
 import com.makesystem.mwc.websocket.server.AbstractServerSocket;
 import com.makesystem.pidgey.json.JsonConverter;
-import java.io.Serializable;
 import javax.websocket.CloseReason;
 import javax.websocket.EndpointConfig;
 import javax.websocket.Session;
