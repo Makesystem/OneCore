@@ -1,15 +1,13 @@
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.makesystem.mwc.WebClient;
 import com.makesystem.mwc.exceptions.RequestException;
 import com.makesystem.mwc.http.client.HttpClient;
 import com.makesystem.mwc.types.Protocol;
+import com.makesystem.mwc.websocket.WebsocketCloseCodes;
 import com.makesystem.mwc.websocket.client.WebsocketClient;
-import com.makesystem.onecore.services.websocket.Message;
-import com.makesystem.onecore.services.websocket.OneDoorServer;
+import com.makesystem.oneentity.core.types.OneCloseCodes;
 import com.makesystem.pidgey.console.Console;
 import com.makesystem.pidgey.console.ConsoleColor;
-import com.makesystem.pidgey.json.JsonConverter;
 import com.makesystem.pidgey.monitor.MonitorHelper;
 import com.makesystem.pidgey.tester.AbstractTester;
 import com.makesystem.pidgey.thread.ThreadsHelper;
@@ -30,9 +28,7 @@ import java.security.NoSuchAlgorithmException;
 public class Client_Tester extends AbstractTester {
 
     public static void main(String[] args) {
-       // new Client_Tester().run();
-        System.out.println(OneDoorServer.class.getPackage().getName() + "." + OneDoorServer.class.getSimpleName());
-        System.out.println(OneDoorServer.class.getName());
+        new Client_Tester().run();
     }
 
     private HttpClient httpClient;
@@ -64,6 +60,10 @@ public class Client_Tester extends AbstractTester {
     @Override
     protected void execution() {
 
+        for(OneCloseCodes codes : OneCloseCodes.values()){
+            WebsocketCloseCodes.registerCloseCode(codes.getCode(), codes.toString());
+        }        
+        
         MonitorHelper.execute(() -> System.out.println(WebClient.discoveryProtocol("vendas.makesystem.com.br"))).print();
         MonitorHelper.execute(() -> System.out.println(WebClient.discoveryProtocol("app2.makesystem.com.br"))).print();
 
@@ -79,33 +79,20 @@ public class Client_Tester extends AbstractTester {
 
             Console.println("On Open", ConsoleColor.PURPLE);
 
-            final Message message = new Message();
-            message.setId(69);
-            message.setData("Isso é as informações da mensagem");
-
-            try {
-                websocketClient.sendMessage(JsonConverter.write(message));
-
-                new Thread(() -> {
-
-                    ThreadsHelper.sleep(15000);
-                    try {
-                        message.setData("Esse foi depois de 15 segundos... Mantendo a conexão aberta só pelo ping pong");
-                        websocketClient.sendMessage(JsonConverter.write(message));
-                    } catch (JsonProcessingException ex) {
-                        ex.printStackTrace();
-                    }
-                }).start();
-
-            } catch (JsonProcessingException ex) {
-                ex.printStackTrace();
-            }
-
         });
-        websocketClient.addOnCloseHandler(() -> Console.println("On close", ConsoleColor.PURPLE));
-        websocketClient.addOnMessageHandler(message -> {
-            Console.println("On message received: " + message, ConsoleColor.CYAN);
-            //websocketClient.close();
+        websocketClient.addOnCloseHandler(reason -> Console.println("On close: " + reason.getCloseCode() + " | " + reason.getReasonPhrase(), ConsoleColor.PURPLE));
+        websocketClient.addOnMessageHandler(mes -> {
+            try {
+
+                //final Message message = JsonConverter.read(mes, Message.class);
+
+               // Console.println("On message received: " + message.getData(), ConsoleColor.CYAN);
+                Console.println("On message received: " + mes, ConsoleColor.CYAN);
+                //websocketClient.close();
+
+            } catch (final Throwable throwable) {
+                throwable.printStackTrace();
+            }
         });
         websocketClient.addOnErrorHandler(exception -> Console.println("On error: " + exception, ConsoleColor.RED));
 
@@ -118,6 +105,12 @@ public class Client_Tester extends AbstractTester {
         } catch (KeyManagementException ex) {
             ex.printStackTrace();
         }
+
+        do {
+
+            System.out.println("ping delay: " + websocketClient.getLatency() + " ms");
+            ThreadsHelper.sleep(1000);
+        } while (websocketClient.isOpen());
 
         /*        
         try {
