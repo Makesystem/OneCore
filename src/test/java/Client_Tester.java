@@ -36,6 +36,10 @@ public class Client_Tester extends AbstractTester {
 
     @Override
     protected void preExecution() {
+        
+        for (OneCloseCodes codes : OneCloseCodes.values()) {
+            WebsocketCloseCodes.registerCloseCode(codes.getCode(), codes.toString());
+        }
 
         final Protocol protocol = Protocol.HTTPS;
         final String host;
@@ -60,10 +64,6 @@ public class Client_Tester extends AbstractTester {
     @Override
     protected void execution() {
 
-        for(OneCloseCodes codes : OneCloseCodes.values()){
-            WebsocketCloseCodes.registerCloseCode(codes.getCode(), codes.toString());
-        }        
-        
         MonitorHelper.execute(() -> System.out.println(WebClient.discoveryProtocol("vendas.makesystem.com.br"))).print();
         MonitorHelper.execute(() -> System.out.println(WebClient.discoveryProtocol("app2.makesystem.com.br"))).print();
 
@@ -85,8 +85,7 @@ public class Client_Tester extends AbstractTester {
             try {
 
                 //final Message message = JsonConverter.read(mes, Message.class);
-
-               // Console.println("On message received: " + message.getData(), ConsoleColor.CYAN);
+                // Console.println("On message received: " + message.getData(), ConsoleColor.CYAN);
                 Console.println("On message received: " + mes, ConsoleColor.CYAN);
                 //websocketClient.close();
 

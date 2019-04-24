@@ -5,7 +5,6 @@
  */
 package com.makesystem.onecore.services.websocket;
 
-import com.makesystem.mwc.websocket.WebsocketCloseCodes;
 import com.makesystem.mwc.websocket.server.AbstractServerSocket;
 import com.makesystem.mwc.websocket.server.SessionData;
 import com.makesystem.onecore.services.core.users.UserService;
@@ -16,8 +15,6 @@ import com.makesystem.oneentity.core.websocket.Message;
 import com.makesystem.oneentity.services.users.User;
 import com.makesystem.pidgey.json.JsonConverter;
 import com.makesystem.pidgey.lang.ThrowableHelper;
-import com.makesystem.pidgey.thread.ThreadsHelper;
-import com.makesystem.xeoncore.management.ManagementProperties;
 import com.makesystem.xeoncore.services.management.crudLogErrorService.CrudLogErrorService;
 import com.makesystem.xeonentity.core.exceptions.TaggedException;
 import com.makesystem.xeonentity.core.types.ServiceType;
@@ -77,13 +74,13 @@ public class OneDoorServer extends AbstractServerSocket<Message> {
             message.setAction(Action.ONE__LOGIN);
 
             if (user == null) {
-                
+
                 // User not found
-                sessionData.close(new CloseReason(
-                        WebsocketCloseCodes.getCloseCode(1000), 
-                        "Login or e-mail is wrong"
-                ));                
-                
+                sessionData.close(
+                        buildReason(OneCloseCodes.LOGIN_OR_PASSWORD_IS_INVALID.getCode(),
+                                "Login or e-mail is wrong"
+                        ));                
+
             } else {
 
                 // Set session User
