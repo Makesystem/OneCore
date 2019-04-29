@@ -1,10 +1,10 @@
 
-import com.makesystem.mwc.WebClient;
-import com.makesystem.mwc.exceptions.RequestException;
+import com.makesystem.mwc.HttpHelper;
 import com.makesystem.mwc.http.client.HttpClient;
-import com.makesystem.mwc.types.Protocol;
-import com.makesystem.mwc.websocket.WebsocketCloseCodes;
 import com.makesystem.mwc.websocket.client.WebsocketClient;
+import com.makesystem.mwi.exceptions.RequestException;
+import com.makesystem.mwi.types.Protocol;
+import com.makesystem.mwi.websocket.CloseReason;
 import com.makesystem.oneentity.core.types.OneCloseCodes;
 import com.makesystem.pidgey.console.Console;
 import com.makesystem.pidgey.console.ConsoleColor;
@@ -38,7 +38,7 @@ public class Client_Tester extends AbstractTester {
     protected void preExecution() {
         
         for (OneCloseCodes codes : OneCloseCodes.values()) {
-            WebsocketCloseCodes.registerCloseCode(codes.getCode(), codes.toString());
+            CloseReason.CloseCodes.register(codes.getCode(), codes.toString());
         }
 
         final Protocol protocol = Protocol.HTTPS;
@@ -64,8 +64,8 @@ public class Client_Tester extends AbstractTester {
     @Override
     protected void execution() {
 
-        MonitorHelper.execute(() -> System.out.println(WebClient.discoveryProtocol("vendas.makesystem.com.br"))).print();
-        MonitorHelper.execute(() -> System.out.println(WebClient.discoveryProtocol("app2.makesystem.com.br"))).print();
+        MonitorHelper.execute(() -> System.out.println(HttpHelper.discoveryProtocol("vendas.makesystem.com.br"))).print();
+        MonitorHelper.execute(() -> System.out.println(HttpHelper.discoveryProtocol("app2.makesystem.com.br"))).print();
 
         try {
             System.out.println(httpClient.doPost("/one/commons/post_ping"));
@@ -76,9 +76,7 @@ public class Client_Tester extends AbstractTester {
         }
 
         websocketClient.addOnOpenHandler(() -> {
-
             Console.println("On Open", ConsoleColor.PURPLE);
-
         });
         websocketClient.addOnCloseHandler(reason -> Console.println("On close: " + reason.getCloseCode() + " | " + reason.getReasonPhrase(), ConsoleColor.PURPLE));
         websocketClient.addOnMessageHandler(mes -> {

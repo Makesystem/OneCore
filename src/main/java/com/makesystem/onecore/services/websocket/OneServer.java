@@ -7,6 +7,7 @@ package com.makesystem.onecore.services.websocket;
 
 import com.makesystem.mwc.websocket.server.AbstractServerSocket;
 import com.makesystem.mwc.websocket.server.SessionData;
+import com.makesystem.mwi.websocket.CloseReason;
 import com.makesystem.onecore.services.core.users.UserService;
 import com.makesystem.oneentity.core.types.Action;
 import com.makesystem.oneentity.core.types.MessageType;
@@ -19,7 +20,6 @@ import com.makesystem.xeoncore.services.management.crudLogErrorService.CrudLogEr
 import com.makesystem.xeonentity.core.exceptions.TaggedException;
 import com.makesystem.xeonentity.core.types.ServiceType;
 import com.makesystem.xeonentity.services.management.LogError;
-import javax.websocket.CloseReason;
 import javax.websocket.EndpointConfig;
 import javax.websocket.server.ServerEndpoint;
 
@@ -27,8 +27,8 @@ import javax.websocket.server.ServerEndpoint;
  *
  * @author Richeli.vargas
  */
-@ServerEndpoint(OneDoorServer.PATH)
-public class OneDoorServer extends AbstractServerSocket<Message> {
+@ServerEndpoint(OneServer.PATH)
+public class OneServer extends AbstractServerSocket<Message> {
 
     public static final String CONTEXT = "one_door";
     public static final String PATH = "/"
@@ -46,7 +46,6 @@ public class OneDoorServer extends AbstractServerSocket<Message> {
     }
 
     public static interface Tags {
-
         public static final String ON_OPEN = "ON_OPEN";
         public static final String ON_CLOSE = "ON_CLOSE";
         public static final String ON_MESSAGE = "ON_MESSAGE";
@@ -75,11 +74,12 @@ public class OneDoorServer extends AbstractServerSocket<Message> {
 
             if (user == null) {
 
+                // 
+                final int code = OneCloseCodes.LOGIN_OR_PASSWORD_IS_INVALID.getCode();
+                final CloseReason closeReason = buildReason(code, "Login or e-mail is wrong");
+                
                 // User not found
-                sessionData.close(
-                        buildReason(OneCloseCodes.LOGIN_OR_PASSWORD_IS_INVALID.getCode(),
-                                "Login or e-mail is wrong"
-                        ));                
+                sessionData.close(closeReason);                
 
             } else {
 
