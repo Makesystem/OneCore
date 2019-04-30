@@ -8,13 +8,17 @@ import com.makesystem.mwi.websocket.CloseReason;
 import com.makesystem.oneentity.core.types.OneCloseCodes;
 import com.makesystem.pidgey.console.Console;
 import com.makesystem.pidgey.console.ConsoleColor;
+import com.makesystem.pidgey.formatation.NumericFormat;
 import com.makesystem.pidgey.monitor.MonitorHelper;
 import com.makesystem.pidgey.tester.AbstractTester;
 import com.makesystem.pidgey.thread.ThreadsHelper;
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.nio.ByteBuffer;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
+import org.java_websocket.drafts.Draft_6455;
+import org.java_websocket.framing.PingFrame;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -28,7 +32,17 @@ import java.security.NoSuchAlgorithmException;
 public class Client_Tester extends AbstractTester {
 
     public static void main(String[] args) {
-        new Client_Tester().run();
+        //new Client_Tester().run();
+        
+        final PingFrame pingFrame = new PingFrame();
+        final Draft_6455 draft_645 = new Draft_6455();
+        final ByteBuffer binaryFrame = draft_645.createBinaryFrame(pingFrame);
+        for(byte b : binaryFrame.array()){
+            System.out.print(b + " ");
+        }
+        System.out.println();
+        System.out.println(new String(binaryFrame.array()));
+        
     }
 
     private HttpClient httpClient;
