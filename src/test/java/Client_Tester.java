@@ -1,14 +1,13 @@
 
 import com.makesystem.mwc.HttpHelper;
 import com.makesystem.mwc.http.client.HttpClient;
-import com.makesystem.mwc.websocket.client.WebsocketClient;
+import com.makesystem.mwc.websocket.client.WebSocketJRE;
 import com.makesystem.mwi.exceptions.RequestException;
 import com.makesystem.mwi.types.Protocol;
 import com.makesystem.mwi.websocket.CloseReason;
 import com.makesystem.oneentity.core.types.OneCloseCodes;
 import com.makesystem.pidgey.console.Console;
 import com.makesystem.pidgey.console.ConsoleColor;
-import com.makesystem.pidgey.formatation.NumericFormat;
 import com.makesystem.pidgey.monitor.MonitorHelper;
 import com.makesystem.pidgey.tester.AbstractTester;
 import com.makesystem.pidgey.thread.ThreadsHelper;
@@ -17,7 +16,10 @@ import java.net.URISyntaxException;
 import java.nio.ByteBuffer;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
+import java.util.Collection;
 import org.java_websocket.drafts.Draft_6455;
+import org.java_websocket.exceptions.InvalidDataException;
+import org.java_websocket.framing.Framedata;
 import org.java_websocket.framing.PingFrame;
 
 /*
@@ -31,8 +33,8 @@ import org.java_websocket.framing.PingFrame;
  */
 public class Client_Tester extends AbstractTester {
 
-    public static void main(String[] args) {
-        //new Client_Tester().run();
+    public static void main(String[] args) throws InvalidDataException {
+        new Client_Tester().run();
         
         final PingFrame pingFrame = new PingFrame();
         final Draft_6455 draft_645 = new Draft_6455();
@@ -43,10 +45,14 @@ public class Client_Tester extends AbstractTester {
         System.out.println();
         System.out.println(new String(binaryFrame.array()));
         
+        final Collection<Framedata> frames = draft_645.translateFrame(binaryFrame);
+        for(Framedata frame : frames){
+            System.out.println("Is ping: " + frame.getOpcode());
+        }
     }
 
     private HttpClient httpClient;
-    private WebsocketClient websocketClient;
+    private WebSocketJRE websocketClient;
 
     @Override
     protected void preExecution() {
@@ -72,7 +78,7 @@ public class Client_Tester extends AbstractTester {
         }
 
         httpClient = new HttpClient(protocol, host, port);
-        websocketClient = new WebsocketClient(protocol, host, port, "one/one_door");
+        websocketClient = new WebSocketJRE(protocol, host, port, "one/one_door");
     }
 
     @Override
