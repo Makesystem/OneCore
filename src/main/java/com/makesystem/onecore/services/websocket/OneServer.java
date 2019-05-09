@@ -35,14 +35,14 @@ import javax.xml.bind.DatatypeConverter;
 @ServerEndpoint(OneServer.PATH)
 public class OneServer extends AbstractServerSocket<Message> {
 
-    public static final String CONTEXT = "one_door";
+    public static final String CONTEXT = "access";
     public static final String PATH = "/"
             + CONTEXT
             + "/{"
             + Params.LOGIN
             + "}/{"
             + Params.PASSWORD
-            + "}/{some_int}";
+            + "}";
 
     public static interface Params {
 
@@ -61,17 +61,6 @@ public class OneServer extends AbstractServerSocket<Message> {
 
     private final CrudLogErrorService errorService = new CrudLogErrorService();
     private final UserService userService = new UserService();
-
-    public static void main(String[] args) {
-        try {
-            final UserService userService = new UserService();
-            final User user = userService.find("admin", getMD5("adminadmin"));
-            System.out.println("user: " + user);
-        } catch (Throwable throwable) {
-            throwable.printStackTrace();
-        }
-
-    }
 
     @Override
     protected void onOpen(final SessionData sessionData, final EndpointConfig config) {
