@@ -20,7 +20,6 @@ import com.makesystem.pidgey.lang.ThrowableHelper;
 import com.makesystem.xeoncore.services.management.crudLogErrorService.CrudLogErrorService;
 import com.makesystem.xeonentity.core.exceptions.TaggedException;
 import com.makesystem.xeonentity.core.types.ServiceType;
-import com.makesystem.xeonentity.core.types.UserType;
 import com.makesystem.xeonentity.services.management.LogError;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
