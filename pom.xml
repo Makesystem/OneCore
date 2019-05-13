@@ -38,8 +38,8 @@
         <dependency>
             <groupId>com.github.Makesystem</groupId>
             <artifactId>OneEntity</artifactId>
-            <!-- 1.0.11 -->
-            <version>f2963e7aca</version>
+            <!-- 1.0.12 -->
+            <version>66ff25376a</version>
         </dependency>
         
     </dependencies>

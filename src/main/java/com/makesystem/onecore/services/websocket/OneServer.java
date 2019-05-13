@@ -57,6 +57,7 @@ public class OneServer extends AbstractServerSocket<Message> {
 
     private final CrudLogErrorService errorService = new CrudLogErrorService();
     private final UserService userService = new UserService();
+    private final OneConsumer consumer = new OneConsumer();
 
     @Override
     protected void onOpen(final SessionData sessionData, final EndpointConfig config) {
@@ -124,7 +125,7 @@ public class OneServer extends AbstractServerSocket<Message> {
                         // Call services and get result
                         //
                         response.setType(MessageType.RESPONSE_SUCCESS);
-                        response.setData("Success");
+                        response.setData(consumer.consumer(sessionData, message));
                     } catch (final Throwable throwable) {
                         response.setType(MessageType.RESPONSE_ERROR);                        
                         response.setData(ThrowableHelper.toString(throwable));
