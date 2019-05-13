@@ -21,11 +21,8 @@ import com.makesystem.xeoncore.services.management.crudLogErrorService.CrudLogEr
 import com.makesystem.xeonentity.core.exceptions.TaggedException;
 import com.makesystem.xeonentity.core.types.ServiceType;
 import com.makesystem.xeonentity.services.management.LogError;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import javax.websocket.EndpointConfig;
 import javax.websocket.server.ServerEndpoint;
-import javax.xml.bind.DatatypeConverter;
 
 /**
  *
@@ -105,15 +102,6 @@ public class OneServer extends AbstractServerSocket<Message> {
         }
     }
 
-    protected static String getMD5(final String string) throws NoSuchAlgorithmException {
-        final MessageDigest md = MessageDigest.getInstance("MD5");
-        md.update(string.getBytes());
-        final byte[] digest = md.digest();
-        final String myHash = DatatypeConverter
-                .printHexBinary(digest).toUpperCase();
-        return myHash;
-    }
-
     @Override
     protected void onClose(final SessionData sessionData, final CloseReason closeReason) {
         System.out.println("OnClose: " + closeReason.getCloseCode() + "|" + closeReason.getCloseCode().getCode() + "|" + closeReason.getReasonPhrase());
@@ -121,11 +109,37 @@ public class OneServer extends AbstractServerSocket<Message> {
 
     @Override
     protected void onMessage(final SessionData sessionData, final Message message) {
-
+        
         try {
 
-            System.out.println("OnMessage: " + message.getData());
-            sessionData.sendObject(message);
+            switch (message.getType()) {
+                case COMMAND: {
+                    
+                    final Message response = new Message(message.getId());
+                    response.setAction(message.getAction());
+                    response.setService(message.getService());
+
+                    try {
+                        //
+                        // Call services and get result
+                        //
+                        response.setType(MessageType.RESPONSE_SUCCESS);
+                        response.setData("Success");
+                    } catch (final Throwable throwable) {
+                        response.setType(MessageType.RESPONSE_ERROR);                        
+                        response.setData(ThrowableHelper.toString(throwable));
+                        throw throwable;
+                    } finally {
+                        sessionData.sendObject(response);
+                    }
+                    
+                }
+                break;
+                case RESPONSE_SUCCESS:
+                    break;
+                case RESPONSE_ERROR:
+                    break;
+            }
 
         } catch (final Throwable throwable) {
             throw new TaggedException(Tags.ON_MESSAGE, throwable);
