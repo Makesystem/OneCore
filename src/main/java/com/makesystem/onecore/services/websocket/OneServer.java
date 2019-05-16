@@ -15,7 +15,7 @@ import com.makesystem.oneentity.core.types.MessageType;
 import com.makesystem.oneentity.core.types.OneCloseCodes;
 import com.makesystem.oneentity.core.websocket.Message;
 import com.makesystem.oneentity.services.users.User;
-import com.makesystem.pidgey.json.JsonConverter;
+import com.makesystem.pidgey.json.ObjectMapperJRE;
 import com.makesystem.pidgey.lang.ThrowableHelper;
 import com.makesystem.xeoncore.services.management.crudLogErrorService.CrudLogErrorService;
 import com.makesystem.xeonentity.core.exceptions.TaggedException;
@@ -93,7 +93,7 @@ public class OneServer extends AbstractServerSocket<Message> {
 
                 // Send the user data to client
                 message.setType(MessageType.RESPONSE_SUCCESS);
-                message.setData(JsonConverter.write(user));
+                message.setData(ObjectMapperJRE.write(user));
                 sessionData.sendObject(message);
 
             }
@@ -198,12 +198,12 @@ public class OneServer extends AbstractServerSocket<Message> {
 
     @Override
     protected Message decodeMessage(final String string) throws Throwable {
-        return JsonConverter.read(string, Message.class);
+        return ObjectMapperJRE.read(string, Message.class);
     }
 
     @Override
     protected String encodeMessage(final Message message) throws Throwable {
-        return JsonConverter.write(message);
+        return ObjectMapperJRE.write(message);
     }
 
 }
