@@ -38,12 +38,18 @@ public class OneServer extends AbstractServerSocket<Message> {
             + Params.LOGIN
             + "}/{"
             + Params.PASSWORD
+            + "}/{"
+            + Params.LOCAL_IP
+            + "}/{"
+            + Params.PUBLIC_IP
             + "}";
 
     public static interface Params {
 
         public static final String LOGIN = "login";
         public static final String PASSWORD = "password";
+        public static final String LOCAL_IP = "local_ip";
+        public static final String PUBLIC_IP = "public_ip";
     }
 
     public static interface Tags {
@@ -66,7 +72,12 @@ public class OneServer extends AbstractServerSocket<Message> {
 
         final String loginOrEmail = sessionData.getParameters().getString(Params.LOGIN);
         final String password = sessionData.getParameters().getString(Params.PASSWORD);
+        final String localIp = sessionData.getParameters().getString(Params.LOCAL_IP);
+        final String publicIp = sessionData.getParameters().getString(Params.PUBLIC_IP);
 
+        System.out.println("localIp: " + localIp);
+        System.out.println("publicIp: " + publicIp);
+        
         try {
 
             // Find user by ((login or e-mail) and password)
