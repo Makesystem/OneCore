@@ -51,7 +51,7 @@ public class OneConsumer {
         // Last 24 hours
         final long openAtMin = timestamp - (24 * 60 * 60 * 100);
         final long openAtMax = timestamp;
-        final int durationAbove = 400;
+        final int durationAbove = 100/*ms*/; 
         final int limitOfLongOperations = 10;
 
         final DatabaseStatisticService databaseStatisticService = new DatabaseStatisticService();

@@ -5,10 +5,13 @@
  */
 package com.makesystem.onecore.services.websocket;
 
+import com.makesystem.mwc.http.client.HttpClient;
 import com.makesystem.mwc.utils.DebugHelper;
 import com.makesystem.mwc.websocket.server.AbstractServerSocket;
 import com.makesystem.mwc.websocket.server.SessionData;
+import com.makesystem.mwi.types.Protocol;
 import com.makesystem.mwi.websocket.CloseReason;
+import com.makesystem.onecore.services.core.OneProperties;
 import com.makesystem.onecore.services.core.users.UserService;
 import com.makesystem.oneentity.core.types.Action;
 import com.makesystem.oneentity.core.types.MessageType;
@@ -45,7 +48,6 @@ public class OneServer extends AbstractServerSocket<Message> {
             + "}";
 
     public static interface Params {
-
         public static final String LOGIN = "login";
         public static final String PASSWORD = "password";
         public static final String LOCAL_IP = "local_ip";
@@ -53,7 +55,6 @@ public class OneServer extends AbstractServerSocket<Message> {
     }
 
     public static interface Tags {
-
         public static final String ON_OPEN = "ON_OPEN";
         public static final String ON_CLOSE = "ON_CLOSE";
         public static final String ON_MESSAGE = "ON_MESSAGE";
@@ -77,7 +78,17 @@ public class OneServer extends AbstractServerSocket<Message> {
 
         System.out.println("localIp: " + localIp);
         System.out.println("publicIp: " + publicIp);
-        
+
+        try {            
+            final String http_host = OneProperties.INNER_HTTP__HOST.getValue();
+            final Integer http_port = OneProperties.INNER_HTTP__PORT.getValue();
+            final HttpClient httpClient = new HttpClient(Protocol.HTTP, http_host, http_port);
+            System.out.println("SERVER URL: " + http_host + ":" + http_port);
+            System.out.println("PING RESULT: " + httpClient.doPost("/one/commons/post_ping"));
+        } catch (Throwable throwable) {
+            throwable.printStackTrace();
+        }
+
         try {
 
             // Find user by ((login or e-mail) and password)
@@ -121,12 +132,12 @@ public class OneServer extends AbstractServerSocket<Message> {
 
     @Override
     protected void onMessage(final SessionData sessionData, final Message message) {
-        
+
         try {
 
             switch (message.getType()) {
                 case COMMAND: {
-                    
+
                     final Message response = new Message(message.getId());
                     response.setAction(message.getAction());
                     response.setService(message.getService());
@@ -138,13 +149,13 @@ public class OneServer extends AbstractServerSocket<Message> {
                         response.setType(MessageType.RESPONSE_SUCCESS);
                         response.setData(consumer.consumer(sessionData, message));
                     } catch (final Throwable throwable) {
-                        response.setType(MessageType.RESPONSE_ERROR);                        
+                        response.setType(MessageType.RESPONSE_ERROR);
                         response.setData(ThrowableHelper.toString(throwable));
                         throw throwable;
                     } finally {
                         sessionData.sendObject(response);
                     }
-                    
+
                 }
                 break;
                 case RESPONSE_SUCCESS:

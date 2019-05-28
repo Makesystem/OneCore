@@ -12,16 +12,8 @@ import com.makesystem.pidgey.monitor.MonitorHelper;
 import com.makesystem.pidgey.tester.AbstractTester;
 import com.makesystem.pidgey.thread.ThreadsHelper;
 import java.io.IOException;
-import java.net.URISyntaxException;
-import java.nio.ByteBuffer;
-import java.security.KeyManagementException;
-import java.security.NoSuchAlgorithmException;
-import java.util.Collection;
 import java.util.Date;
-import org.java_websocket.drafts.Draft_6455;
 import org.java_websocket.exceptions.InvalidDataException;
-import org.java_websocket.framing.Framedata;
-import org.java_websocket.framing.PingFrame;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
