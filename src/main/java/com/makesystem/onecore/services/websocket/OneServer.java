@@ -5,18 +5,18 @@
  */
 package com.makesystem.onecore.services.websocket;
 
-import com.makesystem.mwc.http.client.HttpClient;
-import com.makesystem.mwc.utils.DebugHelper;
 import com.makesystem.mwc.websocket.server.AbstractServerSocket;
 import com.makesystem.mwc.websocket.server.SessionData;
-import com.makesystem.mwi.types.Protocol;
 import com.makesystem.mwi.websocket.CloseReason;
 import com.makesystem.onecore.services.core.OneProperties;
+import com.makesystem.onecore.services.core.OneUser;
+import com.makesystem.onecore.services.core.connectedUsers.ConnectedUserService;
 import com.makesystem.onecore.services.core.users.UserService;
 import com.makesystem.oneentity.core.types.Action;
 import com.makesystem.oneentity.core.types.MessageType;
 import com.makesystem.oneentity.core.types.OneCloseCodes;
 import com.makesystem.oneentity.core.websocket.Message;
+import com.makesystem.oneentity.services.connectedUsers.ConnectedUser;
 import com.makesystem.oneentity.services.users.User;
 import com.makesystem.pidgey.json.ObjectMapperJRE;
 import com.makesystem.pidgey.lang.ThrowableHelper;
@@ -42,19 +42,25 @@ public class OneServer extends AbstractServerSocket<Message> {
             + "}/{"
             + Params.PASSWORD
             + "}/{"
+            + Params.CUSTOMER
+            + "}/{"
             + Params.LOCAL_IP
             + "}/{"
             + Params.PUBLIC_IP
             + "}";
 
     public static interface Params {
+
         public static final String LOGIN = "login";
         public static final String PASSWORD = "password";
+        public static final String CUSTOMER = "customer";
         public static final String LOCAL_IP = "local_ip";
         public static final String PUBLIC_IP = "public_ip";
     }
 
     public static interface Tags {
+
+        public static final String ON_STARTUP = "ON_STARTUP";
         public static final String ON_OPEN = "ON_OPEN";
         public static final String ON_CLOSE = "ON_CLOSE";
         public static final String ON_MESSAGE = "ON_MESSAGE";
@@ -62,32 +68,54 @@ public class OneServer extends AbstractServerSocket<Message> {
         public static final String NO_THROWABLE = "NO_THROWABLE";
     }
 
+    private static boolean INITIALIZED = false;
+
     private final CrudLogErrorService errorService = new CrudLogErrorService();
+    private final ConnectedUserService connectedUserService = new ConnectedUserService();
     private final UserService userService = new UserService();
     private final OneConsumer consumer = new OneConsumer();
+
+    public OneServer() {
+        super();
+        onStartUp();
+    }
+
+    @Override
+    public int getTimeout() {
+        return OneProperties.WEBSOCKET_SERVER__TIMEOUT.getValue();
+    }
+
+    @Override
+    public void setTimeout(int timeout) {
+        OneProperties.WEBSOCKET_SERVER__TIMEOUT.setValue(timeout);
+    }
+
+    
+    
+    protected final void onStartUp() {
+        if (!INITIALIZED) {
+            INITIALIZED = true;
+            try {
+                connectedUserService.clear();
+            } catch (final Throwable throwable) {
+                onError(null, new TaggedException(Tags.ON_STARTUP, throwable));
+            }
+        }
+    }
 
     @Override
     protected void onOpen(final SessionData sessionData, final EndpointConfig config) {
 
-        DebugHelper.printSessionData(sessionData.getSession());
-
+        // Client        
         final String loginOrEmail = sessionData.getParameters().getString(Params.LOGIN);
         final String password = sessionData.getParameters().getString(Params.PASSWORD);
+        final String customer = sessionData.getParameters().getString(Params.CUSTOMER);
         final String localIp = sessionData.getParameters().getString(Params.LOCAL_IP);
         final String publicIp = sessionData.getParameters().getString(Params.PUBLIC_IP);
 
-        System.out.println("localIp: " + localIp);
-        System.out.println("publicIp: " + publicIp);
-
-        try {            
-            final String http_host = OneProperties.INNER_HTTP__HOST.getValue();
-            final Integer http_port = OneProperties.INNER_HTTP__PORT.getValue();
-            final HttpClient httpClient = new HttpClient(Protocol.HTTP, http_host, http_port);
-            System.out.println("SERVER URL: " + http_host + ":" + http_port);
-            System.out.println("PING RESULT: " + httpClient.doPost("/one/commons/post_ping"));
-        } catch (Throwable throwable) {
-            throwable.printStackTrace();
-        }
+        //Server
+        final String httpHost = OneProperties.INNER_HTTP__HOST.getValue();
+        final Integer httpPort = OneProperties.INNER_HTTP__PORT.getValue();
 
         try {
 
@@ -110,14 +138,34 @@ public class OneServer extends AbstractServerSocket<Message> {
 
             } else {
 
-                // Set session User
-                sessionData.setData(user);
+                final OneUser oneUser = new OneUser(user);
 
+                // /////////////////////////////////////////////////////////////
+                // Create connection register
+                // /////////////////////////////////////////////////////////////
+                final ConnectedUser connectedUser = new ConnectedUser();
+                connectedUser.setUser(user.getId().getHexString());
+                connectedUser.setCustomer(customer);
+                connectedUser.setPublicIp(publicIp);
+                connectedUser.setLocalIp(localIp);
+                connectedUser.setServerHost(httpHost);
+                connectedUser.setServerPort(httpPort.toString());
+                connectedUser.setService(ServiceType.ONE);
+                connectedUser.setInsertionDate(System.currentTimeMillis());
+
+                oneUser.getConnections().add(connectedUserService.insert(connectedUser));
+
+                // /////////////////////////////////////////////////////////////
+                // Set session User
+                // /////////////////////////////////////////////////////////////
+                sessionData.setData(oneUser);
+
+                // /////////////////////////////////////////////////////////////
                 // Send the user data to client
+                // /////////////////////////////////////////////////////////////
                 message.setType(MessageType.RESPONSE_SUCCESS);
                 message.setData(ObjectMapperJRE.write(user));
                 sessionData.sendObject(message);
-
             }
 
         } catch (final Throwable throwable) {
@@ -127,7 +175,17 @@ public class OneServer extends AbstractServerSocket<Message> {
 
     @Override
     protected void onClose(final SessionData sessionData, final CloseReason closeReason) {
+
         System.out.println("OnClose: " + closeReason.getCloseCode() + "|" + closeReason.getCloseCode().getCode() + "|" + closeReason.getReasonPhrase());
+
+        final OneUser user = sessionData.getData();
+        user.getConnections().forEach(connection -> {
+            try {
+                connectedUserService.delete(connection);
+            } catch (final Throwable throwable) {
+                onError(sessionData, new TaggedException(Tags.ON_CLOSE, throwable));
+            }
+        });
     }
 
     @Override
@@ -179,7 +237,9 @@ public class OneServer extends AbstractServerSocket<Message> {
 
             final LogError logError = new LogError();
 
-            logError.setCustomer(sessionData.getParameters().getString("document"));
+            if (sessionData != null) {
+                logError.setCustomer(sessionData.getParameters().getString("document"));
+            }
             logError.setService(ServiceType.ONE);
 
             if (throwable == null) {
@@ -212,7 +272,7 @@ public class OneServer extends AbstractServerSocket<Message> {
         } catch (final Throwable ignore) {
             ignore.printStackTrace();
         } finally {
-            if (closeConnection) {
+            if (closeConnection && sessionData != null) {
                 sessionData.close();
             }
         }

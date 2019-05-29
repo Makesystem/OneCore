@@ -41,10 +41,10 @@ public class UserService extends OneService {
             final Bson emailFilter = queryBuilder.equal(Struct.USERS__EMAIL, loginOrEmail.toLowerCase());
             final Bson passwordFilter = queryBuilder.equal(Struct.USERS__PASSWORD, password);
             final Bson loginOrEmailFilter = queryBuilder.or(loginFilter, emailFilter);
-            final Bson loginAndPasswordFilter = queryBuilder.and(loginOrEmailFilter, passwordFilter);
+            final Bson filter = queryBuilder.and(loginOrEmailFilter, passwordFilter);
             
             final FindOptions findOptions = new FindOptions();
-            findOptions.setFilter(loginAndPasswordFilter);
+            findOptions.setFilter(filter);
             findOptions.setLimit(1);
 
             // ///////////////////////////////////////////////////////////////////////////

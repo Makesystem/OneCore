@@ -6,6 +6,7 @@
 package com.makesystem.onecore.services.http;
 
 import com.makesystem.mwc.http.server.AbstractServiceServlet;
+import com.makesystem.oneentity.services.OneHttpServices;
 import javax.ejb.Stateless;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -19,13 +20,13 @@ import javax.ws.rs.core.MediaType;
  * @author Richeli.vargas
  */
 @Stateless
-@Path("/commons")
+@Path(OneHttpServices.Commons.PATH)
 public class CommonServices extends AbstractServiceServlet {
 
     @POST
     @Produces(MediaType.TEXT_PLAIN)
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-    @Path("/post_ping")
+    @Path(OneHttpServices.Commons.PostPing.PATH)
     public String postPing() throws Throwable {
         final StringBuilder builder = new StringBuilder();
             builder.append("ContentType: ").append(httpServletRequest.getContentType()).append(" | ");
@@ -52,7 +53,7 @@ public class CommonServices extends AbstractServiceServlet {
     @GET
     @Produces(MediaType.TEXT_PLAIN)
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-    @Path("/get_ping")
+    @Path(OneHttpServices.Commons.GetPing.PATH)
     public String getPing() throws Throwable {
         return Boolean.TRUE.toString();
     }
