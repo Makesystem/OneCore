@@ -8,6 +8,7 @@ package com.makesystem.onecore.services.core.connectedUsers;
 import com.makesystem.mdbc.architectures.mongo.MongoConnection;
 import com.makesystem.mdbc.architectures.mongo.MongoQueryBuilder;
 import com.makesystem.mdbc.architectures.mongo.model.FindOptions;
+import com.makesystem.mdbi.nosql.SimpleObjectId;
 import com.makesystem.onecore.services.core.OneService;
 import com.makesystem.oneentity.core.nosql.Struct;
 import com.makesystem.oneentity.services.connectedUsers.ConnectedUser;
@@ -39,10 +40,18 @@ public class ConnectedUserService extends OneService {
         });
     }
     
-    public void delete(final String userId) throws Throwable {
+    public void delete(final SimpleObjectId userId) throws Throwable {
         run(DatabaseType.ONE, (final MongoConnection mongoConnection) -> {
             mongoConnection.setOperationAlias(OperationAlias.CONNECTED_USER__DELETE);
             mongoConnection.getQuery().deleteMany(ConnectedUser.class, new Document(Struct.CONNECTED_USERS__USER, userId));
+            return Void;
+        });
+    }
+    
+    public void delete(final String serverHost) throws Throwable {
+        run(DatabaseType.ONE, (final MongoConnection mongoConnection) -> {
+            mongoConnection.setOperationAlias(OperationAlias.CONNECTED_USER__DELETE);
+            mongoConnection.getQuery().deleteMany(ConnectedUser.class, new Document(Struct.CONNECTED_USERS__SERVER_HOST, serverHost));
             return Void;
         });
     }

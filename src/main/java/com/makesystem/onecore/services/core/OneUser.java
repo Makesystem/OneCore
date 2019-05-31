@@ -18,13 +18,17 @@ import java.util.LinkedList;
 public class OneUser implements Serializable {
 
     private final User user;
+    private final String localIp;
+    private final String publicIp;
 
     private final Collection<ConnectedUser> connections = new LinkedList<>();
 
-    public OneUser(final User user) {
+    public OneUser(User user, String localIp, String publicIp) {
         this.user = user;
+        this.localIp = localIp;
+        this.publicIp = publicIp;
     }
-    
+
     public User getUser() {
         return user;
     }
@@ -33,4 +37,11 @@ public class OneUser implements Serializable {
         return connections;
     }
 
+    public String getLocalIp() {
+        return localIp;
+    }
+
+    public String getPublicIp() {
+        return publicIp;
+    }
 }

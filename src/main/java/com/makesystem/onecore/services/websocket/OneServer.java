@@ -11,15 +11,19 @@ import com.makesystem.mwi.websocket.CloseReason;
 import com.makesystem.onecore.services.core.OneProperties;
 import com.makesystem.onecore.services.core.OneUser;
 import com.makesystem.onecore.services.core.connectedUsers.ConnectedUserService;
+import com.makesystem.onecore.services.core.userActions.UserActionService;
 import com.makesystem.onecore.services.core.users.UserService;
 import com.makesystem.oneentity.core.types.Action;
+import com.makesystem.oneentity.core.types.ActionStatus;
 import com.makesystem.oneentity.core.types.MessageType;
 import com.makesystem.oneentity.core.types.OneCloseCodes;
 import com.makesystem.oneentity.core.websocket.Message;
 import com.makesystem.oneentity.services.connectedUsers.ConnectedUser;
 import com.makesystem.oneentity.services.users.User;
+import com.makesystem.oneentity.services.usersActions.UserAction;
 import com.makesystem.pidgey.json.ObjectMapperJRE;
 import com.makesystem.pidgey.lang.ThrowableHelper;
+import com.makesystem.pidgey.thread.ThreadsHelper;
 import com.makesystem.xeoncore.services.management.crudLogErrorService.CrudLogErrorService;
 import com.makesystem.xeonentity.core.exceptions.TaggedException;
 import com.makesystem.xeonentity.core.types.ServiceType;
@@ -73,6 +77,7 @@ public class OneServer extends AbstractServerSocket<Message> {
     private final CrudLogErrorService errorService = new CrudLogErrorService();
     private final ConnectedUserService connectedUserService = new ConnectedUserService();
     private final UserService userService = new UserService();
+    private final UserActionService userActionService = new UserActionService();
     private final OneConsumer consumer = new OneConsumer();
 
     public OneServer() {
@@ -89,14 +94,12 @@ public class OneServer extends AbstractServerSocket<Message> {
     public void setTimeout(int timeout) {
         OneProperties.WEBSOCKET_SERVER__TIMEOUT.setValue(timeout);
     }
-
-    
     
     protected final void onStartUp() {
         if (!INITIALIZED) {
             INITIALIZED = true;
             try {
-                connectedUserService.clear();
+                connectedUserService.delete(OneProperties.INNER_HTTP__HOST.getValue());
             } catch (final Throwable throwable) {
                 onError(null, new TaggedException(Tags.ON_STARTUP, throwable));
             }
@@ -106,6 +109,8 @@ public class OneServer extends AbstractServerSocket<Message> {
     @Override
     protected void onOpen(final SessionData sessionData, final EndpointConfig config) {
 
+        final long startAction = System.currentTimeMillis();
+        
         // Client        
         final String loginOrEmail = sessionData.getParameters().getString(Params.LOGIN);
         final String password = sessionData.getParameters().getString(Params.PASSWORD);
@@ -114,6 +119,7 @@ public class OneServer extends AbstractServerSocket<Message> {
         final String publicIp = sessionData.getParameters().getString(Params.PUBLIC_IP);
 
         //Server
+        final String serverName = OneProperties.SERVER_NAME.getValue();
         final String httpHost = OneProperties.INNER_HTTP__HOST.getValue();
         final Integer httpPort = OneProperties.INNER_HTTP__PORT.getValue();
 
@@ -138,20 +144,21 @@ public class OneServer extends AbstractServerSocket<Message> {
 
             } else {
 
-                final OneUser oneUser = new OneUser(user);
+                final OneUser oneUser = new OneUser(user, localIp, publicIp);
 
                 // /////////////////////////////////////////////////////////////
                 // Create connection register
                 // /////////////////////////////////////////////////////////////
                 final ConnectedUser connectedUser = new ConnectedUser();
-                connectedUser.setUser(user.getId().getHexString());
-                connectedUser.setCustomer(customer);
+                connectedUser.setUser(user.getId());
+                connectedUser.setCustomer(null);
                 connectedUser.setPublicIp(publicIp);
                 connectedUser.setLocalIp(localIp);
+                connectedUser.setServerName(serverName);
                 connectedUser.setServerHost(httpHost);
                 connectedUser.setServerPort(httpPort.toString());
                 connectedUser.setService(ServiceType.ONE);
-                connectedUser.setInsertionDate(System.currentTimeMillis());
+                connectedUser.setInsertionDate(startAction);
 
                 oneUser.getConnections().add(connectedUserService.insert(connectedUser));
 
@@ -166,6 +173,11 @@ public class OneServer extends AbstractServerSocket<Message> {
                 message.setType(MessageType.RESPONSE_SUCCESS);
                 message.setData(ObjectMapperJRE.write(user));
                 sessionData.sendObject(message);
+                
+                // /////////////////////////////////////////////////////////////
+                // Save login action
+                // /////////////////////////////////////////////////////////////
+                userActionService.insertLoginAction(oneUser, startAction);
             }
 
         } catch (final Throwable throwable) {
@@ -191,29 +203,40 @@ public class OneServer extends AbstractServerSocket<Message> {
     @Override
     protected void onMessage(final SessionData sessionData, final Message message) {
 
+        final OneUser oneUser = sessionData.getData();
+        
         try {
 
             switch (message.getType()) {
                 case COMMAND: {
-
+                    
+                    // Create a Message to send to the client
                     final Message response = new Message(message.getId());
                     response.setAction(message.getAction());
                     response.setService(message.getService());
 
-                    try {
+                    // Create a Action to register on database
+                    try {                        
+                        final String result = userActionService.execute(
+                                oneUser.getUser().getId(), 
+                                oneUser.getLocalIp(),
+                                oneUser.getPublicIp(),
+                                message.getAction(), 
+                                () -> consumer.consumer(sessionData, message));                        
                         //
                         // Call services and get result
                         //
                         response.setType(MessageType.RESPONSE_SUCCESS);
-                        response.setData(consumer.consumer(sessionData, message));
+                        response.setData(result);                     
                     } catch (final Throwable throwable) {
+                        // Set message data and status to respose
                         response.setType(MessageType.RESPONSE_ERROR);
                         response.setData(ThrowableHelper.toString(throwable));
                         throw throwable;
                     } finally {
+                        // Send response to client
                         sessionData.sendObject(response);
                     }
-
                 }
                 break;
                 case RESPONSE_SUCCESS:

@@ -24,6 +24,9 @@ public class OneService extends AbstractService {
         public static final String CONNECTED_USER__DELETE               = "CONNECTED_USER__DELETE";
         public static final String CONNECTED_USER__CLEAR                = "CONNECTED_USER__CLEAR";        
         public static final String CONNECTED_USER__FIND                 = "CONNECTED_USER__LIST";
+        // User Action
+        public static final String USER_ACTION__INSERT                  = "USER_ACTION__INSERT";
+        public static final String USER_ACTION__UPDATE                  = "USER_ACTION__UPDATE";
     }
     
     public OneService() {
