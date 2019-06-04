@@ -9,6 +9,7 @@ import com.makesystem.mwc.websocket.server.SessionData;
 import com.makesystem.oneentity.core.websocket.Message;
 import com.makesystem.pidgey.json.ObjectMapperJRE;
 import com.makesystem.xeoncore.services.management.databaseStatisticService.DatabaseStatisticService;
+import com.makesystem.xeonentity.services.management.DatabaseConnections;
 import com.makesystem.xeonentity.services.management.DatabaseStatistic;
 
 /**
@@ -25,6 +26,8 @@ public class OneConsumer {
                 return one__current_timestamp(message.getData());
             case ONE__DATABASE_STATISTICS:
                 return one__database_statistics(message.getData());
+            case ONE__DATABASE_CONNECTIONS:
+                return one__database_connections(message.getData());
             default:
                 throw new IllegalArgumentException("Unknow action: " + message.getAction());
         }
@@ -62,5 +65,19 @@ public class OneConsumer {
                 limitOfLongOperations);
 
         return ObjectMapperJRE.write(databaseStatistic);
+    }
+    
+    protected <D> String one__database_connections(final D data) throws Throwable {
+
+        final long timestamp = System.currentTimeMillis();
+        //final long openAtMin = timestamp - (timestamp % (24 * 60 * 60 * 1000));
+        // Last 24 hours
+        final long openAtMin = timestamp - (24 * 60 * 60 * 100);
+        final long openAtMax = timestamp;
+        
+        final DatabaseStatisticService databaseStatisticService = new DatabaseStatisticService();
+        final DatabaseConnections databaseConnections = databaseStatisticService.getDatabaseConnections(openAtMin, openAtMax);
+
+        return ObjectMapperJRE.write(databaseConnections);
     }
 }
