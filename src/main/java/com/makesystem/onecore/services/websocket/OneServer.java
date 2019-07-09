@@ -71,11 +71,10 @@ public class OneServer extends AbstractServerSocket<Message> {
 
     private static boolean INITIALIZED = false;
 
-    
     private final ConnectedUserService connectedUserService = new ConnectedUserService();
     private final UserService userService = new UserService();
     private final UserActionService userActionService = new UserActionService();
-    
+
     private final Management management = Management.getInstance();
     private final OneConsumer consumer = new OneConsumer();
 
@@ -93,7 +92,7 @@ public class OneServer extends AbstractServerSocket<Message> {
     public void setTimeout(int timeout) {
         OneProperties.WEBSOCKET_SERVER__TIMEOUT.setValue(timeout);
     }
-    
+
     protected final void onStartUp() {
         if (!INITIALIZED) {
             INITIALIZED = true;
@@ -109,7 +108,7 @@ public class OneServer extends AbstractServerSocket<Message> {
     protected void onOpen(final SessionData sessionData, final EndpointConfig config) {
 
         final long startAction = System.currentTimeMillis();
-        
+
         // Client        
         final String loginOrEmail = sessionData.getParameters().getString(Params.LOGIN);
         final String password = sessionData.getParameters().getString(Params.PASSWORD);
@@ -172,7 +171,7 @@ public class OneServer extends AbstractServerSocket<Message> {
                 message.setType(MessageType.RESPONSE_SUCCESS);
                 message.setData(ObjectMapperJRE.write(user));
                 sessionData.sendObject(message);
-                
+
                 // /////////////////////////////////////////////////////////////
                 // Save login action
                 // /////////////////////////////////////////////////////////////
@@ -200,30 +199,30 @@ public class OneServer extends AbstractServerSocket<Message> {
     protected void onMessage(final SessionData sessionData, final Message message) {
 
         final OneUser oneUser = sessionData.getData();
-        
+
         try {
 
             switch (message.getType()) {
                 case COMMAND: {
-                    
+
                     // Create a Message to send to the client
                     final Message response = new Message(message.getId());
                     response.setAction(message.getAction());
                     response.setService(message.getService());
 
                     // Create a Action to register on database
-                    try {                        
+                    try {
                         final String result = userActionService.execute(
-                                oneUser.getUser().getId(), 
+                                oneUser.getUser().getId(),
                                 oneUser.getLocalIp(),
                                 oneUser.getPublicIp(),
-                                message.getAction(), 
-                                () -> consumer.consumer(sessionData, message));                        
+                                message.getAction(),
+                                () -> consumer.consumer(sessionData, message));
                         //
                         // Call services and get result
                         //
                         response.setType(MessageType.RESPONSE_SUCCESS);
-                        response.setData(result);                     
+                        response.setData(result);
                     } catch (final Throwable throwable) {
                         // Set message data and status to respose
                         response.setType(MessageType.RESPONSE_ERROR);
@@ -258,7 +257,15 @@ public class OneServer extends AbstractServerSocket<Message> {
 
             if (sessionData != null) {
                 logError.setCustomer(sessionData.getParameters().getString(Params.CUSTOMER));
+
+                final OneUser oneUser = (OneUser) sessionData.getData();
+                if (oneUser != null
+                        && oneUser.getUser() != null
+                        && oneUser.getUser().getId() != null) {
+                    logError.setUser(oneUser.getUser().getId().getHexString());
+                }
             }
+            
             logError.setService(ServiceType.ONE);
 
             if (throwable == null) {
