@@ -8,9 +8,9 @@ package com.makesystem.onecore.services.websocket;
 import com.makesystem.mwc.websocket.server.SessionData;
 import com.makesystem.oneentity.core.websocket.Message;
 import com.makesystem.pidgey.json.ObjectMapperJRE;
-import com.makesystem.xeoncore.services.management.databaseStatisticService.DatabaseStatisticService;
-import com.makesystem.xeonentity.services.management.DatabaseConnections;
-import com.makesystem.xeonentity.services.management.DatabaseStatistic;
+import com.makesystem.xeoncore.services.management.DatabaseStatisticService;
+import com.makesystem.xeonentity.services.management.runnable.DatabaseConnections;
+import com.makesystem.xeonentity.services.management.runnable.DatabaseStatistic;
 
 /**
  *

@@ -5,8 +5,8 @@
  */
 package com.makesystem.onecore.services.core;
 
-import com.makesystem.oneentity.services.connectedUsers.ConnectedUser;
-import com.makesystem.oneentity.services.users.User;
+import com.makesystem.oneentity.services.users.storage.ConnectedUser;
+import com.makesystem.oneentity.services.users.storage.User;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.LinkedList;

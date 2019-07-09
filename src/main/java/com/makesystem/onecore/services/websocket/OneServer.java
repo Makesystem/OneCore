@@ -10,21 +10,21 @@ import com.makesystem.mwc.websocket.server.SessionData;
 import com.makesystem.mwi.websocket.CloseReason;
 import com.makesystem.onecore.services.core.OneProperties;
 import com.makesystem.onecore.services.core.OneUser;
-import com.makesystem.onecore.services.core.connectedUsers.ConnectedUserService;
-import com.makesystem.onecore.services.core.userActions.UserActionService;
+import com.makesystem.onecore.services.core.users.ConnectedUserService;
+import com.makesystem.onecore.services.core.users.UserActionService;
 import com.makesystem.onecore.services.core.users.UserService;
 import com.makesystem.oneentity.core.types.Action;
 import com.makesystem.oneentity.core.types.MessageType;
 import com.makesystem.oneentity.core.types.OneCloseCodes;
 import com.makesystem.oneentity.core.websocket.Message;
-import com.makesystem.oneentity.services.connectedUsers.ConnectedUser;
-import com.makesystem.oneentity.services.users.User;
+import com.makesystem.oneentity.services.users.storage.ConnectedUser;
+import com.makesystem.oneentity.services.users.storage.User;
 import com.makesystem.pidgey.json.ObjectMapperJRE;
 import com.makesystem.pidgey.lang.ThrowableHelper;
-import com.makesystem.xeoncore.services.management.crudLogErrorService.CrudLogErrorService;
+import com.makesystem.xeoncore.management.Management;
 import com.makesystem.xeonentity.core.exceptions.TaggedException;
 import com.makesystem.xeonentity.core.types.ServiceType;
-import com.makesystem.xeonentity.services.management.LogError;
+import com.makesystem.xeonentity.services.management.storage.LogError;
 import javax.websocket.EndpointConfig;
 import javax.websocket.server.ServerEndpoint;
 
@@ -71,10 +71,12 @@ public class OneServer extends AbstractServerSocket<Message> {
 
     private static boolean INITIALIZED = false;
 
-    private final CrudLogErrorService errorService = new CrudLogErrorService();
+    
     private final ConnectedUserService connectedUserService = new ConnectedUserService();
     private final UserService userService = new UserService();
     private final UserActionService userActionService = new UserActionService();
+    
+    private final Management management = Management.getInstance();
     private final OneConsumer consumer = new OneConsumer();
 
     public OneServer() {
@@ -184,9 +186,6 @@ public class OneServer extends AbstractServerSocket<Message> {
 
     @Override
     protected void onClose(final SessionData sessionData, final CloseReason closeReason) {
-
-        System.out.println("OnClose: " + closeReason.getCloseCode() + "|" + closeReason.getCloseCode().getCode() + "|" + closeReason.getReasonPhrase());
-
         final OneUser user = sessionData.getData();
         user.getConnections().forEach(connection -> {
             try {
@@ -258,7 +257,7 @@ public class OneServer extends AbstractServerSocket<Message> {
             final LogError logError = new LogError();
 
             if (sessionData != null) {
-                logError.setCustomer(sessionData.getParameters().getString("document"));
+                logError.setCustomer(sessionData.getParameters().getString(Params.CUSTOMER));
             }
             logError.setService(ServiceType.ONE);
 
@@ -287,7 +286,7 @@ public class OneServer extends AbstractServerSocket<Message> {
                 logError.setStackTrace(ThrowableHelper.toString(throwable));
             }
 
-            errorService.insert(logError);
+            management.saveLog(logError);
 
         } catch (final Throwable ignore) {
             ignore.printStackTrace();

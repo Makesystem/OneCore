@@ -6,55 +6,55 @@
 package com.makesystem.onecore.services.http;
 
 import com.makesystem.mwc.http.server.AbstractServiceServlet;
-import com.makesystem.oneentity.services.OneHttpServices;
 import javax.ejb.Stateless;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
+import com.makesystem.oneentity.services.OneHttpServices.Commons;
+import com.makesystem.oneentity.services.OneHttpServices.Commons.*;
+import javax.ws.rs.PathParam;
 
 /**
  *
  * @author Richeli.vargas
  */
 @Stateless
-@Path(OneHttpServices.Commons.PATH)
+@Path(Commons.PATH)
 public class CommonServices extends AbstractServiceServlet {
 
     @POST
     @Produces(MediaType.TEXT_PLAIN)
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-    @Path(OneHttpServices.Commons.PostPing.PATH)
+    @Path(PostPing.PATH)
     public String postPing() throws Throwable {
-        final StringBuilder builder = new StringBuilder();
-            builder.append("ContentType: ").append(httpServletRequest.getContentType()).append(" | ");
-            builder.append("ContextPath: ").append(httpServletRequest.getContextPath()).append(" | ");
-            builder.append("LocalAddr: ").append(httpServletRequest.getLocalAddr()).append(" | ");
-            builder.append("LocalName: ").append(httpServletRequest.getLocalName()).append(" | ");
-            builder.append("LocalPort: ").append(httpServletRequest.getLocalPort()).append(" | ");
-            builder.append("Method: ").append(httpServletRequest.getMethod()).append(" | ");
-            builder.append("RemoteAddr: ").append(httpServletRequest.getRemoteAddr()).append(" | ");
-            builder.append("RemoteHost: ").append(httpServletRequest.getRemoteHost()).append(" | ");
-            builder.append("RemotePort: ").append(httpServletRequest.getRemotePort()).append(" | ");
-            builder.append("RemoteUser: ").append(httpServletRequest.getRemoteUser()).append(" | ");
-            builder.append("RequestURI: ").append(httpServletRequest.getRequestURI()).append(" | ");
-            builder.append("RequestURL: ").append(httpServletRequest.getRequestURL()).append(" | ");
-            builder.append("RequestedSessionId: ").append(httpServletRequest.getRequestedSessionId()).append(" | ");
-            builder.append("ServerName: ").append(httpServletRequest.getServerName()).append(" | ");
-            builder.append("ServerPort: ").append(httpServletRequest.getServerPort()).append(" | ");
-            builder.append("Scheme: ").append(httpServletRequest.getScheme()).append(" | ");
-            builder.append("ServletPath: ").append(httpServletRequest.getServletPath());
-            
-            return builder.toString();
+        return Boolean.TRUE.toString();
     }
 
     @GET
     @Produces(MediaType.TEXT_PLAIN)
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-    @Path(OneHttpServices.Commons.GetPing.PATH)
+    @Path(GetPing.PATH)
     public String getPing() throws Throwable {
         return Boolean.TRUE.toString();
+    }
+
+    @POST
+    @Produces(MediaType.TEXT_PLAIN)
+    @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+    @Path(PostEcho.PATH)
+    public String postEcho(@FormParam(PostEcho.Attributes.DATA) final String data) throws Throwable {
+        return data;
+    }
+
+    @GET
+    @Produces(MediaType.TEXT_PLAIN)
+    @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+    @Path(GetEcho.PATH)
+    public String getEcho(@PathParam(GetEcho.Attributes.DATA) final String data) throws Throwable {
+        return data;
     }
 }

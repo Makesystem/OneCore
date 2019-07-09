@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.2
  */
-package com.makesystem.onecore.services.core.connectedUsers;
+package com.makesystem.onecore.services.core.users;
 
 import com.makesystem.mdbc.architectures.mongo.MongoConnection;
 import com.makesystem.mdbc.architectures.mongo.MongoQueryBuilder;
@@ -11,7 +11,7 @@ import com.makesystem.mdbc.architectures.mongo.model.FindOptions;
 import com.makesystem.mdbi.nosql.SimpleObjectId;
 import com.makesystem.onecore.services.core.OneService;
 import com.makesystem.oneentity.core.nosql.Struct;
-import com.makesystem.oneentity.services.connectedUsers.ConnectedUser;
+import com.makesystem.oneentity.services.users.storage.ConnectedUser;
 import com.makesystem.xeonentity.core.types.DatabaseType;
 import com.makesystem.xeonentity.core.types.ServiceType;
 import java.util.Collection;

@@ -5,7 +5,7 @@
  */
 package com.makesystem.onecore.config;
 
-import com.makesystem.mwc.http.server.AbstractRequestFilter;
+import com.makesystem.xeoncore.core.AbstractRequestFilter;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.annotation.WebFilter;
@@ -14,13 +14,16 @@ import javax.servlet.annotation.WebFilter;
  *
  * @author Richeli.vargas
  */
-@WebFilter(urlPatterns = { "/*", "" })
+@WebFilter(urlPatterns = {"/*", ""})
 public class RequestFilterConfig extends AbstractRequestFilter {
 
     public RequestFilterConfig() {
         registerPublicMethod("post_ping");
+        registerPublicMethod("get_ping");
+        registerPublicMethod("post_echo");
+        registerPublicMethod("get_echo");
     }
-    
+
     @Override
     protected void doBefore(final ServletRequest servletRequest, final ServletResponse servletResponse) {
     }
@@ -33,5 +36,5 @@ public class RequestFilterConfig extends AbstractRequestFilter {
     protected boolean allowRequest(final ServletRequest servletRequest, final ServletResponse servletResponse) {
         return true;
     }
-    
+
 }

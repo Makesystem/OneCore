@@ -10,7 +10,7 @@ import com.makesystem.mdbc.architectures.mongo.MongoQueryBuilder;
 import com.makesystem.mdbc.architectures.mongo.model.FindOptions;
 import com.makesystem.onecore.services.core.OneService;
 import com.makesystem.oneentity.core.nosql.Struct;
-import com.makesystem.oneentity.services.users.User;
+import com.makesystem.oneentity.services.users.storage.User;
 import com.makesystem.xeonentity.core.types.DatabaseType;
 import java.util.Collection;
 import org.bson.conversions.Bson;
