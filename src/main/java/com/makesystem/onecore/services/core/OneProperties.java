@@ -11,7 +11,12 @@ import com.makesystem.pidgey.io.GetIpHandler;
 import com.makesystem.pidgey.io.InnetAddressHelperJRE;
 import com.makesystem.pidgey.lang.SystemProperty;
 import com.makesystem.pidgey.xml.XmlHelperJRE;
+import java.io.StringWriter;
 import java.net.InetAddress;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -31,7 +36,7 @@ public abstract class OneProperties {
     public static final SystemProperty<String> SERVER_NAME = new SystemProperty("one__server_name", "no_name");
     public static final SystemProperty<String> INNER_HTTP__HOST = new SystemProperty("one__inner_http__host", "127.0.0.1");
     public static final SystemProperty<Integer> INNER_HTTP__PORT = new SystemProperty("one__inner_http__port", 80);
-    public static final SystemProperty<Integer> INNER_HTTP__SECURE_PORT = new SystemProperty("one__inner_http__secure_port", 443);    
+    public static final SystemProperty<Integer> INNER_HTTP__SECURE_PORT = new SystemProperty("one__inner_http__secure_port", 443);
     public static final SystemProperty<Integer> WEBSOCKET_SERVER__TIMEOUT = new SystemProperty("one__websocket_server__timeout", WebClient.SESSION__DEFAULT_TIMEOUT);
 
     static {

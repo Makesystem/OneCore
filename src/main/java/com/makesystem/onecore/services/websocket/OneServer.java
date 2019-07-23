@@ -79,7 +79,7 @@ public class OneServer extends AbstractServerSocket<Message> {
     private final OneConsumer consumer = new OneConsumer();
 
     public OneServer() {
-        super();
+        super();        
         onStartUp();
     }
 
@@ -106,7 +106,7 @@ public class OneServer extends AbstractServerSocket<Message> {
 
     @Override
     protected void onOpen(final SessionData sessionData, final EndpointConfig config) {
-
+        
         final long startAction = System.currentTimeMillis();
 
         // Client        
