@@ -165,8 +165,10 @@ public final class OneProperties implements ServletContextListener {
             //DomainXml.write(domain);
             ServerLog.clear();
             //System.out.println(XmlHelper.toIdentedString(domain.toElement()));
+            System.out.println(domain.toString());
             System.out.println("version: " + domain.getVersion());
             System.out.println("standalone: " + domain.isStandalone());
+            System.out.println("encoding: " + domain.getEncoding());
         } catch (Throwable throwable) {
             throwable.printStackTrace();
         }
