@@ -6,26 +6,29 @@
 package com.makesystem.onecore.services.core;
 
 import com.makesystem.mdbi.core.types.ConnectionType;
+import com.makesystem.mwc.http.server.glasfish.DomainXml;
+import static com.makesystem.mwc.http.server.glasfish.DomainXml.getURL;
+import com.makesystem.mwc.http.server.glasfish.ServerLog;
 import com.makesystem.mwi.WebClient;
 import com.makesystem.pidgey.io.GetIpHandler;
 import com.makesystem.pidgey.io.InnetAddressHelperJRE;
+import com.makesystem.pidgey.lang.ObjectsHelper;
 import com.makesystem.pidgey.lang.SystemProperty;
-import com.makesystem.pidgey.xml.XmlHelperJRE;
-import java.io.StringWriter;
+import com.makesystem.pidgey.xml.XmlDocument;
+import com.makesystem.pidgey.xml.XmlElement;
+import com.makesystem.pidgey.xml.XmlHelper;
+import com.makesystem.xeoncore.management.ManagementProperties;
 import java.net.InetAddress;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
+import javax.servlet.ServletContextEvent;
+import javax.servlet.ServletContextListener;
+import javax.servlet.annotation.WebListener;
 
 /**
  *
  * @author Richeli.vargas
  */
-public abstract class OneProperties {
+@WebListener
+public final class OneProperties implements ServletContextListener {
 
     public static final SystemProperty<String> DATABASE__HOST = new SystemProperty("one__db__host", "127.0.0.1");
     public static final SystemProperty<Integer> DATABASE__PORT = new SystemProperty("one__db__port", 27017);
@@ -39,7 +42,21 @@ public abstract class OneProperties {
     public static final SystemProperty<Integer> INNER_HTTP__SECURE_PORT = new SystemProperty("one__inner_http__secure_port", 443);
     public static final SystemProperty<Integer> WEBSOCKET_SERVER__TIMEOUT = new SystemProperty("one__websocket_server__timeout", WebClient.SESSION__DEFAULT_TIMEOUT);
 
-    static {
+    public OneProperties() {
+    }
+
+    @Override
+    public void contextInitialized(final ServletContextEvent sce) {
+        loadSystemProperties();
+    }
+
+    @Override
+    @SuppressWarnings("CallToPrintStackTrace")
+    public void contextDestroyed(final ServletContextEvent event) {
+        // Nothing
+    }
+
+    private static void loadSystemProperties() {
 
         final boolean hasHttpHost = System.getProperty(INNER_HTTP__HOST.getProperty()) != null;
         final boolean hasHttpPort = System.getProperty(INNER_HTTP__PORT.getProperty()) != null;
@@ -63,34 +80,28 @@ public abstract class OneProperties {
 
             try {
 
-                final String domain_dir = System.getProperty("user.dir");
-                final String domain_url = domain_dir + "/domain.xml";
-                final Document document = XmlHelperJRE.getDocument(domain_url);
+                final XmlDocument document = DomainXml.getDocument();
 
-                final Node configs = XmlHelperJRE.getNodeByTag(document, "configs");
-                final Node config = XmlHelperJRE.getNodeByTag(configs, "config", "server-config");
-                final Node networkConfig = XmlHelperJRE.getNodeByTag(config, "network-config");
-                final Node networkListeners = XmlHelperJRE.getNodeByTag(networkConfig, "network-listeners");
+                final XmlElement httpListener1 = DomainXml.getHttpListener1(document);
+                final String httpListener1_port = httpListener1.getAttribute(DomainXml.Attributes.PORT);
 
-                final Node networkListener_1 = XmlHelperJRE.getNodeByTag(networkListeners, "network-listener", "http-listener-1");
-                final Element networkListener_1_Element = (Element) networkListener_1;
-                final String port = networkListener_1_Element.getAttribute("port");
+                final XmlElement httpListener2 = DomainXml.getHttpListener1(document);
+                final String httpListener2_port = httpListener2.getAttribute(DomainXml.Attributes.PORT);
 
-                if (port != null && !port.isEmpty() && !hasHttpPort) {
-                    INNER_HTTP__PORT.setValue(Integer.valueOf(port));
+                if (ObjectsHelper.isNotNull(httpListener1_port)
+                        && ObjectsHelper.isNotEmpty(httpListener1_port)) {
+                    final Integer value = Integer.valueOf(httpListener1_port);
+                    INNER_HTTP__PORT.setValue(value);
+                    INNER_HTTP__SECURE_PORT.setValue(value);
                 }
 
-                final Node networkListener_2 = XmlHelperJRE.getNodeByTag(networkListeners, "network-listener", "http-listener-2");
-                final Element networkListener_2_Element = (Element) networkListener_2;
-                final String securePort = networkListener_2_Element.getAttribute("port");
-
-                if (securePort != null && !securePort.isEmpty() && !hasHttpSecurePort) {
-                    INNER_HTTP__SECURE_PORT.setValue(Integer.valueOf(securePort));
-                } else if (port != null && !port.isEmpty() && !hasHttpSecurePort) {
-                    INNER_HTTP__SECURE_PORT.setValue(Integer.valueOf(port));
+                if (ObjectsHelper.isNotNull(httpListener2_port)
+                        && ObjectsHelper.isNotEmpty(httpListener2_port)) {
+                    final Integer value = Integer.valueOf(httpListener2_port);
+                    INNER_HTTP__SECURE_PORT.setValue(value);
                 }
 
-            } catch (final Throwable throwable) {
+            } catch (@SuppressWarnings("UseSpecificCatch") final Throwable ignore) {
                 // Ignore
             }
 
@@ -100,12 +111,69 @@ public abstract class OneProperties {
             try {
                 final InetAddress addr = InetAddress.getLocalHost();
                 SERVER_NAME.setValue(addr.getHostName());
-            } catch (@SuppressWarnings("UseSpecificCatch") final Throwable throwable) {
+            } catch (@SuppressWarnings("UseSpecificCatch") final Throwable ignore) {
                 // Ignore
             }
         }
+
+        new Thread(() -> {
+            try {
+                Thread.sleep(10000);
+                updateDomainXml();
+            } catch (@SuppressWarnings("UseSpecificCatch") final Throwable ignore) {
+                // Ignore
+            }
+        }).start();
     }
 
-    private OneProperties() {
+    public final static void updateDomainXml() throws Throwable {
+
+        // /////////////////////////////////////////////////////////////////////
+        // Get Domain.xml
+        // /////////////////////////////////////////////////////////////////////
+        final XmlDocument domain = DomainXml.getDocument();
+
+        // /////////////////////////////////////////////////////////////////////
+        // Management Properties
+        // /////////////////////////////////////////////////////////////////////
+        writeSystemProperty(domain, ManagementProperties.DATABASE__HOST);
+        writeSystemProperty(domain, ManagementProperties.DATABASE__NAME);
+        writeSystemProperty(domain, ManagementProperties.DATABASE__PASSWORD);
+        writeSystemProperty(domain, ManagementProperties.DATABASE__PORT);
+        writeSystemProperty(domain, ManagementProperties.DATABASE__TYPE);
+        writeSystemProperty(domain, ManagementProperties.DATABASE__USER);
+
+        // /////////////////////////////////////////////////////////////////////
+        // One Properties
+        // /////////////////////////////////////////////////////////////////////
+        writeSystemProperty(domain, OneProperties.DATABASE__HOST);
+        writeSystemProperty(domain, OneProperties.DATABASE__PORT);
+        writeSystemProperty(domain, OneProperties.DATABASE__NAME);
+        writeSystemProperty(domain, OneProperties.DATABASE__USER);
+        writeSystemProperty(domain, OneProperties.DATABASE__PASSWORD);
+        writeSystemProperty(domain, OneProperties.DATABASE__TYPE);
+        writeSystemProperty(domain, OneProperties.SERVER_NAME);
+        writeSystemProperty(domain, OneProperties.INNER_HTTP__HOST);
+        writeSystemProperty(domain, OneProperties.INNER_HTTP__PORT);
+        writeSystemProperty(domain, OneProperties.INNER_HTTP__SECURE_PORT);
+        writeSystemProperty(domain, OneProperties.WEBSOCKET_SERVER__TIMEOUT);
+
+        // /////////////////////////////////////////////////////////////////////
+        // Update Domain.xml
+        // /////////////////////////////////////////////////////////////////////
+        try {
+            //DomainXml.write(domain);
+            ServerLog.clear();
+            //System.out.println(XmlHelper.toIdentedString(domain.toElement()));
+            System.out.println("version: " + domain.getVersion());
+            System.out.println("standalone: " + domain.isStandalone());
+        } catch (Throwable throwable) {
+            throwable.printStackTrace();
+        }
+    }
+
+    protected final static void writeSystemProperty(final XmlDocument domain, final SystemProperty systemProperty) {
+        final String value = systemProperty.getValue() == null ? null : systemProperty.getValue().toString();
+        DomainXml.setSystemProperty(domain, systemProperty.getProperty(), value);
     }
 }

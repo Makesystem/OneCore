@@ -69,19 +69,12 @@ public class OneServer extends AbstractServerSocket<Message> {
         public static final String NO_THROWABLE = "NO_THROWABLE";
     }
 
-    private static boolean INITIALIZED = false;
-
     private final ConnectedUserService connectedUserService = new ConnectedUserService();
     private final UserService userService = new UserService();
     private final UserActionService userActionService = new UserActionService();
 
     private final Management management = Management.getInstance();
     private final OneConsumer consumer = new OneConsumer();
-
-    public OneServer() {
-        super();        
-        onStartUp();
-    }
 
     @Override
     public int getTimeout() {
@@ -93,20 +86,18 @@ public class OneServer extends AbstractServerSocket<Message> {
         OneProperties.WEBSOCKET_SERVER__TIMEOUT.setValue(timeout);
     }
 
+    @Override
     protected final void onStartUp() {
-        if (!INITIALIZED) {
-            INITIALIZED = true;
-            try {
-                connectedUserService.delete(OneProperties.INNER_HTTP__HOST.getValue());
-            } catch (final Throwable throwable) {
-                onError(null, new TaggedException(Tags.ON_STARTUP, throwable));
-            }
+        try {
+            connectedUserService.delete(OneProperties.INNER_HTTP__HOST.getValue());
+        } catch (final Throwable throwable) {
+            onError(null, new TaggedException(Tags.ON_STARTUP, throwable));
         }
     }
 
     @Override
     protected void onOpen(final SessionData sessionData, final EndpointConfig config) {
-        
+
         final long startAction = System.currentTimeMillis();
 
         // Client        
@@ -265,7 +256,7 @@ public class OneServer extends AbstractServerSocket<Message> {
                     logError.setUser(oneUser.getUser().getId().getHexString());
                 }
             }
-            
+
             logError.setService(ServiceType.ONE);
 
             if (throwable == null) {
