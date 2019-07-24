@@ -7,8 +7,6 @@ package com.makesystem.onecore.services.core;
 
 import com.makesystem.mdbi.core.types.ConnectionType;
 import com.makesystem.mwc.http.server.glasfish.DomainXml;
-import static com.makesystem.mwc.http.server.glasfish.DomainXml.getURL;
-import com.makesystem.mwc.http.server.glasfish.ServerLog;
 import com.makesystem.mwi.WebClient;
 import com.makesystem.pidgey.io.GetIpHandler;
 import com.makesystem.pidgey.io.InnetAddressHelperJRE;
@@ -16,7 +14,6 @@ import com.makesystem.pidgey.lang.ObjectsHelper;
 import com.makesystem.pidgey.lang.SystemProperty;
 import com.makesystem.pidgey.xml.XmlDocument;
 import com.makesystem.pidgey.xml.XmlElement;
-import com.makesystem.pidgey.xml.XmlHelper;
 import com.makesystem.xeoncore.management.ManagementProperties;
 import java.net.InetAddress;
 import javax.servlet.ServletContextEvent;
@@ -56,25 +53,13 @@ public final class OneProperties implements ServletContextListener {
         // Nothing
     }
 
+    @SuppressWarnings("CallToPrintStackTrace")
     private static void loadSystemProperties() {
 
         final boolean hasHttpHost = System.getProperty(INNER_HTTP__HOST.getProperty()) != null;
         final boolean hasHttpPort = System.getProperty(INNER_HTTP__PORT.getProperty()) != null;
         final boolean hasHttpSecurePort = System.getProperty(INNER_HTTP__SECURE_PORT.getProperty()) != null;
         final boolean hasServerName = System.getProperty(SERVER_NAME.getProperty()) != null;
-
-        if (!hasHttpHost) {
-            InnetAddressHelperJRE.getLocalIp(new GetIpHandler() {
-                @Override
-                public void onSuccess(final String ip) {
-                    INNER_HTTP__HOST.setValue(ip);
-                }
-
-                @Override
-                public void onFailure(final Throwable throwable) {
-                }
-            });
-        }
 
         if (!hasHttpPort || !hasHttpSecurePort) {
 
@@ -103,6 +88,7 @@ public final class OneProperties implements ServletContextListener {
 
             } catch (@SuppressWarnings("UseSpecificCatch") final Throwable ignore) {
                 // Ignore
+                ignore.printStackTrace();
             }
 
         }
@@ -113,17 +99,39 @@ public final class OneProperties implements ServletContextListener {
                 SERVER_NAME.setValue(addr.getHostName());
             } catch (@SuppressWarnings("UseSpecificCatch") final Throwable ignore) {
                 // Ignore
+                ignore.printStackTrace();
             }
         }
 
-        new Thread(() -> {
-            try {
-                Thread.sleep(10000);
-                updateDomainXml();
-            } catch (@SuppressWarnings("UseSpecificCatch") final Throwable ignore) {
-                // Ignore
-            }
-        }).start();
+        if (!hasHttpHost) {
+            InnetAddressHelperJRE.getLocalIp(new GetIpHandler() {
+                @Override
+                public void onSuccess(final String ip) {
+                    INNER_HTTP__HOST.setValue(ip);
+                    callUpdateDomainXml();
+                }
+
+                @Override
+                public void onFailure(final Throwable ignore) {
+                    ignore.printStackTrace();
+                    callUpdateDomainXml();
+                }
+            });
+
+        } else {
+            callUpdateDomainXml();
+        }
+
+    }
+
+    @SuppressWarnings("CallToPrintStackTrace")
+    public final static void callUpdateDomainXml() {
+        try {
+            updateDomainXml();
+        } catch (@SuppressWarnings("UseSpecificCatch") final Throwable ignore) {
+            // Ignore
+            ignore.printStackTrace();
+        }
     }
 
     public final static void updateDomainXml() throws Throwable {
@@ -161,17 +169,7 @@ public final class OneProperties implements ServletContextListener {
         // /////////////////////////////////////////////////////////////////////
         // Update Domain.xml
         // /////////////////////////////////////////////////////////////////////
-        try {
-            //DomainXml.write(domain);
-            ServerLog.clear();
-            //System.out.println(XmlHelper.toIdentedString(domain.toElement()));
-            System.out.println(domain.toString());
-            System.out.println("version: " + domain.getVersion());
-            System.out.println("standalone: " + domain.isStandalone());
-            System.out.println("encoding: " + domain.getEncoding());
-        } catch (Throwable throwable) {
-            throwable.printStackTrace();
-        }
+        DomainXml.write(domain);
     }
 
     protected final static void writeSystemProperty(final XmlDocument domain, final SystemProperty systemProperty) {
