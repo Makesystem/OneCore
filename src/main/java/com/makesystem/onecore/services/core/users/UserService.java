@@ -24,7 +24,54 @@ public class UserService extends OneService {
     public User insert(final User user) throws Throwable {
         return run(DatabaseType.ONE, (final MongoConnection mongoConnection) -> {
             mongoConnection.setOperationAlias(OperationAlias.USER__INSERT);
-            return mongoConnection.getQuery().insert(user);            
+            
+            if(!loginAvaliable(user.getLogin())){       
+                throw new IllegalArgumentException("Login '" + user.getLogin() + "' is already in use");
+            }
+            
+            if(!emailAvaliable(user.getEmail())){
+                throw new IllegalArgumentException("E-mail '" + user.getEmail() + "' is already in use");
+            }
+            
+            return mongoConnection.getQuery().insert(user);                        
+        });
+    }
+    
+    public boolean loginAvaliable(final String login) throws Throwable {
+        return run(DatabaseType.ONE, (final MongoConnection mongoConnection) -> {
+            mongoConnection.setOperationAlias(OperationAlias.USER__FIND_BY__LOGIN_AND_PASSWORD);
+
+            // ///////////////////////////////////////////////////////////////////////////
+            // Create the query
+            // ///////////////////////////////////////////////////////////////////////////
+            final MongoQueryBuilder queryBuilder = new MongoQueryBuilder();
+            final Bson loginFilter = queryBuilder.equal(Struct.USERS__LOGIN, login.toLowerCase());
+         
+            // ///////////////////////////////////////////////////////////////////////////
+            // Execute
+            // ///////////////////////////////////////////////////////////////////////////
+            final long count = mongoConnection.getQuery().count(User.class, loginFilter);
+
+            return count == 0;
+        });
+    }
+    
+    public boolean emailAvaliable(final String email) throws Throwable {
+        return run(DatabaseType.ONE, (final MongoConnection mongoConnection) -> {
+            mongoConnection.setOperationAlias(OperationAlias.USER__FIND_BY__LOGIN_AND_PASSWORD);
+
+            // ///////////////////////////////////////////////////////////////////////////
+            // Create the query
+            // ///////////////////////////////////////////////////////////////////////////
+            final MongoQueryBuilder queryBuilder = new MongoQueryBuilder();
+            final Bson emailFilter = queryBuilder.equal(Struct.USERS__EMAIL, email.toLowerCase());
+         
+            // ///////////////////////////////////////////////////////////////////////////
+            // Execute
+            // ///////////////////////////////////////////////////////////////////////////
+            final long count = mongoConnection.getQuery().count(User.class, emailFilter);
+
+            return count == 0;
         });
     }
     

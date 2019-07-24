@@ -177,13 +177,15 @@ public class OneServer extends AbstractServerSocket<Message> {
     @Override
     protected void onClose(final SessionData sessionData, final CloseReason closeReason) {
         final OneUser user = sessionData.getData();
-        user.getConnections().forEach(connection -> {
-            try {
-                connectedUserService.delete(connection);
-            } catch (final Throwable throwable) {
-                onError(sessionData, new TaggedException(Tags.ON_CLOSE, throwable));
-            }
-        });
+        if (user != null) {
+            user.getConnections().forEach(connection -> {
+                try {
+                    connectedUserService.delete(connection);
+                } catch (final Throwable throwable) {
+                    onError(sessionData, new TaggedException(Tags.ON_CLOSE, throwable));
+                }
+            });
+        }
     }
 
     @Override
@@ -284,7 +286,9 @@ public class OneServer extends AbstractServerSocket<Message> {
                 logError.setStackTrace(ThrowableHelper.toString(throwable));
             }
 
-            management.saveLog(logError);
+            if (management != null) {
+                management.saveLog(logError);
+            }
 
         } catch (final Throwable ignore) {
             ignore.printStackTrace();

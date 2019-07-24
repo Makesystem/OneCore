@@ -1,27 +1,11 @@
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.makesystem.mwc.HttpHelper;
-import com.makesystem.mwc.http.client.HttpClient;
-import com.makesystem.mwc.websocket.client.WebSocketJRE;
-import com.makesystem.mwi.exceptions.RequestException;
-import com.makesystem.mwi.types.Protocol;
-import com.makesystem.mwi.websocket.CloseReason;
+import com.makesystem.onecore.services.core.OneProperties;
 import com.makesystem.onecore.services.core.users.UserService;
-import com.makesystem.oneentity.core.types.OneCloseCodes;
-import com.makesystem.oneentity.services.OneHttpServices;
 import com.makesystem.oneentity.services.users.storage.User;
-import com.makesystem.pidgey.console.Console;
-import com.makesystem.pidgey.console.ConsoleColor;
-import com.makesystem.pidgey.monitor.MonitorHelper;
 import com.makesystem.pidgey.security.MD5;
 import com.makesystem.pidgey.tester.AbstractTester;
-import com.makesystem.pidgey.thread.ThreadsHelper;
 import com.makesystem.xeonentity.core.types.UserType;
-import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import org.apache.http.NameValuePair;
-import org.apache.http.message.BasicNameValuePair;
 import org.java_websocket.exceptions.InvalidDataException;
 
 /*
@@ -36,11 +20,12 @@ import org.java_websocket.exceptions.InvalidDataException;
 public class User_Tester extends AbstractTester {
 
     public static void main(String[] args) throws InvalidDataException, JsonProcessingException {
-        new Client_Tester().run();
+        new User_Tester().run();
     }
 
     @Override
     protected void preExecution() {
+        OneProperties.DATABASE__HOST.setValue("192.168.2.10");
     }
 
     @Override
@@ -59,6 +44,7 @@ public class User_Tester extends AbstractTester {
         final UserService userService = new UserService();
         try {
             userService.insert(user);
+            System.out.println("AQUI");
         } catch (Throwable ex) {
             ex.printStackTrace();
         }

@@ -5,10 +5,15 @@
  */
 package com.makesystem.onecore.config;
 
+import com.makesystem.mwc.http.server.glasfish.ServerLog;
 import com.makesystem.xeoncore.core.AbstractRequestFilter;
+import java.io.IOException;
+import javax.servlet.FilterChain;
+import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.annotation.WebFilter;
+import javax.servlet.http.HttpServletRequest;
 
 /**
  *
@@ -22,6 +27,20 @@ public class RequestFilterConfig extends AbstractRequestFilter {
         registerPublicMethod("get_ping");
         registerPublicMethod("post_echo");
         registerPublicMethod("get_echo");
+    }
+
+    @Override
+    public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
+
+        final String method = getRequestMethod(servletRequest);
+        if (method.equals("177.19.174.206".replace(" ", ""))) {
+            final HttpServletRequest httpServletRequest = ((HttpServletRequest) servletRequest);
+            final String requestURI = httpServletRequest.getRequestURI();
+            ServerLog.clear();
+            System.out.println("requestURI: " + requestURI);
+        }
+
+        super.doFilter(servletRequest, servletResponse, filterChain);
     }
 
     @Override
