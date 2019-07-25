@@ -1,6 +1,5 @@
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.makesystem.mwc.HttpHelper;
 import com.makesystem.mwc.http.client.HttpClient;
 import com.makesystem.mwc.websocket.client.WebSocketJRE;
@@ -8,16 +7,13 @@ import com.makesystem.mwi.exceptions.RequestException;
 import com.makesystem.mwi.types.Protocol;
 import com.makesystem.mwi.websocket.CloseReason;
 import com.makesystem.oneentity.core.types.OneCloseCodes;
-import com.makesystem.oneentity.services.OneHttpServices;
+import com.makesystem.oneentity.services.OneServices;
 import com.makesystem.pidgey.console.Console;
 import com.makesystem.pidgey.console.ConsoleColor;
-import com.makesystem.pidgey.json.ObjectMapperJRE;
 import com.makesystem.pidgey.monitor.MonitorHelper;
 import com.makesystem.pidgey.tester.AbstractTester;
 import com.makesystem.pidgey.thread.ThreadsHelper;
 import java.io.IOException;
-import java.util.LinkedHashMap;
-import java.util.Map;
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 import org.java_websocket.exceptions.InvalidDataException;
@@ -74,8 +70,8 @@ public class Client_Tester extends AbstractTester {
         MonitorHelper.execute(() -> System.out.println(HttpHelper.discoveryProtocol("app2.makesystem.com.br"))).print();
 
         try {
-            final NameValuePair data = new BasicNameValuePair(OneHttpServices.Commons.PostEcho.Attributes.DATA, "echo test");
-            System.out.println(httpClient.doPost(OneHttpServices.Commons.PostEcho.CONSUMER, data).replace("|", "\n"));
+            final NameValuePair data = new BasicNameValuePair(OneServices.Commons.PostEcho.Attributes.DATA, "echo test");
+            System.out.println(httpClient.doPost(OneServices.Commons.PostEcho.CONSUMER, data).replace("|", "\n"));
         } catch (IOException ex) {
             ex.printStackTrace();
         } catch (RequestException ex) {

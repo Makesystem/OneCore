@@ -17,6 +17,7 @@ import com.makesystem.oneentity.core.types.Action;
 import com.makesystem.oneentity.core.types.MessageType;
 import com.makesystem.oneentity.core.types.OneCloseCodes;
 import com.makesystem.oneentity.core.websocket.Message;
+import com.makesystem.oneentity.services.OneServices.Access;
 import com.makesystem.oneentity.services.users.storage.ConnectedUser;
 import com.makesystem.oneentity.services.users.storage.User;
 import com.makesystem.pidgey.json.ObjectMapperJRE;
@@ -32,35 +33,10 @@ import javax.websocket.server.ServerEndpoint;
  *
  * @author Richeli.vargas
  */
-@ServerEndpoint(OneServer.PATH)
+@ServerEndpoint(Access.PATH)
 public class OneServer extends AbstractServerSocket<Message> {
 
-    public static final String CONTEXT = "access";
-    public static final String PATH = "/"
-            + CONTEXT
-            + "/{"
-            + Params.LOGIN
-            + "}/{"
-            + Params.PASSWORD
-            + "}/{"
-            + Params.CUSTOMER
-            + "}/{"
-            + Params.LOCAL_IP
-            + "}/{"
-            + Params.PUBLIC_IP
-            + "}";
-
-    public static interface Params {
-
-        public static final String LOGIN = "login";
-        public static final String PASSWORD = "password";
-        public static final String CUSTOMER = "customer";
-        public static final String LOCAL_IP = "local_ip";
-        public static final String PUBLIC_IP = "public_ip";
-    }
-
     public static interface Tags {
-
         public static final String ON_STARTUP = "ON_STARTUP";
         public static final String ON_OPEN = "ON_OPEN";
         public static final String ON_CLOSE = "ON_CLOSE";
@@ -101,11 +77,11 @@ public class OneServer extends AbstractServerSocket<Message> {
         final long startAction = System.currentTimeMillis();
 
         // Client        
-        final String loginOrEmail = sessionData.getParameters().getString(Params.LOGIN);
-        final String password = sessionData.getParameters().getString(Params.PASSWORD);
-        final String customer = sessionData.getParameters().getString(Params.CUSTOMER);
-        final String localIp = sessionData.getParameters().getString(Params.LOCAL_IP);
-        final String publicIp = sessionData.getParameters().getString(Params.PUBLIC_IP);
+        final String loginOrEmail = sessionData.getParameters().getString(Access.Attributes.LOGIN);
+        final String password = sessionData.getParameters().getString(Access.Attributes.PASSWORD);
+        final String customer = sessionData.getParameters().getString(Access.Attributes.CUSTOMER);
+        final String localIp = sessionData.getParameters().getString(Access.Attributes.LOCAL_IP);
+        final String publicIp = sessionData.getParameters().getString(Access.Attributes.PUBLIC_IP);
 
         //Server
         final String serverName = OneProperties.SERVER_NAME.getValue();
@@ -249,7 +225,7 @@ public class OneServer extends AbstractServerSocket<Message> {
             final LogError logError = new LogError();
 
             if (sessionData != null) {
-                logError.setCustomer(sessionData.getParameters().getString(Params.CUSTOMER));
+                logError.setCustomer(sessionData.getParameters().getString(Access.Attributes.CUSTOMER));
 
                 final OneUser oneUser = (OneUser) sessionData.getData();
                 if (oneUser != null

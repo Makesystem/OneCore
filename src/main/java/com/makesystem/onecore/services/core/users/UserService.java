@@ -50,9 +50,7 @@ public class UserService extends OneService {
             // ///////////////////////////////////////////////////////////////////////////
             // Execute
             // ///////////////////////////////////////////////////////////////////////////
-            final long count = mongoConnection.getQuery().count(User.class, loginFilter);
-
-            return count == 0;
+            return !mongoConnection.getQuery().exists(User.class, loginFilter);
         });
     }
     
@@ -69,9 +67,7 @@ public class UserService extends OneService {
             // ///////////////////////////////////////////////////////////////////////////
             // Execute
             // ///////////////////////////////////////////////////////////////////////////
-            final long count = mongoConnection.getQuery().count(User.class, emailFilter);
-
-            return count == 0;
+            return !mongoConnection.getQuery().exists(User.class, emailFilter);
         });
     }
     
