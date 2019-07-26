@@ -223,7 +223,8 @@ public class OneServer extends AbstractServerSocket<Message> {
         try {
 
             final LogError logError = new LogError();
-
+            logError.setWhen(System.currentTimeMillis());
+            
             if (sessionData != null) {
                 logError.setCustomer(sessionData.getParameters().getString(Access.Attributes.CUSTOMER));
 

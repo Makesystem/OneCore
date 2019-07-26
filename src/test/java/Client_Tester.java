@@ -43,7 +43,7 @@ public class Client_Tester extends AbstractTester {
             CloseReason.CloseCodes.register(codes.getCode(), codes.toString());
         }
 
-        final Protocol protocol = Protocol.HTTPS;
+        final Protocol protocol = Protocol.HTTP;
         final String host;
         final int port;
 
@@ -70,8 +70,8 @@ public class Client_Tester extends AbstractTester {
         MonitorHelper.execute(() -> System.out.println(HttpHelper.discoveryProtocol("app2.makesystem.com.br"))).print();
 
         try {
-            final NameValuePair data = new BasicNameValuePair(OneServices.Commons.PostEcho.Attributes.DATA, "echo test");
-            System.out.println(httpClient.doPost(OneServices.Commons.PostEcho.CONSUMER, data).replace("|", "\n"));
+            final NameValuePair data = new BasicNameValuePair(OneServices.Commons.GetEcho.Attributes.DATA, "echo test");
+            System.out.println(httpClient.doGet(OneServices.Commons.GetEcho.CONSUMER, data).replace("|", "\n"));
         } catch (IOException ex) {
             ex.printStackTrace();
         } catch (RequestException ex) {
