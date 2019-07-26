@@ -37,6 +37,7 @@ import javax.websocket.server.ServerEndpoint;
 public class OneServer extends AbstractServerSocket<Message> {
 
     public static interface Tags {
+
         public static final String ON_STARTUP = "ON_STARTUP";
         public static final String ON_OPEN = "ON_OPEN";
         public static final String ON_CLOSE = "ON_CLOSE";
@@ -45,12 +46,21 @@ public class OneServer extends AbstractServerSocket<Message> {
         public static final String NO_THROWABLE = "NO_THROWABLE";
     }
 
-    private final ConnectedUserService connectedUserService = new ConnectedUserService();
-    private final UserService userService = new UserService();
-    private final UserActionService userActionService = new UserActionService();
+    private final ConnectedUserService connectedUserService;
+    private final UserService userService;
+    private final UserActionService userActionService;
 
-    private final Management management = Management.getInstance();
-    private final OneConsumer consumer = new OneConsumer();
+    private final Management management;
+    private final OneConsumer consumer;
+
+    public OneServer() {
+        super();
+        connectedUserService = new ConnectedUserService();
+        userService = new UserService();
+        userActionService = new UserActionService();
+        management = Management.getInstance();
+        consumer = new OneConsumer();
+    }
 
     @Override
     public int getTimeout() {
@@ -224,7 +234,7 @@ public class OneServer extends AbstractServerSocket<Message> {
 
             final LogError logError = new LogError();
             logError.setWhen(System.currentTimeMillis());
-            
+
             if (sessionData != null) {
                 logError.setCustomer(sessionData.getParameters().getString(Access.Attributes.CUSTOMER));
 
@@ -238,10 +248,13 @@ public class OneServer extends AbstractServerSocket<Message> {
 
             logError.setService(ServiceType.ONE);
 
+            final String message;
+            final String stackTrace;
+
             if (throwable == null) {
                 logError.setTag(Tags.NO_THROWABLE);
-                logError.setMessage("No message");
-                logError.setStackTrace("No stack trace");
+                message = "No message";
+                stackTrace = "No stack trace";
             } else if (throwable instanceof TaggedException) {
 
                 final TaggedException taggedException = (TaggedException) throwable;
@@ -250,18 +263,25 @@ public class OneServer extends AbstractServerSocket<Message> {
 
                 final Throwable cause = taggedException.getCause();
                 if (cause == null) {
-                    logError.setMessage(throwable.getMessage());
-                    logError.setStackTrace(ThrowableHelper.toString(throwable));
+                    stackTrace = ThrowableHelper.toString(throwable);
                 } else {
-                    logError.setMessage(cause.getMessage());
-                    logError.setStackTrace(ThrowableHelper.toString(cause));
+                    stackTrace = ThrowableHelper.toString(cause);
                 }
+
+                message = stackTrace == null || stackTrace.isEmpty()
+                        ? "No message"
+                        : stackTrace.split("\n")[0];
 
             } else {
                 logError.setTag(Tags.NO_TAGGED_THROWABLE);
-                logError.setMessage(throwable.getMessage());
-                logError.setStackTrace(ThrowableHelper.toString(throwable));
+                stackTrace = ThrowableHelper.toString(throwable);
+                message = stackTrace == null || stackTrace.isEmpty()
+                        ? "No message"
+                        : stackTrace.split("\n")[0];
             }
+
+            logError.setMessage(message);
+            logError.setStackTrace(stackTrace);
 
             if (management != null) {
                 management.saveLog(logError);
