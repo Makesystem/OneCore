@@ -60,7 +60,7 @@ public class Client_Tester extends AbstractTester {
         final Protocol protocol = Protocol.HTTP;
         final String host;
         final int port;
-
+        // viacep.com.br/ws/01001000/json/   
         switch (protocol) {
             case HTTPS:
                 host = "app2.makesystem.com.br";
@@ -68,8 +68,10 @@ public class Client_Tester extends AbstractTester {
                 break;
             case HTTP:
             default:
-                host = "192.168.2.7";
-                port = 7004;
+                host = "viacep.com.br/ws/01001000/json";
+                port = 80;
+                //host = "192.168.2.7";
+                //port = 7004;
                 break;
         }
 
@@ -160,7 +162,7 @@ public class Client_Tester extends AbstractTester {
 
         try {
             final NameValuePair data = new BasicNameValuePair(OneServices.Commons.GetEcho.Attributes.DATA, URLEncoder.encode("echo test", Charset.UTF_8.getName()));
-            System.out.println("echo: " + URLDecoder.decode(httpClient.doGet(OneServices.Commons.GetEcho.CONSUMER, data), Charset.UTF_8.getName()));
+            System.out.println("echo: " + URLDecoder.decode(httpClient.doGet(""), Charset.UTF_8.getName()));
         } catch (IOException ex) {
             ex.printStackTrace();
         } catch (RequestException ex) {
