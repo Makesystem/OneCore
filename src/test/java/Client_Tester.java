@@ -73,7 +73,7 @@ public class Client_Tester extends AbstractTester {
 
         try {
             final NameValuePair data = new BasicNameValuePair(OneServices.Commons.GetEcho.Attributes.DATA, "echo test");
-            System.out.println("echo: " + URLDecoder.decode(httpClient.doGet(OneServices.Commons.GetEcho.CONSUMER, data), Charset.UTF_8.getName()));
+            System.out.println("echo: " + httpClient.doGet(OneServices.Commons.GetEcho.CONSUMER, data));
         } catch (IOException ex) {
             ex.printStackTrace();
         } catch (RequestException ex) {
