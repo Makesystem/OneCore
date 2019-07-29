@@ -68,90 +68,15 @@ public class Client_Tester extends AbstractTester {
                 break;
             case HTTP:
             default:
-                host = "viacep.com.br/ws/01001000/json";
-                port = 80;
-                //host = "192.168.2.7";
-                //port = 7004;
+                //host = "viacep.com.br/ws/01001000/json";
+                //port = 80;
+                host = "192.168.2.7";
+                port = 7004;
                 break;
         }
 
-        httpClient = new HttpClient(protocol, host, port) {
-
-            @Override
-            protected String doGet(final String methodPath, final String contentType, final NameValuePair... attributes) throws IOException, RequestException {
-
-                final String _url = getBaseUrl();
-                final String _path = methodPath;
-                final String _params = attributesToUrl(attributes);
-
-                final String url = HttpHelper.buildUrl(_url, _path, _params);
-
-                try (final CloseableHttpClient httpClient = HttpClients.createDefault()) {
-
-                    if (getConnectionTimeout() != null) {
-                        httpClient.getParams().setParameter(CoreConnectionPNames.CONNECTION_TIMEOUT, getConnectionTimeout());
-                        httpClient.getParams().setParameter(CoreConnectionPNames.SO_TIMEOUT, getConnectionTimeout());
-                    }
-
-                    final HttpGet httpGet = new HttpGet(url);
-                    if (ObjectsHelper.isNotNullAndNotEmpty(contentType)) {
-                        httpGet.setHeader("Content-type", contentType);
-                    }
-
-                    // Set session id
-                    if (ObjectsHelper.isNotNullAndNotEmpty(getSessionId())) {
-                        httpGet.addHeader(HEADER__SESSION_ID, getSessionId());
-                    }
-
-                    try (final CloseableHttpResponse response = httpClient.execute(httpGet)) {
-
-                        // Status code
-                        // 2xx: Successful
-                        // 3xx: Redirection
-                        // 4xx: Client Error
-                        // 5xx: Server Error
-                        final int statusCode = response.getStatusLine().getStatusCode();
-                        final int statusGroup = statusCode / 100;
-
-                        // Get response data
-                        final HttpEntity entity = response.getEntity();
-
-                        if (entity == null) {
-                            System.out.println("AQUI: " + statusGroup);
-                            // If status code will be 2xx return TRUE, or else FALSE
-                            // Status code 2xx is Successful
-                            // https://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html
-                            return statusGroup == 2
-                                    ? Boolean.TRUE.toString()
-                                    : Boolean.FALSE.toString();
-                        }
-
-                        // Convert response to string
-                        final String result = EntityUtils.toString(entity, getChartset());
-                        EntityUtils.consume(entity);
-
-                        // Client error or Server error
-                        if (statusGroup == 4 || statusGroup == 5) {
-                            if (result.startsWith("{") && result.endsWith("}")) {
-                                final RequestError error = ObjectMapperJRE.read(result, RequestError.class);
-                                throw new RequestException(
-                                        statusCode,
-                                        error.getMessage(),
-                                        new Exception(error.getThrowable()));
-                            } else {
-                                throw new RequestException(statusCode,
-                                        URLDecoder.decode(result, getChartset()));
-                            }
-                        }
-
-                        System.out.println("result: " + result);
-                        return result;
-                    }
-                }
-            }
-
-        };
-        websocketClient = new WebSocketJRE(protocol, host, port, "one/one_door");
+        httpClient = new HttpClient(protocol, host, port);
+        websocketClient = new WebSocketJRE(protocol, host, port, "one/access");
     }
 
     @Override
@@ -161,8 +86,9 @@ public class Client_Tester extends AbstractTester {
         MonitorHelper.execute(() -> System.out.println(HttpHelper.discoveryProtocol("app2.makesystem.com.br"))).print();
 
         try {
-            final NameValuePair data = new BasicNameValuePair(OneServices.Commons.GetEcho.Attributes.DATA, URLEncoder.encode("echo test", Charset.UTF_8.getName()));
-            System.out.println("echo: " + URLDecoder.decode(httpClient.doGet(""), Charset.UTF_8.getName()));
+            final NameValuePair data = new BasicNameValuePair(OneServices.Commons.GetEcho.Attributes.DATA, "echo test");
+            //System.out.println("echo: " + URLDecoder.decode(httpClient.doGet(""), Charset.UTF_8.getName()));
+            System.out.println("echo: " + URLDecoder.decode(httpClient.doGet(OneServices.Commons.GetEcho.CONSUMER, data), Charset.UTF_8.getName()));
         } catch (IOException ex) {
             ex.printStackTrace();
         } catch (RequestException ex) {

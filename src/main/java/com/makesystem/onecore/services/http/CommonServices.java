@@ -16,7 +16,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import com.makesystem.oneentity.services.OneServices.Commons;
 import com.makesystem.oneentity.services.OneServices.Commons.*;
-import javax.ws.rs.PathParam;
+import javax.ws.rs.QueryParam;
 
 /**
  *
@@ -27,34 +27,33 @@ import javax.ws.rs.PathParam;
 public class CommonServices extends AbstractServiceServlet {
 
     @POST
+    @Path(PostPing.PATH)
     @Produces(MediaType.TEXT_PLAIN)
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-    @Path(PostPing.PATH)
-    public String postPing() throws Throwable {
+    public String postPing() {
         return Boolean.TRUE.toString();
     }
 
     @GET
-    @Produces(MediaType.TEXT_PLAIN)
-    @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     @Path(GetPing.PATH)
-    public String getPing() throws Throwable {
+    @Produces(MediaType.TEXT_PLAIN)
+    public String getPing() {
         return Boolean.TRUE.toString();
     }
 
     @POST
-    @Produces(MediaType.TEXT_PLAIN)
-    @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     @Path(PostEcho.PATH)
-    public String postEcho(@FormParam(PostEcho.Attributes.DATA) final String data) throws Throwable {
+    @Produces(MediaType.TEXT_PLAIN)
+    @Consumes(MediaType.TEXT_PLAIN)
+    public String postEcho(@FormParam(PostEcho.Attributes.DATA) final String data) {
         return data;
     }
 
     @GET
-    @Produces(MediaType.TEXT_PLAIN)
-    @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     @Path(GetEcho.PATH)
-    public String getEcho(@PathParam(GetEcho.Attributes.DATA) final String data) throws Throwable {
+    @Produces(MediaType.TEXT_PLAIN)
+    @Consumes(MediaType.TEXT_PLAIN)
+    public String getEcho(@QueryParam(GetEcho.Attributes.DATA) final String data) {
         return data;
     }
 }

@@ -49,7 +49,7 @@
     <!-- Error pages settings      -->
     <!-- +++++++++++++++++++++++++ -->
     
-     <error-page>
+    <error-page>
         <error-code>404</error-code>
         <location>/error_servlet</location>
     </error-page>  
@@ -71,9 +71,7 @@
         <url-pattern>/*</url-pattern>
     </servlet-mapping> 
     <session-config>
-        <session-timeout>
-            30
-        </session-timeout>
+        <session-timeout>30</session-timeout>
     </session-config>
     <welcome-file-list>
         <welcome-file>index.html</welcome-file>

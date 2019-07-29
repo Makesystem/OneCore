@@ -5,7 +5,8 @@
  */
 package com.makesystem.onecore.config;
 
-import com.makesystem.oneentity.services.OneServices;
+import com.makesystem.oneentity.services.OneServices.*;
+import com.makesystem.oneentity.services.OneServices.Commons.*;
 import com.makesystem.xeoncore.core.AbstractRequestFilter;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
@@ -20,10 +21,10 @@ import javax.servlet.http.HttpServletRequest;
 public class RequestFilterConfig extends AbstractRequestFilter {
 
     public RequestFilterConfig() {
-        registerPublicMethod("post_ping");
-        registerPublicMethod("get_ping");
-        registerPublicMethod("post_echo");
-        registerPublicMethod("get_echo");
+        registerPublicMethod(PostPing.NAME);
+        registerPublicMethod(GetPing.NAME);
+        registerPublicMethod(PostEcho.NAME);
+        registerPublicMethod(GetEcho.NAME);
     }
 
     @Override
@@ -36,12 +37,12 @@ public class RequestFilterConfig extends AbstractRequestFilter {
 
     @Override
     protected boolean allowRequest(final ServletRequest servletRequest, final ServletResponse servletResponse) {
-        
+
         final HttpServletRequest httpServletRequest = ((HttpServletRequest) servletRequest);
         final String requestURI = httpServletRequest.getRequestURI();
-        
-        final boolean isWebsocketRequest = requestURI.startsWith(OneServices.Access.CONSUMER);
-        
+
+        final boolean isWebsocketRequest = requestURI.startsWith(Access.CONSUMER);
+
         return isWebsocketRequest || true;
     }
 
