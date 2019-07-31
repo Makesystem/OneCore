@@ -1,6 +1,7 @@
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.makesystem.mwc.HttpHelper;
+import com.makesystem.mwc.ProtocolDiscovery;
 import com.makesystem.mwc.http.client.HttpClient;
 import com.makesystem.mwc.websocket.client.WebSocketJRE;
 import com.makesystem.mwi.exceptions.RequestException;
@@ -68,8 +69,8 @@ public class Client_Tester extends AbstractTester {
     @Override
     protected void execution() {
 
-        MonitorHelper.execute(() -> System.out.println(HttpHelper.discoveryProtocol("vendas.makesystem.com.br"))).print();
-        MonitorHelper.execute(() -> System.out.println(HttpHelper.discoveryProtocol("app2.makesystem.com.br"))).print();
+        MonitorHelper.execute(() -> System.out.println(ProtocolDiscovery.discovery("vendas.makesystem.com.br"))).print();
+        MonitorHelper.execute(() -> System.out.println(ProtocolDiscovery.discovery("app2.makesystem.com.br"))).print();
 
         try {
             final NameValuePair data = new BasicNameValuePair(OneServices.Commons.GetEcho.Attributes.DATA, "echo test");
