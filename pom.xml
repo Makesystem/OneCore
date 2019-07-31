@@ -32,13 +32,13 @@
         <dependency>
             <groupId>com.github.Makesystem</groupId>
             <artifactId>XeonCore</artifactId>
-            <version>ed342d1252</version>
+            <version>64614996ae</version>
         </dependency>
         
         <dependency>
             <groupId>com.github.Makesystem</groupId>
             <artifactId>OneEntity</artifactId>
-            <version>cf52db3f6</version>
+            <version>4489005755</version>
         </dependency>
         
     </dependencies>
