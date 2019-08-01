@@ -1,6 +1,5 @@
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.makesystem.mwc.HttpHelper;
 import com.makesystem.mwc.ProtocolDiscovery;
 import com.makesystem.mwc.http.client.HttpClient;
 import com.makesystem.mwc.websocket.client.WebSocketJRE;
@@ -11,12 +10,10 @@ import com.makesystem.oneentity.core.types.OneCloseCodes;
 import com.makesystem.oneentity.services.OneServices;
 import com.makesystem.pidgey.console.Console;
 import com.makesystem.pidgey.console.ConsoleColor;
-import com.makesystem.pidgey.io.file.Charset;
 import com.makesystem.pidgey.monitor.MonitorHelper;
 import com.makesystem.pidgey.tester.AbstractTester;
 import com.makesystem.pidgey.thread.ThreadsHelper;
 import java.io.IOException;
-import java.net.URLDecoder;
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 import org.java_websocket.exceptions.InvalidDataException;
