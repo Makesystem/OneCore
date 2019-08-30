@@ -55,11 +55,8 @@ public class OneConsumer {
 
     protected <D> String management__database_statistics(final D data) throws Throwable {
 
-        final long timestamp = System.currentTimeMillis();
-        //final long openAtMin = timestamp - (timestamp % (24 * 60 * 60 * 1000));
-        // Last 24 hours
-        final long openAtMin = timestamp - (24 * 60 * 60 * 100);
-        final long openAtMax = timestamp;
+        final long openAtMax = System.currentTimeMillis();
+        final long openAtMin = openAtMax - MathHelper.toMillis(1, TimeUnit.HOURS);
         final int durationAbove = 100/*ms*/; 
         final int limitOfLongOperations = 10;
 
@@ -76,7 +73,7 @@ public class OneConsumer {
     protected <D> String management__database_connections(final D data) throws Throwable {
 
         final long openAtMax = System.currentTimeMillis();
-        final long openAtMin = openAtMax - MathHelper.toMillis(30, TimeUnit.DAYS);
+        final long openAtMin = openAtMax - MathHelper.toMillis(1, TimeUnit.HOURS);
         
         final DatabaseStatisticService databaseStatisticService = new DatabaseStatisticService();
         final DatabaseConnections databaseConnections = databaseStatisticService.getDatabaseConnections(openAtMin, openAtMax);
@@ -88,7 +85,7 @@ public class OneConsumer {
 
         final String database = data.toString();
         final long openAtMax = System.currentTimeMillis();
-        final long openAtMin = openAtMax - MathHelper.toMillis(30, TimeUnit.DAYS);
+        final long openAtMin = openAtMax - MathHelper.toMillis(1, TimeUnit.HOURS);
         
         final DatabaseStatisticService databaseStatisticService = new DatabaseStatisticService();
         final Collection<Average<String>> aliasAvg = databaseStatisticService.getAliasAvg(database, openAtMin, openAtMax);
