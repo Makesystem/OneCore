@@ -8,9 +8,9 @@ package com.makesystem.onecore.services.websocket;
 import com.makesystem.mwc.websocket.server.SessionData;
 import com.makesystem.oneentity.core.websocket.Message;
 import com.makesystem.pidgey.json.ObjectMapperJRE;
-import com.makesystem.pidgey.lang.Average;
 import com.makesystem.pidgey.lang.MathHelper;
 import com.makesystem.xeoncore.services.management.DatabaseStatisticService;
+import com.makesystem.xeonentity.services.management.runnable.AliasAvg;
 import com.makesystem.xeonentity.services.management.runnable.DatabaseConnections;
 import com.makesystem.xeonentity.services.management.runnable.DatabaseStatistic;
 import java.util.Collection;
@@ -88,7 +88,7 @@ public class OneConsumer {
         final long openAtMin = openAtMax - MathHelper.toMillis(1, TimeUnit.HOURS);
         
         final DatabaseStatisticService databaseStatisticService = new DatabaseStatisticService();
-        final Collection<Average<String>> aliasAvg = databaseStatisticService.getAliasAvg(database, openAtMin, openAtMax);
+        final Collection<AliasAvg> aliasAvg = databaseStatisticService.getAliasAvg(database, openAtMin, openAtMax);
                 
         return ObjectMapperJRE.write(aliasAvg);
     }
