@@ -6,13 +6,13 @@
 package com.makesystem.onecore.services.websocket;
 
 import com.makesystem.mwc.websocket.server.SessionData;
-import com.makesystem.oneentity.core.websocket.Message;
+import com.makesystem.oneentity.core.types.Action;
 import com.makesystem.pidgey.json.ObjectMapperJRE;
 import com.makesystem.pidgey.lang.MathHelper;
 import com.makesystem.xeoncore.services.management.DatabaseStatisticService;
+import com.makesystem.xeonentity.core.websocket.Message;
 import com.makesystem.xeonentity.services.management.runnable.AliasAvg;
-import com.makesystem.xeonentity.services.management.runnable.DatabaseConnections;
-import com.makesystem.xeonentity.services.management.runnable.DatabaseStatistic;
+import com.makesystem.xeonentity.services.management.runnable.DatabaseAvg;
 import java.util.Collection;
 import java.util.concurrent.TimeUnit;
 
@@ -23,15 +23,13 @@ import java.util.concurrent.TimeUnit;
 public class OneConsumer {
 
     public <D> String consumer(final SessionData sessionData, final Message message) throws Throwable {
-        switch (message.getAction()) {
+        switch (Action.valueOf(message.getAction())) {
             case ONE__ECHO:
                 return one__echo(message.getData());
             case ONE__CURRENT_TIMESTAMP:
                 return one__current_timestamp(message.getData());
-            case MANAGEMENT__DATABASE_STATISTICS:
-                return management__database_statistics(message.getData());
-            case MANAGEMENT__DATABASE_CONNECTIONS:
-                return management__database_connections(message.getData());
+            case MANAGEMENT__DATABASE_AVERAGE:
+                return management__database_average(message.getData());
             case MANAGEMENT__ALIAS_AVERAGE:
                 return management__alias_average(message.getData());
             default:
@@ -53,32 +51,15 @@ public class OneConsumer {
         return String.valueOf(System.currentTimeMillis());
     }
 
-    protected <D> String management__database_statistics(final D data) throws Throwable {
-
-        final long openAtMax = System.currentTimeMillis();
-        final long openAtMin = openAtMax - MathHelper.toMillis(1, TimeUnit.HOURS);
-        final int durationAbove = 100/*ms*/; 
-        final int limitOfLongOperations = 10;
-
-        final DatabaseStatisticService databaseStatisticService = new DatabaseStatisticService();
-        final DatabaseStatistic databaseStatistic = databaseStatisticService.getDatabaseStatistic(
-                openAtMin, 
-                openAtMax, 
-                durationAbove, 
-                limitOfLongOperations);
-
-        return ObjectMapperJRE.write(databaseStatistic);
-    }
-    
-    protected <D> String management__database_connections(final D data) throws Throwable {
+    protected <D> String management__database_average(final D data) throws Throwable {
 
         final long openAtMax = System.currentTimeMillis();
         final long openAtMin = openAtMax - MathHelper.toMillis(1, TimeUnit.HOURS);
         
         final DatabaseStatisticService databaseStatisticService = new DatabaseStatisticService();
-        final DatabaseConnections databaseConnections = databaseStatisticService.getDatabaseConnections(openAtMin, openAtMax);
-
-        return ObjectMapperJRE.write(databaseConnections);
+        final Collection<DatabaseAvg> result = databaseStatisticService.getDatabaseAvg(openAtMin, openAtMax);
+                
+        return ObjectMapperJRE.write(result);
     }
     
     protected <D> String management__alias_average(final D data) throws Throwable {
@@ -88,8 +69,8 @@ public class OneConsumer {
         final long openAtMin = openAtMax - MathHelper.toMillis(1, TimeUnit.HOURS);
         
         final DatabaseStatisticService databaseStatisticService = new DatabaseStatisticService();
-        final Collection<AliasAvg> aliasAvg = databaseStatisticService.getAliasAvg(database, openAtMin, openAtMax);
+        final Collection<AliasAvg> result = databaseStatisticService.getAliasAvg(database, openAtMin, openAtMax);
                 
-        return ObjectMapperJRE.write(aliasAvg);
+        return ObjectMapperJRE.write(result);
     }
 }

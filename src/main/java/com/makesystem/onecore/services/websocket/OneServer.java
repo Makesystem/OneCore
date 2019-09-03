@@ -5,7 +5,6 @@
  */
 package com.makesystem.onecore.services.websocket;
 
-import com.makesystem.mwc.websocket.server.AbstractServerSocket;
 import com.makesystem.mwc.websocket.server.SessionData;
 import com.makesystem.mwi.websocket.CloseReason;
 import com.makesystem.onecore.services.core.OneProperties;
@@ -14,19 +13,21 @@ import com.makesystem.onecore.services.core.users.ConnectedUserService;
 import com.makesystem.onecore.services.core.users.UserActionService;
 import com.makesystem.onecore.services.core.users.UserService;
 import com.makesystem.oneentity.core.types.Action;
-import com.makesystem.oneentity.core.types.MessageType;
 import com.makesystem.oneentity.core.types.OneCloseCodes;
-import com.makesystem.oneentity.core.websocket.Message;
+import com.makesystem.oneentity.core.types.ServiceType;
 import com.makesystem.oneentity.services.OneServices.Access;
 import com.makesystem.oneentity.services.users.storage.ConnectedUser;
 import com.makesystem.oneentity.services.users.storage.User;
 import com.makesystem.pidgey.json.ObjectMapperJRE;
 import com.makesystem.pidgey.lang.ThrowableHelper;
+import com.makesystem.xeoncore.core.AbstractServerSocket;
 import com.makesystem.xeoncore.management.Management;
 import com.makesystem.xeonentity.core.exceptions.TaggedException;
-import com.makesystem.xeonentity.core.types.ServiceType;
+import com.makesystem.xeonentity.core.types.MessageType;
+import com.makesystem.xeonentity.core.websocket.Message;
 import com.makesystem.xeonentity.services.management.storage.LogError;
 import javax.websocket.EndpointConfig;
+import javax.websocket.Session;
 import javax.websocket.server.ServerEndpoint;
 
 /**
@@ -34,7 +35,7 @@ import javax.websocket.server.ServerEndpoint;
  * @author Richeli.vargas
  */
 @ServerEndpoint(Access.PATH)
-public class OneServer extends AbstractServerSocket<Message> {
+public class OneServer extends AbstractServerSocket {
 
     public static interface Tags {
 
@@ -73,6 +74,26 @@ public class OneServer extends AbstractServerSocket<Message> {
     }
 
     @Override
+    protected String getInnerHost() {
+        return OneProperties.INNER_HTTP__HOST.getValue();
+    }
+
+    @Override
+    protected Integer getInnerPort() {
+        return OneProperties.INNER_HTTP__PORT.getValue();
+    }
+
+    @Override
+    protected String getClientHost(final Session session) {
+        return session.getPathParameters().get(Access.Attributes.PUBLIC_IP);
+    }
+
+    @Override
+    protected Integer getClientPort(final Session session) {
+        return null;
+    }
+
+    @Override
     protected final void onStartUp() {
         try {
             connectedUserService.delete(OneProperties.INNER_HTTP__HOST.getValue());
@@ -105,8 +126,8 @@ public class OneServer extends AbstractServerSocket<Message> {
 
             // Create a message to send for the client
             final Message message = new Message();
-            message.setService(ServiceType.ONE);
-            message.setAction(Action.ONE__LOGIN);
+            message.setService(ServiceType.ONE.toString());
+            message.setAction(Action.ONE__LOGIN.toString());
 
             if (user == null) {
 
@@ -195,7 +216,7 @@ public class OneServer extends AbstractServerSocket<Message> {
                                 oneUser.getUser().getId(),
                                 oneUser.getLocalIp(),
                                 oneUser.getPublicIp(),
-                                message.getAction(),
+                                Action.valueOf(message.getAction()),
                                 () -> consumer.consumer(sessionData, message));
                         //
                         // Call services and get result

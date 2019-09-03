@@ -22,6 +22,7 @@
     </repositories>
     
     <dependencies>
+        
         <dependency>
             <groupId>javax</groupId>
             <artifactId>javaee-web-api</artifactId>
@@ -32,13 +33,13 @@
         <dependency>
             <groupId>com.github.Makesystem</groupId>
             <artifactId>XeonCore</artifactId>
-            <version>064df7c316</version>
+            <version>de4147790d</version>
         </dependency>
         
         <dependency>
             <groupId>com.github.Makesystem</groupId>
             <artifactId>OneEntity</artifactId>
-            <version>00c8bf34a1</version>
+            <version>11fc04cbe0</version>
         </dependency>
         
     </dependencies>
