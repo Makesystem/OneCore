@@ -27,17 +27,18 @@ import javax.servlet.annotation.WebListener;
 @WebListener
 public final class OneProperties implements ServletContextListener {
 
-    public static final SystemProperty<String> DATABASE__HOST = new SystemProperty("one__db__host", "127.0.0.1");
-    public static final SystemProperty<Integer> DATABASE__PORT = new SystemProperty("one__db__port", 27017);
-    public static final SystemProperty<String> DATABASE__NAME = new SystemProperty("one__db__name", "one");
-    public static final SystemProperty<String> DATABASE__USER = new SystemProperty("one__db__user", "unknow");
-    public static final SystemProperty<String> DATABASE__PASSWORD = new SystemProperty("one__db__password", "unknow");
-    public static final SystemProperty<ConnectionType> DATABASE__TYPE = new SystemProperty("one__db__type", ConnectionType.MONGO);
-    public static final SystemProperty<String> SERVER_NAME = new SystemProperty("one__server_name", "no_name");
-    public static final SystemProperty<String> INNER_HTTP__HOST = new SystemProperty("one__inner_http__host", "127.0.0.1");
-    public static final SystemProperty<Integer> INNER_HTTP__PORT = new SystemProperty("one__inner_http__port", 80);
-    public static final SystemProperty<Integer> INNER_HTTP__SECURE_PORT = new SystemProperty("one__inner_http__secure_port", 443);
-    public static final SystemProperty<Integer> WEBSOCKET_SERVER__TIMEOUT = new SystemProperty("one__websocket_server__timeout", WebClient.SESSION__DEFAULT_TIMEOUT);
+    public static final SystemProperty<String>          DATABASE__HOST = new SystemProperty("one__db__host", "127.0.0.1");
+    public static final SystemProperty<Integer>         DATABASE__PORT = new SystemProperty("one__db__port", 27017);
+    public static final SystemProperty<String>          DATABASE__NAME = new SystemProperty("one__db__name", "one");
+    public static final SystemProperty<String>          DATABASE__USER = new SystemProperty("one__db__user", "unknow");
+    public static final SystemProperty<String>          DATABASE__PASSWORD = new SystemProperty("one__db__password", "unknow");
+    public static final SystemProperty<ConnectionType>  DATABASE__TYPE = new SystemProperty("one__db__type", ConnectionType.MONGO);
+    public static final SystemProperty<Integer>         DATABASE__POOL_SIZE = new SystemProperty("one__db__pool_size",  100);
+    public static final SystemProperty<String>          SERVER_NAME = new SystemProperty("one__server_name", "no_name");
+    public static final SystemProperty<String>          INNER_HTTP__HOST = new SystemProperty("one__inner_http__host", "127.0.0.1");
+    public static final SystemProperty<Integer>         INNER_HTTP__PORT = new SystemProperty("one__inner_http__port", 80);
+    public static final SystemProperty<Integer>         INNER_HTTP__SECURE_PORT = new SystemProperty("one__inner_http__secure_port", 443);
+    public static final SystemProperty<Integer>         WEBSOCKET_SERVER__TIMEOUT = new SystemProperty("one__websocket_server__timeout", WebClient.SESSION__DEFAULT_TIMEOUT);
 
     public OneProperties() {
     }
@@ -160,6 +161,7 @@ public final class OneProperties implements ServletContextListener {
         writeSystemProperty(domain, OneProperties.DATABASE__USER);
         writeSystemProperty(domain, OneProperties.DATABASE__PASSWORD);
         writeSystemProperty(domain, OneProperties.DATABASE__TYPE);
+        writeSystemProperty(domain, OneProperties.DATABASE__POOL_SIZE);
         writeSystemProperty(domain, OneProperties.SERVER_NAME);
         writeSystemProperty(domain, OneProperties.INNER_HTTP__HOST);
         writeSystemProperty(domain, OneProperties.INNER_HTTP__PORT);

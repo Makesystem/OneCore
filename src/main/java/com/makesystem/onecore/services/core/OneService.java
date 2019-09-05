@@ -37,7 +37,8 @@ public class OneService extends AbstractService {
                 OneProperties.DATABASE__USER.getValue(),
                 OneProperties.DATABASE__PASSWORD.getValue(),
                 OneProperties.DATABASE__TYPE.getValue(),
-                DatabaseType.ONE));
+                DatabaseType.ONE,                
+                OneProperties.DATABASE__POOL_SIZE.getValue()));
     }
 
 }
