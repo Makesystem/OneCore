@@ -37,6 +37,17 @@ public class UserService extends OneService {
         });
     }
     
+    public Collection<User> insert(final Collection<User> users) throws Throwable {
+        return run(DatabaseType.ONE, (final MongoConnection mongoConnection) -> {
+            mongoConnection.setOperationAlias(OperationAlias.USER__INSERT);
+            
+            mongoConnection.getQuery().insert(users);     
+            
+            return users;                   
+        });
+    }
+    
+    
     public boolean loginAvaliable(final String login) throws Throwable {
         return run(DatabaseType.ONE, (final MongoConnection mongoConnection) -> {
             mongoConnection.setOperationAlias(OperationAlias.USER__FIND_BY__LOGIN_AND_PASSWORD);
