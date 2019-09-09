@@ -28,7 +28,7 @@ public class ConnectedUserService extends OneService {
     public ConnectedUser insert(final ConnectedUser user) throws Throwable {
         return run(DatabaseType.ONE, (final MongoConnection mongoConnection) -> {
             mongoConnection.setOperationAlias(OperationAlias.CONNECTED_USER__INSERT);
-            return mongoConnection.getQuery().insert(user);
+            return mongoConnection.getQuery().insertOneAndRetrive(user);
         });
     }
     

@@ -39,10 +39,11 @@ public class UserActionService extends OneService {
         this.insert(userAction);
     }
 
-    public UserAction insert(final UserAction action) throws Throwable {
-        return run(DatabaseType.ONE, (final MongoConnection mongoConnection) -> {
+    public void insert(final UserAction action) throws Throwable {
+        run(DatabaseType.ONE, (final MongoConnection mongoConnection) -> {
             mongoConnection.setOperationAlias(OperationAlias.USER_ACTION__INSERT);
-            return mongoConnection.getQuery().insert(action);
+            mongoConnection.getQuery().insertOne(action);
+            return Void;
         });
     }
 

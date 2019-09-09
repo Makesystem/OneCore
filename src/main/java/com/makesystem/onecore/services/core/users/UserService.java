@@ -21,33 +21,32 @@ import org.bson.conversions.Bson;
  */
 public class UserService extends OneService {
 
-    public User insert(final User user) throws Throwable {
-        return run(DatabaseType.ONE, (final MongoConnection mongoConnection) -> {
+    public void insert(final User user) throws Throwable {
+        run(DatabaseType.ONE, (final MongoConnection mongoConnection) -> {
             mongoConnection.setOperationAlias(OperationAlias.USER__INSERT);
-            
-            if(!loginAvaliable(user.getLogin())){       
+
+            if (!loginAvaliable(user.getLogin())) {
                 throw new IllegalArgumentException("Login '" + user.getLogin() + "' is already in use");
             }
-            
-            if(!emailAvaliable(user.getEmail())){
+
+            if (!emailAvaliable(user.getEmail())) {
                 throw new IllegalArgumentException("E-mail '" + user.getEmail() + "' is already in use");
             }
+
+            mongoConnection.getQuery().insertOne(user);
             
-            return mongoConnection.getQuery().insert(user);                        
+            return Void;
         });
     }
-    
-    public Collection<User> insert(final Collection<User> users) throws Throwable {
-        return run(DatabaseType.ONE, (final MongoConnection mongoConnection) -> {
+
+    public void insert(final Collection<User> users) throws Throwable {
+        run(DatabaseType.ONE, (final MongoConnection mongoConnection) -> {
             mongoConnection.setOperationAlias(OperationAlias.USER__INSERT);
-            
-            mongoConnection.getQuery().insert(users);     
-            
-            return users;                   
+            mongoConnection.getQuery().insertMany(users);
+            return Void;
         });
     }
-    
-    
+
     public boolean loginAvaliable(final String login) throws Throwable {
         return run(DatabaseType.ONE, (final MongoConnection mongoConnection) -> {
             mongoConnection.setOperationAlias(OperationAlias.USER__FIND_BY__LOGIN_AND_PASSWORD);
@@ -57,14 +56,14 @@ public class UserService extends OneService {
             // ///////////////////////////////////////////////////////////////////////////
             final MongoQueryBuilder queryBuilder = new MongoQueryBuilder();
             final Bson loginFilter = queryBuilder.equal(Struct.USERS__LOGIN, login.toLowerCase());
-         
+
             // ///////////////////////////////////////////////////////////////////////////
             // Execute
             // ///////////////////////////////////////////////////////////////////////////
             return !mongoConnection.getQuery().exists(User.class, loginFilter);
         });
     }
-    
+
     public boolean emailAvaliable(final String email) throws Throwable {
         return run(DatabaseType.ONE, (final MongoConnection mongoConnection) -> {
             mongoConnection.setOperationAlias(OperationAlias.USER__FIND_BY__LOGIN_AND_PASSWORD);
@@ -74,14 +73,14 @@ public class UserService extends OneService {
             // ///////////////////////////////////////////////////////////////////////////
             final MongoQueryBuilder queryBuilder = new MongoQueryBuilder();
             final Bson emailFilter = queryBuilder.equal(Struct.USERS__EMAIL, email.toLowerCase());
-         
+
             // ///////////////////////////////////////////////////////////////////////////
             // Execute
             // ///////////////////////////////////////////////////////////////////////////
             return !mongoConnection.getQuery().exists(User.class, emailFilter);
         });
     }
-    
+
     public User find(final String loginOrEmail, final String password) throws Throwable {
         return run(DatabaseType.ONE, (final MongoConnection mongoConnection) -> {
             mongoConnection.setOperationAlias(OperationAlias.USER__FIND_BY__LOGIN_AND_PASSWORD);
@@ -96,7 +95,7 @@ public class UserService extends OneService {
             final Bson passwordFilter = queryBuilder.equal(Struct.USERS__PASSWORD, password);
             final Bson loginOrEmailFilter = queryBuilder.or(loginFilter, emailFilter);
             final Bson filter = queryBuilder.and(loginOrEmailFilter, passwordFilter);
-            
+
             final FindOptions findOptions = new FindOptions();
             findOptions.setFilter(filter);
             findOptions.setLimit(1);
