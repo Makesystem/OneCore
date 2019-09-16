@@ -26,6 +26,9 @@ import com.makesystem.xeonentity.core.exceptions.TaggedException;
 import com.makesystem.xeonentity.core.types.MessageType;
 import com.makesystem.xeonentity.core.websocket.Message;
 import com.makesystem.xeonentity.services.management.storage.LogError;
+import com.mongodb.MongoClientException;
+import com.mongodb.MongoTimeoutException;
+import java.sql.SQLException;
 import javax.websocket.EndpointConfig;
 import javax.websocket.Session;
 import javax.websocket.server.ServerEndpoint;
@@ -104,7 +107,7 @@ public class OneServer extends AbstractServerSocket {
 
     @Override
     protected void onOpen(final SessionData sessionData, final EndpointConfig config) {
-
+        
         final long startAction = System.currentTimeMillis();
 
         // Client        
@@ -177,6 +180,21 @@ public class OneServer extends AbstractServerSocket {
             }
 
         } catch (final Throwable throwable) {
+
+            final int code;
+            
+            if (throwable instanceof MongoTimeoutException) {
+                code = OneCloseCodes.DATABASE_IS_NOT_ACCESSIBLE.getCode();
+            } else if (throwable instanceof MongoClientException) {
+                code = OneCloseCodes.UNKNOW_DATABASE_ERROR.getCode();
+            } else if (throwable instanceof SQLException) {
+                code = OneCloseCodes.UNKNOW_DATABASE_ERROR.getCode();
+            } else {
+                code = OneCloseCodes.UNKNOW_ERROR.getCode();
+            }
+
+            sessionData.close(buildReason(code, throwable.getMessage()));
+
             throw new TaggedException(Tags.ON_OPEN, throwable);
         }
     }
