@@ -107,7 +107,7 @@ public class OneServer extends AbstractServerSocket {
 
     @Override
     protected void onOpen(final SessionData sessionData, final EndpointConfig config) {
-        
+
         final long startAction = System.currentTimeMillis();
 
         // Client        
@@ -182,7 +182,7 @@ public class OneServer extends AbstractServerSocket {
         } catch (final Throwable throwable) {
 
             final int code;
-            
+
             if (throwable instanceof MongoTimeoutException) {
                 code = OneCloseCodes.DATABASE_IS_NOT_ACCESSIBLE.getCode();
             } else if (throwable instanceof MongoClientException) {
