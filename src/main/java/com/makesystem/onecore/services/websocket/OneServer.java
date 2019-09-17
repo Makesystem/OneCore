@@ -181,19 +181,10 @@ public class OneServer extends AbstractServerSocket {
 
         } catch (final Throwable throwable) {
 
-            final int code;
-
-            if (throwable instanceof MongoTimeoutException) {
-                code = OneCloseCodes.DATABASE_IS_NOT_ACCESSIBLE.getCode();
-            } else if (throwable instanceof MongoClientException) {
-                code = OneCloseCodes.UNKNOW_DATABASE_ERROR.getCode();
-            } else if (throwable instanceof SQLException) {
-                code = OneCloseCodes.UNKNOW_DATABASE_ERROR.getCode();
-            } else {
-                code = OneCloseCodes.UNKNOW_ERROR.getCode();
-            }
-
-            sessionData.close(buildReason(code, throwable.getMessage()));
+            final int reasonCode = getCloseReasonFor(throwable);
+            final String reasonPhrase = throwable.getMessage();
+            final CloseReason reason = buildReason(reasonCode, reasonPhrase);
+            sessionData.close(reason);
 
             throw new TaggedException(Tags.ON_OPEN, throwable);
         }
@@ -345,4 +336,21 @@ public class OneServer extends AbstractServerSocket {
         return ObjectMapperJRE.write(message);
     }
 
+    protected int getCloseReasonFor(final Throwable throwable) {
+
+        if (throwable == null) {
+            return OneCloseCodes.UNKNOW_ERROR.getCode();
+        }
+
+        if (throwable instanceof MongoTimeoutException) {
+            return OneCloseCodes.DATABASE_IS_NOT_ACCESSIBLE.getCode();
+        } else if (throwable instanceof MongoClientException) {
+            return OneCloseCodes.UNKNOW_DATABASE_ERROR.getCode();
+        } else if (throwable instanceof SQLException) {
+            return OneCloseCodes.UNKNOW_DATABASE_ERROR.getCode();
+        } else {
+            return getCloseReasonFor(throwable.getCause());
+        }
+
+    }
 }
