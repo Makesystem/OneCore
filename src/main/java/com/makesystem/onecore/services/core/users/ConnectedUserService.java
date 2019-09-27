@@ -31,7 +31,7 @@ public class ConnectedUserService extends OneService {
             return mongoConnection.getQuery().insertOneAndRetrive(user);
         });
     }
-    
+
     public void delete(final ConnectedUser user) throws Throwable {
         run(DatabaseType.ONE, (final MongoConnection mongoConnection) -> {
             mongoConnection.setOperationAlias(OperationAlias.CONNECTED_USER__DELETE);
@@ -39,7 +39,7 @@ public class ConnectedUserService extends OneService {
             return Void;
         });
     }
-    
+
     public void delete(final SimpleObjectId userId) throws Throwable {
         run(DatabaseType.ONE, (final MongoConnection mongoConnection) -> {
             mongoConnection.setOperationAlias(OperationAlias.CONNECTED_USER__DELETE);
@@ -47,7 +47,7 @@ public class ConnectedUserService extends OneService {
             return Void;
         });
     }
-    
+
     public void delete(final String serverHost) throws Throwable {
         run(DatabaseType.ONE, (final MongoConnection mongoConnection) -> {
             mongoConnection.setOperationAlias(OperationAlias.CONNECTED_USER__DELETE);
@@ -55,12 +55,19 @@ public class ConnectedUserService extends OneService {
             return Void;
         });
     }
-    
+
     public void clear() throws Throwable {
         run(DatabaseType.ONE, (final MongoConnection mongoConnection) -> {
             mongoConnection.setOperationAlias(OperationAlias.CONNECTED_USER__CLEAR);
             mongoConnection.getMongoDatabase(Struct.CONNECTED_USERS__TABLE_NAME).drop();
             return Void;
+        });
+    }
+
+    public int count() throws Throwable {
+        return run(DatabaseType.ONE, (final MongoConnection mongoConnection) -> {
+            mongoConnection.setOperationAlias(OperationAlias.CONNECTED_USER__COUNT);
+            return (int) mongoConnection.getQuery().count(ConnectedUser.class, new Document());
         });
     }
 
@@ -78,11 +85,11 @@ public class ConnectedUserService extends OneService {
             if (user != null && !user.trim().isEmpty()) {
                 filters.add(queryBuilder.equal(Struct.CONNECTED_USERS__USER, user));
             }
-            
+
             if (customer != null && !customer.trim().isEmpty()) {
                 filters.add(queryBuilder.equal(Struct.CONNECTED_USERS__CUSTOMER, customer));
             }
-            
+
             if (service != null) {
                 filters.add(queryBuilder.equal(Struct.CONNECTED_USERS__SERVICE, service));
             }
