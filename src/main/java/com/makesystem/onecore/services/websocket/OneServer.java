@@ -21,7 +21,6 @@ import com.makesystem.oneentity.services.users.storage.User;
 import com.makesystem.pidgey.json.ObjectMapperJRE;
 import com.makesystem.pidgey.lang.ThrowableHelper;
 import com.makesystem.xeoncore.core.AbstractServerSocket;
-import com.makesystem.xeoncore.management.Management;
 import com.makesystem.xeonentity.core.exceptions.TaggedException;
 import com.makesystem.xeonentity.core.types.MessageType;
 import com.makesystem.xeonentity.core.websocket.Message;
@@ -54,15 +53,13 @@ public class OneServer extends AbstractServerSocket {
     private final UserService userService;
     private final UserActionService userActionService;
 
-    private final Management management;
     private final OneConsumer consumer;
 
     public OneServer() {
         super();
         connectedUserService = new ConnectedUserService();
         userService = new UserService();
-        userActionService = new UserActionService();
-        management = Management.getInstance();
+        userActionService = new UserActionService();    
         consumer = new OneConsumer();
     }
 

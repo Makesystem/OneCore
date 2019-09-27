@@ -42,7 +42,7 @@ public class UserActionService extends OneService {
     public void insert(final UserAction action) throws Throwable {
         run(DatabaseType.ONE, (final MongoConnection mongoConnection) -> {
             mongoConnection.setOperationAlias(OperationAlias.USER_ACTION__INSERT);
-            mongoConnection.getQuery().insertOne(action);
+            mongoConnection.getQuery().insertOneAndRetrive(action);
             return Void;
         });
     }
