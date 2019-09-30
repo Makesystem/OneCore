@@ -29,7 +29,7 @@ public class CommonServices extends AbstractServiceServlet {
     @POST
     @Path(PostPing.PATH)
     @Produces(MediaType.TEXT_PLAIN)
-    @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+    @Consumes(MediaType.TEXT_PLAIN)
     public String postPing() {
         return Boolean.TRUE.toString();
     }
@@ -44,7 +44,7 @@ public class CommonServices extends AbstractServiceServlet {
     @POST
     @Path(PostEcho.PATH)
     @Produces(MediaType.TEXT_PLAIN)
-    @Consumes(MediaType.TEXT_PLAIN)
+    @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     public String postEcho(@FormParam(PostEcho.Attributes.DATA) final String data) {
         return data;
     }
