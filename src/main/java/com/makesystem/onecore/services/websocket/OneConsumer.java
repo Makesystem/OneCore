@@ -9,7 +9,7 @@ import com.makesystem.mwc.websocket.server.SessionData;
 import com.makesystem.onecore.services.core.users.ConnectedUserService;
 import com.makesystem.oneentity.core.types.Action;
 import com.makesystem.pidgey.json.ObjectMapperJRE;
-import com.makesystem.pidgey.lang.MathHelper;
+import com.makesystem.pidgey.lang.NumberHelper;
 import com.makesystem.xeoncore.services.management.StatisticsService;
 import com.makesystem.xeonentity.core.websocket.Message;
 import com.makesystem.xeonentity.services.management.runnable.AliasAvg;
@@ -65,7 +65,7 @@ public class OneConsumer {
     protected <D> String management__server_average(final D data) throws Throwable {
 
         final long openAtMax = System.currentTimeMillis();
-        final long openAtMin = openAtMax - MathHelper.toMillis(1, TimeUnit.HOURS);
+        final long openAtMin = openAtMax - NumberHelper.toMillis(1, TimeUnit.HOURS);
         
         final StatisticsService service = new StatisticsService();
         final Collection<ServerAvg> result = service.getServerAvg(openAtMin, openAtMax);
@@ -76,7 +76,7 @@ public class OneConsumer {
     protected <D> String management__database_average(final D data) throws Throwable {
 
         final long openAtMax = System.currentTimeMillis();
-        final long openAtMin = openAtMax - MathHelper.toMillis(1, TimeUnit.HOURS);
+        final long openAtMin = openAtMax - NumberHelper.toMillis(1, TimeUnit.HOURS);
         
         final StatisticsService service = new StatisticsService();
         final Collection<DatabaseAvg> result = service.getDatabaseAvg(openAtMin, openAtMax);
@@ -88,7 +88,7 @@ public class OneConsumer {
 
         final String database = data.toString();
         final long openAtMax = System.currentTimeMillis();
-        final long openAtMin = openAtMax - MathHelper.toMillis(1, TimeUnit.HOURS);
+        final long openAtMin = openAtMax - NumberHelper.toMillis(1, TimeUnit.HOURS);
         
         final StatisticsService service = new StatisticsService();
         final Collection<AliasAvg> result = service.getAliasAvg(database, openAtMin, openAtMax);

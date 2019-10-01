@@ -10,7 +10,7 @@ import com.makesystem.mwc.http.server.glasfish.DomainXml;
 import com.makesystem.mwi.WebClient;
 import com.makesystem.pidgey.io.GetIpHandler;
 import com.makesystem.pidgey.io.InnetAddressHelperJRE;
-import com.makesystem.pidgey.lang.ObjectsHelper;
+import com.makesystem.pidgey.lang.ObjectHelper;
 import com.makesystem.pidgey.lang.SystemProperty;
 import com.makesystem.pidgey.xml.XmlDocument;
 import com.makesystem.pidgey.xml.XmlElement;
@@ -74,15 +74,15 @@ public final class OneProperties implements ServletContextListener {
                 final XmlElement httpListener2 = DomainXml.getHttpListener1(document);
                 final String httpListener2_port = httpListener2.getAttribute(DomainXml.Attributes.PORT);
 
-                if (ObjectsHelper.isNotNull(httpListener1_port)
-                        && ObjectsHelper.isNotEmpty(httpListener1_port)) {
+                if (ObjectHelper.isNotNull(httpListener1_port)
+                        && ObjectHelper.isNotEmpty(httpListener1_port)) {
                     final Integer value = Integer.valueOf(httpListener1_port);
                     INNER_HTTP__PORT.setValue(value);
                     INNER_HTTP__SECURE_PORT.setValue(value);
                 }
 
-                if (ObjectsHelper.isNotNull(httpListener2_port)
-                        && ObjectsHelper.isNotEmpty(httpListener2_port)) {
+                if (ObjectHelper.isNotNull(httpListener2_port)
+                        && ObjectHelper.isNotEmpty(httpListener2_port)) {
                     final Integer value = Integer.valueOf(httpListener2_port);
                     INNER_HTTP__SECURE_PORT.setValue(value);
                 }

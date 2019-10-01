@@ -13,7 +13,7 @@ import com.makesystem.oneentity.services.OneServices;
 import com.makesystem.pidgey.console.Console;
 import com.makesystem.pidgey.console.ConsoleColor;
 import com.makesystem.pidgey.json.ObjectMapperJRE;
-import com.makesystem.pidgey.lang.MathHelper;
+import com.makesystem.pidgey.lang.NumberHelper;
 import com.makesystem.pidgey.monitor.MonitorHelper;
 import com.makesystem.pidgey.security.MD5;
 import com.makesystem.pidgey.tester.AbstractTester;
@@ -26,8 +26,6 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.stream.IntStream;
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
@@ -109,7 +107,7 @@ public class Client_Tester extends AbstractTester {
 
             System.out.println("Interactions: " + interactions);
             System.out.println(
-                    "Success: " + success.get() + " ~ " + MathHelper.divide(total.get(), success.get()) + " ms");
+                    "Success: " + success.get() + " ~ " + NumberHelper.divide(total.get(), success.get()) + " ms");
             System.out.println("Errors: " + errors.get());
 
             System.exit(0);
