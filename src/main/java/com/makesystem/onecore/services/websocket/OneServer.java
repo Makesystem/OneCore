@@ -56,7 +56,7 @@ public class OneServer extends AbstractServerSocket {
     private final OneConsumer consumer;
 
     public OneServer() {
-        super();
+        super(2,2,20,2);
         connectedUserService = new ConnectedUserService();
         userService = new UserService();
         userActionService = new UserActionService();    
