@@ -8,13 +8,14 @@ package com.makesystem.onecore.services.core;
 import com.makesystem.mdbi.core.types.ConnectionType;
 import com.makesystem.mwc.http.server.glasfish.DomainXml;
 import com.makesystem.mwi.WebClient;
-import com.makesystem.pidgey.io.GetIpHandler;
-import com.makesystem.pidgey.io.InnetAddressHelperJRE;
+import com.makesystem.pidgey.io.net.IpAddress;
+import com.makesystem.pidgey.io.net.IpAddressJRE;
 import com.makesystem.pidgey.lang.ObjectHelper;
 import com.makesystem.pidgey.lang.SystemProperty;
 import com.makesystem.pidgey.xml.XmlDocument;
 import com.makesystem.pidgey.xml.XmlElement;
 import com.makesystem.xeoncore.management.ManagementProperties;
+import java.io.IOException;
 import java.net.InetAddress;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
@@ -27,18 +28,18 @@ import javax.servlet.annotation.WebListener;
 @WebListener
 public final class OneProperties implements ServletContextListener {
 
-    public static final SystemProperty<String>          DATABASE__HOST = new SystemProperty("one__db__host", "127.0.0.1");
-    public static final SystemProperty<Integer>         DATABASE__PORT = new SystemProperty("one__db__port", 27017);
-    public static final SystemProperty<String>          DATABASE__NAME = new SystemProperty("one__db__name", "one");
-    public static final SystemProperty<String>          DATABASE__USER = new SystemProperty("one__db__user", "unknow");
-    public static final SystemProperty<String>          DATABASE__PASSWORD = new SystemProperty("one__db__password", "unknow");
-    public static final SystemProperty<ConnectionType>  DATABASE__TYPE = new SystemProperty("one__db__type", ConnectionType.MONGO);
-    public static final SystemProperty<Integer>         DATABASE__POOL_SIZE = new SystemProperty("one__db__pool_size",  100);
-    public static final SystemProperty<String>          SERVER_NAME = new SystemProperty("one__server_name", "no_name");
-    public static final SystemProperty<String>          INNER_HTTP__HOST = new SystemProperty("one__inner_http__host", "127.0.0.1");
-    public static final SystemProperty<Integer>         INNER_HTTP__PORT = new SystemProperty("one__inner_http__port", 80);
-    public static final SystemProperty<Integer>         INNER_HTTP__SECURE_PORT = new SystemProperty("one__inner_http__secure_port", 443);
-    public static final SystemProperty<Integer>         WEBSOCKET_SERVER__TIMEOUT = new SystemProperty("one__websocket_server__timeout", WebClient.SESSION__DEFAULT_TIMEOUT);
+    public static final SystemProperty<String> DATABASE__HOST = new SystemProperty("one__db__host", "127.0.0.1");
+    public static final SystemProperty<Integer> DATABASE__PORT = new SystemProperty("one__db__port", 27017);
+    public static final SystemProperty<String> DATABASE__NAME = new SystemProperty("one__db__name", "one");
+    public static final SystemProperty<String> DATABASE__USER = new SystemProperty("one__db__user", "unknow");
+    public static final SystemProperty<String> DATABASE__PASSWORD = new SystemProperty("one__db__password", "unknow");
+    public static final SystemProperty<ConnectionType> DATABASE__TYPE = new SystemProperty("one__db__type", ConnectionType.MONGO);
+    public static final SystemProperty<Integer> DATABASE__POOL_SIZE = new SystemProperty("one__db__pool_size", 100);
+    public static final SystemProperty<String> SERVER_NAME = new SystemProperty("one__server_name", "no_name");
+    public static final SystemProperty<String> INNER_HTTP__HOST = new SystemProperty("one__inner_http__host", "127.0.0.1");
+    public static final SystemProperty<Integer> INNER_HTTP__PORT = new SystemProperty("one__inner_http__port", 80);
+    public static final SystemProperty<Integer> INNER_HTTP__SECURE_PORT = new SystemProperty("one__inner_http__secure_port", 443);
+    public static final SystemProperty<Integer> WEBSOCKET_SERVER__TIMEOUT = new SystemProperty("one__websocket_server__timeout", WebClient.SESSION__DEFAULT_TIMEOUT);
 
     public OneProperties() {
     }
@@ -105,19 +106,14 @@ public final class OneProperties implements ServletContextListener {
         }
 
         if (!hasHttpHost) {
-            InnetAddressHelperJRE.getLocalIp(new GetIpHandler() {
-                @Override
-                public void onSuccess(final String ip) {
-                    INNER_HTTP__HOST.setValue(ip);
-                    callUpdateDomainXml();
-                }
+            final IpAddress ipAddress = new IpAddressJRE();
 
-                @Override
-                public void onFailure(final Throwable ignore) {
-                    ignore.printStackTrace();
-                    callUpdateDomainXml();
-                }
-            });
+            try {                
+                INNER_HTTP__HOST.setValue(ipAddress.getLocal());
+                callUpdateDomainXml();
+            } catch (IOException throwable) {                
+                throwable.printStackTrace();
+            }
 
         } else {
             callUpdateDomainXml();

@@ -14,7 +14,7 @@ import com.makesystem.pidgey.console.Console;
 import com.makesystem.pidgey.console.ConsoleColor;
 import com.makesystem.pidgey.json.ObjectMapperJRE;
 import com.makesystem.pidgey.lang.NumberHelper;
-import com.makesystem.pidgey.monitor.MonitorHelper;
+import com.makesystem.pidgey.monitor.Monitor;
 import com.makesystem.pidgey.security.MD5;
 import com.makesystem.pidgey.tester.AbstractTester;
 import com.makesystem.pidgey.thread.ThreadPool;
@@ -225,8 +225,8 @@ public class Client_Tester extends AbstractTester {
 
     protected void genericTest() {
 
-        MonitorHelper.execute(() -> System.out.println(ProtocolDiscovery.discovery("vendas.makesystem.com.br"))).print();
-        MonitorHelper.execute(() -> System.out.println(ProtocolDiscovery.discovery("app2.makesystem.com.br"))).print();
+        Monitor.exec(() -> System.out.println(ProtocolDiscovery.discovery("vendas.makesystem.com.br"))).print();
+        Monitor.exec(() -> System.out.println(ProtocolDiscovery.discovery("app2.makesystem.com.br"))).print();
 
         try {
             final NameValuePair data = new BasicNameValuePair(OneServices.Commons.GetEcho.Attributes.DATA, "echo test");
@@ -242,17 +242,17 @@ public class Client_Tester extends AbstractTester {
         }
 
         websocketClient.addOnOpenHandler(() -> {
-            Console.println("On Open", ConsoleColor.PURPLE);
+            Console.log("{cc}On Open", ConsoleColor.PURPLE);
         });
-        websocketClient.addOnCloseHandler(reason -> Console.println("On close: " + reason.getCloseCode() + " | " + reason.getReasonPhrase(), ConsoleColor.PURPLE));
+        websocketClient.addOnCloseHandler(reason -> Console.log("{cc}On close: " + reason.getCloseCode() + " | " + reason.getReasonPhrase(), ConsoleColor.PURPLE));
         websocketClient.addOnMessageHandler(mes -> {
             try {
-                Console.println("On message received: " + mes, ConsoleColor.CYAN);
+                Console.log("{cc}On message received: " + mes, ConsoleColor.CYAN);
             } catch (final Throwable throwable) {
                 throwable.printStackTrace();
             }
         });
-        websocketClient.addOnErrorHandler(exception -> Console.println("On error: " + exception, ConsoleColor.RED));
+        websocketClient.addOnErrorHandler(exception -> Console.log("{cc}On error: " + exception, ConsoleColor.RED));
 
         websocketClient.connect("meu_login", "minha_senha", 10);
 
