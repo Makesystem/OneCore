@@ -56,10 +56,10 @@ public class OneServer extends AbstractServerSocket {
     private final OneConsumer consumer;
 
     public OneServer() {
-        super(2,2,20,2);
+        super(2, 2, 20, 2);
         connectedUserService = new ConnectedUserService();
         userService = new UserService();
-        userActionService = new UserActionService();    
+        userActionService = new UserActionService();
         consumer = new OneConsumer();
     }
 
@@ -146,6 +146,7 @@ public class OneServer extends AbstractServerSocket {
                 // Create connection register
                 // /////////////////////////////////////////////////////////////
                 final ConnectedUser connectedUser = new ConnectedUser();
+                connectedUser.setSessionId(sessionData.getSession().getId());
                 connectedUser.setUser(user.getId());
                 connectedUser.setCustomer(null);
                 connectedUser.setPublicIp(publicIp);
@@ -189,15 +190,34 @@ public class OneServer extends AbstractServerSocket {
 
     @Override
     protected void onClose(final SessionData sessionData, final CloseReason closeReason) {
+
         final OneUser user = sessionData.getData();
         if (user != null) {
-            user.getConnections().forEach(connection -> {
+
+            final long startAction = System.currentTimeMillis();
+
+            // /////////////////////////////////////////////////////////////////
+            // Remove connection register
+            // /////////////////////////////////////////////////////////////////
+            final ConnectedUser connection = user.getConnection(sessionData.getSession().getId());
+            if (connection != null) {
                 try {
                     connectedUserService.delete(connection);
                 } catch (final Throwable throwable) {
                     onError(sessionData, new TaggedException(Tags.ON_CLOSE, throwable));
+                } finally {
+                    user.remove(connection);
                 }
-            });
+            }
+
+            try {
+                // /////////////////////////////////////////////////////////////
+                // Save login action
+                // /////////////////////////////////////////////////////////////
+                userActionService.insertLoginAction(user, startAction);
+            } catch (final Throwable throwable) {
+                onError(sessionData, new TaggedException(Tags.ON_CLOSE, throwable));
+            }
         }
     }
 

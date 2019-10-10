@@ -45,7 +45,7 @@
         <dependency>
             <groupId>com.github.Makesystem</groupId>
             <artifactId>OneEntity</artifactId>
-            <version>9f0d2d23d3</version>
+            <version>74435d6bde</version>
         </dependency>
         
     </dependencies>

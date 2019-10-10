@@ -9,7 +9,8 @@ import com.makesystem.oneentity.services.users.storage.ConnectedUser;
 import com.makesystem.oneentity.services.users.storage.User;
 import java.io.Serializable;
 import java.util.Collection;
-import java.util.LinkedList;
+import java.util.Objects;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 /**
  *
@@ -21,7 +22,7 @@ public class OneUser implements Serializable {
     private final String localIp;
     private final String publicIp;
 
-    private final Collection<ConnectedUser> connections = new LinkedList<>();
+    private final Collection<ConnectedUser> connections = new ConcurrentLinkedQueue<>();
 
     public OneUser(User user, String localIp, String publicIp) {
         this.user = user;
@@ -35,6 +36,19 @@ public class OneUser implements Serializable {
 
     public Collection<ConnectedUser> getConnections() {
         return connections;
+    }
+
+    public ConnectedUser getConnection(final String sessionId) {
+        if (sessionId == null) {
+            return null;
+        }
+        return connections.stream()
+                .filter(connection -> Objects.equals(connection.getSessionId(), sessionId))
+                .findAny().orElse(null);
+    }
+
+    public boolean remove(final ConnectedUser connection) {
+        return connections.remove(connection);
     }
 
     public String getLocalIp() {

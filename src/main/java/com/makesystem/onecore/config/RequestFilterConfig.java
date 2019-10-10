@@ -5,6 +5,7 @@
  */
 package com.makesystem.onecore.config;
 
+import com.makesystem.mwi.types.MethodType;
 import com.makesystem.oneentity.services.OneServices.*;
 import com.makesystem.oneentity.services.OneServices.Commons.*;
 import com.makesystem.xeoncore.core.AbstractRequestFilter;
@@ -46,4 +47,15 @@ public class RequestFilterConfig extends AbstractRequestFilter {
         return isWebsocketRequest || true;
     }
 
+    @Override
+    protected MethodType getMethodType(final ServletRequest servletRequest) {
+        return isWebsocketRequest(servletRequest) ? MethodType.ON_OPEN : super.getMethodType(servletRequest);
+    }
+
+    protected boolean isWebsocketRequest(final ServletRequest servletRequest) {        
+        final HttpServletRequest httpServletRequest = ((HttpServletRequest) servletRequest);
+        final String requestURI = httpServletRequest.getRequestURI();
+        return requestURI.startsWith(Access.CONSUMER);
+        
+    }
 }

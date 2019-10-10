@@ -38,6 +38,19 @@ public class UserActionService extends OneService {
         userAction.setDurarion((int) (System.currentTimeMillis() - startAction));
         this.insert(userAction);
     }
+    
+    public void insertLogoffAction(final OneUser user, final long startAction) throws Throwable {
+        final UserAction userAction = new UserAction();
+        userAction.setAction(Action.ONE__LOGOFF);
+        userAction.setCustomer(null);
+        userAction.setInsertionDate(startAction);
+        userAction.setUser(user.getUser().getId());
+        userAction.setLocalIp(user.getLocalIp());
+        userAction.setPublicIp(user.getPublicIp());
+        userAction.setStatus(ActionStatus.SUCCESS);
+        userAction.setDurarion((int) (System.currentTimeMillis() - startAction));
+        this.insert(userAction);
+    }
 
     public void insert(final UserAction action) throws Throwable {
         run(DatabaseType.ONE, (final MongoConnection mongoConnection) -> {
