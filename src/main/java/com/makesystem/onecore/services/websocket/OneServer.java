@@ -18,6 +18,7 @@ import com.makesystem.oneentity.core.types.ServiceType;
 import com.makesystem.oneentity.services.OneServices.Access;
 import com.makesystem.oneentity.services.users.storage.ConnectedUser;
 import com.makesystem.oneentity.services.users.storage.User;
+import com.makesystem.pidgey.interfaces.AsyncCallback;
 import com.makesystem.pidgey.json.ObjectMapperJRE;
 import com.makesystem.pidgey.lang.ThrowableHelper;
 import com.makesystem.xeoncore.core.AbstractServerSocket;
@@ -231,33 +232,38 @@ public class OneServer extends AbstractServerSocket {
             switch (message.getType()) {
                 case COMMAND: {
 
-                    // Create a Message to send to the client
-                    final Message response = new Message(message.getId());
-                    response.setAction(message.getAction());
-                    response.setService(message.getService());
-
                     // Create a Action to register on database
-                    try {
-                        final String result = userActionService.execute(
-                                oneUser.getUser().getId(),
-                                oneUser.getLocalIp(),
-                                oneUser.getPublicIp(),
-                                Action.valueOf(message.getAction()),
-                                () -> consumer.consumer(sessionData, message));
-                        //
-                        // Call services and get result
-                        //
-                        response.setType(MessageType.RESPONSE_SUCCESS);
-                        response.setData(result);
-                    } catch (final Throwable throwable) {
-                        // Set message data and status to respose
-                        response.setType(MessageType.RESPONSE_ERROR);
-                        response.setData(ThrowableHelper.toString(throwable));
-                        throw throwable;
-                    } finally {
-                        // Send response to client
-                        sessionData.sendObject(response);
-                    }
+                    final AsyncCallback<String> callback = new AsyncCallback<String>() {
+                        
+                        @Override
+                        public void onSuccess(final String response) {
+                            sendResponse(MessageType.RESPONSE_SUCCESS, response);
+                        }
+
+                        @Override
+                        public void onFailure(final Throwable throwable) {
+                            sendResponse(MessageType.RESPONSE_ERROR, ThrowableHelper.toString(throwable));
+                            onError(sessionData, new TaggedException(Tags.ON_MESSAGE, throwable));
+                        }
+
+                        void sendResponse(final MessageType messageType, final String data) {
+                            // Create a Message to send to the client
+                            final Message response = new Message(message.getId());
+                            response.setAction(message.getAction());
+                            response.setService(message.getService());
+                            response.setType(messageType);
+                            response.setData(data);
+                            sessionData.sendObject(response);
+                        }
+                    };
+
+                    userActionService.execute(
+                            oneUser.getUser().getId(),
+                            oneUser.getLocalIp(),
+                            oneUser.getPublicIp(),
+                            Action.valueOf(message.getAction()),
+                            () -> consumer.consumer(sessionData, message, callback));
+
                 }
                 break;
                 case RESPONSE_SUCCESS:

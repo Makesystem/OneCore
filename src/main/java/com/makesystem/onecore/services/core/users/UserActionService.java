@@ -12,6 +12,7 @@ import com.makesystem.onecore.services.core.OneUser;
 import com.makesystem.oneentity.core.types.Action;
 import com.makesystem.oneentity.core.types.ActionStatus;
 import com.makesystem.oneentity.services.users.storage.UserAction;
+import com.makesystem.pidgey.interfaces.Snippet;
 import com.makesystem.pidgey.lang.ThrowableHelper;
 import com.makesystem.xeonentity.core.types.DatabaseType;
 
@@ -20,11 +21,6 @@ import com.makesystem.xeonentity.core.types.DatabaseType;
  * @author Richeli.vargas
  */
 public class UserActionService extends OneService {
-
-    public interface UserActionRunnable<R> {
-        public R run() throws Throwable;
-    }
-
 
     public void insertLoginAction(final OneUser user, final long startAction) throws Throwable {
         final UserAction userAction = new UserAction();
@@ -68,12 +64,12 @@ public class UserActionService extends OneService {
         });
     }
 
-    public <R> R execute(
+    public <R> void execute(
             final SimpleObjectId userId,
             final String userLocalIp,
             final String userPublicIp,
             final Action action,
-            final UserActionRunnable<R> runnable) throws Throwable {
+            final Snippet snippet) throws Throwable {
 
         final UserAction userAction = new UserAction();
         userAction.setUser(userId);
@@ -86,12 +82,10 @@ public class UserActionService extends OneService {
         this.insert(userAction);
 
         try {
-            // Run
-            final R result = runnable.run();
+            // Execute
+            snippet.exec();
             // Update Action
             userAction.setStatus(ActionStatus.SUCCESS);
-            //
-            return result;
         } catch (final Throwable throwable) {
             // Update Action
             userAction.setStatus(ActionStatus.ERROR);
