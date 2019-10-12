@@ -16,7 +16,10 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import com.makesystem.oneentity.services.OneServices.Commons;
 import com.makesystem.oneentity.services.OneServices.Commons.*;
+import java.util.concurrent.TimeUnit;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.container.AsyncResponse;
+import javax.ws.rs.container.Suspended;
 
 /**
  *
@@ -30,30 +33,36 @@ public class CommonServices extends AbstractServiceServlet {
     @Path(PostPing.PATH)
     @Produces(MediaType.TEXT_PLAIN)
     @Consumes(MediaType.TEXT_PLAIN)
-    public String postPing() {
-        return Boolean.TRUE.toString();
+    public void postPing(
+            @Suspended final AsyncResponse asyncResponse) {
+        asyncResponse.resume(Boolean.TRUE.toString());
     }
 
     @GET
     @Path(GetPing.PATH)
     @Produces(MediaType.TEXT_PLAIN)
-    public String getPing() {
-        return Boolean.TRUE.toString();
+    public void getPing(
+            @Suspended final AsyncResponse asyncResponse) {
+        asyncResponse.resume(Boolean.TRUE.toString());
     }
 
     @POST
     @Path(PostEcho.PATH)
     @Produces(MediaType.TEXT_PLAIN)
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-    public String postEcho(@FormParam(PostEcho.Attributes.DATA) final String data) {
-        return data;
+    public void postEcho(
+            @Suspended final AsyncResponse asyncResponse,
+            @FormParam(PostEcho.Attributes.DATA) final String data) {
+        asyncResponse.resume(data);
     }
 
     @GET
     @Path(GetEcho.PATH)
     @Produces(MediaType.TEXT_PLAIN)
     @Consumes(MediaType.TEXT_PLAIN)
-    public String getEcho(@QueryParam(GetEcho.Attributes.DATA) final String data) {
-        return data;
+    public void getEcho(
+            @Suspended final AsyncResponse asyncResponse,
+            @QueryParam(GetEcho.Attributes.DATA) final String data) {
+        asyncResponse.resume(data);
     }
 }
