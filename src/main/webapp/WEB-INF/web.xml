@@ -29,7 +29,7 @@
     
     <servlet>
         <servlet-name>Jersey REST Service</servlet-name>
-        <servlet-class>org.glassfish.jersey.servlet.ServletContainer</servlet-class>
+        <servlet-class>org.glassfish.jersey.servlet.ServletContainer</servlet-class>  
         <init-param>
             <param-name>jersey.config.server.provider.packages</param-name>
             <param-value>com.makesystem.onecore.config</param-value>
@@ -42,8 +42,17 @@
             <param-name>javax.ws.rs.Application</param-name>
             <param-value>com.makesystem.onecore.config.ApplicationConfig</param-value>
         </init-param>
+        <init-param>
+            <param-name>jersey.config.server.provider.packages</param-name>
+            <param-value>com.javapapers.webservices.rest.jersey</param-value>
+        </init-param>
         <load-on-startup>1</load-on-startup>
+        <async-supported>true</async-supported>
     </servlet>    
+    <servlet-mapping>
+        <servlet-name>Jersey REST Service</servlet-name>
+        <url-pattern>/*</url-pattern>
+    </servlet-mapping> 
     
     <!-- +++++++++++++++++++++++++ -->
     <!-- CORS Filter               -->
@@ -100,11 +109,6 @@
     <!-- +++++++++++++++++++++++++ -->
     <!-- Basic settings            -->
     <!-- +++++++++++++++++++++++++ -->
-    
-    <servlet-mapping>
-        <servlet-name>Jersey REST Service</servlet-name>
-        <url-pattern>/*</url-pattern>
-    </servlet-mapping> 
     <session-config>
         <session-timeout>30</session-timeout>
     </session-config>

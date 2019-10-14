@@ -19,6 +19,7 @@ import com.makesystem.oneentity.services.OneServices.Commons.*;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.container.AsyncResponse;
 import javax.ws.rs.container.Suspended;
+import javax.ws.rs.core.Response;
 
 /**
  *
@@ -33,16 +34,16 @@ public class CommonServices extends AbstractServiceServlet {
     @Produces(MediaType.TEXT_PLAIN)
     @Consumes(MediaType.TEXT_PLAIN)
     public void postPing(
-            @Suspended final AsyncResponse asyncResponse) {
-        asyncResponse.resume(Boolean.TRUE.toString());
+            final @Suspended AsyncResponse asyncResponse) {
+        (new Thread(() -> asyncResponse.resume(Response.ok(Boolean.TRUE.toString()).build()))).start();
     }
 
     @GET
     @Path(GetPing.PATH)
     @Produces(MediaType.TEXT_PLAIN)
     public void getPing(
-            @Suspended final AsyncResponse asyncResponse) {
-        asyncResponse.resume(Boolean.TRUE.toString());
+            final @Suspended AsyncResponse asyncResponse) {
+        (new Thread(() -> asyncResponse.resume(Response.ok(Boolean.TRUE.toString()).build()))).start();
     }
 
     @POST
@@ -50,9 +51,9 @@ public class CommonServices extends AbstractServiceServlet {
     @Produces(MediaType.TEXT_PLAIN)
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     public void postEcho(
-            @Suspended final AsyncResponse asyncResponse,
+            final @Suspended AsyncResponse asyncResponse,
             @FormParam(PostEcho.Attributes.DATA) final String data) {
-        asyncResponse.resume(data);
+        (new Thread(() -> asyncResponse.resume(Response.ok(data).build()))).start();
     }
 
     @GET
@@ -60,8 +61,8 @@ public class CommonServices extends AbstractServiceServlet {
     @Produces(MediaType.TEXT_PLAIN)
     @Consumes(MediaType.TEXT_PLAIN)
     public void getEcho(
-            @Suspended final AsyncResponse asyncResponse,
+            final @Suspended AsyncResponse asyncResponse,
             @QueryParam(GetEcho.Attributes.DATA) final String data) {
-        asyncResponse.resume(data);
+        (new Thread(() -> asyncResponse.resume(Response.ok(data).build()))).start();
     }
 }
