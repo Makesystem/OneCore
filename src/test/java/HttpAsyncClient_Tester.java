@@ -59,7 +59,7 @@ public class HttpAsyncClient_Tester extends AbstractTester {
 
     @Override
     protected void execution() {
-        postTest();
+        //postTest();
         getTest();
     }
 

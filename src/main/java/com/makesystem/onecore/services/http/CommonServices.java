@@ -20,6 +20,7 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.container.AsyncResponse;
 import javax.ws.rs.container.Suspended;
 import javax.ws.rs.core.Response;
+import org.glassfish.jersey.server.ManagedAsync;
 
 /**
  *
@@ -33,36 +34,40 @@ public class CommonServices extends AbstractServiceServlet {
     @Path(PostPing.PATH)
     @Produces(MediaType.TEXT_PLAIN)
     @Consumes(MediaType.TEXT_PLAIN)
+    @ManagedAsync
     public void postPing(
             final @Suspended AsyncResponse asyncResponse) {
-        (new Thread(() -> asyncResponse.resume(Response.ok(Boolean.TRUE.toString()).build()))).start();
+        asyncResponse.resume(Response.ok(Boolean.TRUE.toString()).build());
     }
 
     @GET
     @Path(GetPing.PATH)
     @Produces(MediaType.TEXT_PLAIN)
+    @ManagedAsync
     public void getPing(
             final @Suspended AsyncResponse asyncResponse) {
-        (new Thread(() -> asyncResponse.resume(Response.ok(Boolean.TRUE.toString()).build()))).start();
+        asyncResponse.resume(Response.ok(Boolean.TRUE.toString()).build());
     }
 
     @POST
     @Path(PostEcho.PATH)
     @Produces(MediaType.TEXT_PLAIN)
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+    @ManagedAsync
     public void postEcho(
             final @Suspended AsyncResponse asyncResponse,
             @FormParam(PostEcho.Attributes.DATA) final String data) {
-        (new Thread(() -> asyncResponse.resume(Response.ok(data).build()))).start();
+        asyncResponse.resume(Response.ok(data).build());
     }
 
     @GET
     @Path(GetEcho.PATH)
     @Produces(MediaType.TEXT_PLAIN)
     @Consumes(MediaType.TEXT_PLAIN)
+    @ManagedAsync
     public void getEcho(
             final @Suspended AsyncResponse asyncResponse,
             @QueryParam(GetEcho.Attributes.DATA) final String data) {
-        (new Thread(() -> asyncResponse.resume(Response.ok(data).build()))).start();
+        asyncResponse.resume(Response.ok(data).build());
     }
 }

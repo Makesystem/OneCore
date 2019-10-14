@@ -49,6 +49,14 @@ public class HttpClient_Tester extends AbstractTester {
 
     private HttpClient httpClient;
 
+    void close() {
+        try {
+            httpClient.close();
+        } catch (Throwable throwable) {
+            throwable.printStackTrace();
+        }
+    }
+    
     @Override
     protected void preExecution() {
         httpClient = new HttpClient();
@@ -56,9 +64,10 @@ public class HttpClient_Tester extends AbstractTester {
 
     @Override
     protected void execution() {
-        //postTest();
-        //getTest();
-        performanceTest();
+        postTest();
+        getTest();
+        //performanceTest();
+        close();
     }
 
     protected void postTest() {
@@ -71,11 +80,10 @@ public class HttpClient_Tester extends AbstractTester {
         try {
             final String result = httpClient.doPost(properties);
             Console.log("post result: {s}", result);
-            httpClient.close();
         } catch (Throwable throwable) {
             throwable.printStackTrace();
         }
-        Console.log("Async post was called");
+        Console.log("Sync post was called");
     }
 
     protected void getTest() {
@@ -88,11 +96,10 @@ public class HttpClient_Tester extends AbstractTester {
         try {
             final String result = httpClient.doGet(properties);
             Console.log("post result: {s}", result);
-            httpClient.close();
         } catch (Throwable throwable) {
             throwable.printStackTrace();
         }
-        Console.log("Async get was called");
+        Console.log("Sync get was called");
     }
 
     @SuppressWarnings({"CallToPrintStackTrace", "UseSpecificCatch"})
@@ -119,12 +126,7 @@ public class HttpClient_Tester extends AbstractTester {
                 }));
 
         pool.waitFinish();
-        Console.log("Calls: {i} ~ {i}ms / call", average.getCount(), average.getAverage());
-        try {
-            httpClient.close();
-        } catch (IOException exception) {
-            exception.printStackTrace();
-        }
+        Console.log("Calls: {i} ~ {i}ms / call", average.getCount(), average.getAverage());        
     }
 
     @Override

@@ -57,10 +57,10 @@
     <!-- +++++++++++++++++++++++++ -->
     <!-- CORS Filter               -->
     <!-- +++++++++++++++++++++++++ -->
-    
     <filter>
         <filter-name>CORS</filter-name>
         <filter-class>com.thetransactioncompany.cors.CORSFilter</filter-class>
+        <async-supported>true</async-supported>
         <init-param>
             <param-name>cors.allowOrigin</param-name>
             <param-value>*</param-value>
