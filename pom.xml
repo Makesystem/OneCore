@@ -39,7 +39,7 @@
         <dependency>
             <groupId>com.github.Makesystem</groupId>
             <artifactId>XeonCore</artifactId>
-            <version>c1294da8ce</version>
+            <version>8e7896e712</version>
         </dependency>
         
         <dependency>
