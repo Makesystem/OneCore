@@ -9,9 +9,6 @@ import com.makesystem.mwi.types.MethodType;
 import com.makesystem.oneentity.services.OneServices.*;
 import com.makesystem.oneentity.services.OneServices.Commons.*;
 import com.makesystem.xeoncore.core.AbstractRequestFilter;
-import java.io.IOException;
-import javax.servlet.FilterChain;
-import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.annotation.WebFilter;
@@ -41,13 +38,7 @@ public class RequestFilterConfig extends AbstractRequestFilter {
 
     @Override
     protected boolean allowRequest(final ServletRequest servletRequest, final ServletResponse servletResponse) {
-
-        final HttpServletRequest httpServletRequest = ((HttpServletRequest) servletRequest);
-        final String requestURI = httpServletRequest.getRequestURI();
-
-        final boolean isWebsocketRequest = requestURI.startsWith(Access.CONSUMER);
-
-        return isWebsocketRequest || true;
+        return true;
     }
 
     @Override
