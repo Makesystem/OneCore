@@ -3,6 +3,7 @@ import com.makesystem.mwc.http.client.HttpAsyncClient;
 import com.makesystem.mwc.http.client.properties.AsyncGetProperties;
 import com.makesystem.mwc.http.client.properties.AsyncPostProperties;
 import com.makesystem.mwi.types.Protocol;
+import com.makesystem.oneentity.services.OneServices.Commons.*;
 import com.makesystem.pidgey.console.Console;
 import com.makesystem.pidgey.interfaces.AsyncCallback;
 import com.makesystem.pidgey.tester.AbstractTester;
@@ -65,9 +66,9 @@ public class HttpAsyncClient_Tester extends AbstractTester {
 
     protected void postTest() {
 
-        final NameValuePair data = new BasicNameValuePair("data", "echo");
+        final NameValuePair data = new BasicNameValuePair(PostEcho.Attributes.DATA, "echo");
 
-        final AsyncPostProperties properties = new AsyncPostProperties(PROTOCOL, HOST, PORT, "/one/commons/post_echo");
+        final AsyncPostProperties properties = new AsyncPostProperties(PROTOCOL, HOST, PORT, PostEcho.CONSUMER);
         properties.setAttributes(data);
         properties.setAsyncCallback(new AsyncCallback<String>() {
 
@@ -92,9 +93,9 @@ public class HttpAsyncClient_Tester extends AbstractTester {
 
     protected void getTest() {
 
-        final NameValuePair data = new BasicNameValuePair("data", "echo");
+        final NameValuePair data = new BasicNameValuePair(GetEcho.Attributes.DATA, "echo");
 
-        final AsyncGetProperties properties = new AsyncGetProperties(PROTOCOL, HOST, PORT, "/one/commons/get_echo");
+        final AsyncGetProperties properties = new AsyncGetProperties(PROTOCOL, HOST, PORT, GetEcho.CONSUMER);
         properties.setAttributes(data);
         properties.setAsyncCallback(new AsyncCallback<String>() {
 

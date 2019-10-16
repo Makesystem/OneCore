@@ -3,13 +3,13 @@ import com.makesystem.mwc.http.client.HttpClient;
 import com.makesystem.mwc.http.client.properties.GetProperties;
 import com.makesystem.mwc.http.client.properties.PostProperties;
 import com.makesystem.mwi.types.Protocol;
+import com.makesystem.oneentity.services.OneServices.Commons.*;
 import com.makesystem.pidgey.console.Console;
 import com.makesystem.pidgey.lang.Average;
 import com.makesystem.pidgey.monitor.Monitor;
 import com.makesystem.pidgey.monitor.MonitorResult;
 import com.makesystem.pidgey.tester.AbstractTester;
 import com.makesystem.pidgey.thread.ThreadPool;
-import java.io.IOException;
 import java.util.stream.IntStream;
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
@@ -56,7 +56,7 @@ public class HttpClient_Tester extends AbstractTester {
             throwable.printStackTrace();
         }
     }
-    
+
     @Override
     protected void preExecution() {
         httpClient = new HttpClient();
@@ -72,9 +72,9 @@ public class HttpClient_Tester extends AbstractTester {
 
     protected void postTest() {
 
-        final NameValuePair data = new BasicNameValuePair("data", "echo");
+        final NameValuePair data = new BasicNameValuePair(PostEcho.Attributes.DATA, "echo");
 
-        final PostProperties properties = new PostProperties(PROTOCOL, HOST, PORT, "/one/commons/post_echo");
+        final PostProperties properties = new PostProperties(PROTOCOL, HOST, PORT, PostEcho.CONSUMER);
         properties.setAttributes(data);
 
         try {
@@ -88,9 +88,9 @@ public class HttpClient_Tester extends AbstractTester {
 
     protected void getTest() {
 
-        final NameValuePair data = new BasicNameValuePair("data", "echo");
+        final NameValuePair data = new BasicNameValuePair(GetEcho.Attributes.DATA, "echo");
 
-        final GetProperties properties = new GetProperties(PROTOCOL, HOST, PORT, "/one/commons/get_echo");
+        final GetProperties properties = new GetProperties(PROTOCOL, HOST, PORT, GetEcho.CONSUMER);
         properties.setAttributes(data);
 
         try {
@@ -105,9 +105,9 @@ public class HttpClient_Tester extends AbstractTester {
     @SuppressWarnings({"CallToPrintStackTrace", "UseSpecificCatch"})
     protected void performanceTest() {
 
-        final NameValuePair data = new BasicNameValuePair("data", "echo");
+        final NameValuePair data = new BasicNameValuePair(PostEcho.Attributes.DATA, "echo");
 
-        final PostProperties properties = new PostProperties(PROTOCOL, HOST, PORT, "/one/commons/post_echo");
+        final PostProperties properties = new PostProperties(PROTOCOL, HOST, PORT, PostEcho.CONSUMER);
         properties.setAttributes(data);
 
         final Average<String> average = new Average<>("Post Test");
@@ -126,7 +126,7 @@ public class HttpClient_Tester extends AbstractTester {
                 }));
 
         pool.waitFinish();
-        Console.log("Calls: {i} ~ {i}ms / call", average.getCount(), average.getAverage());        
+        Console.log("Calls: {i} ~ {i}ms / call", average.getCount(), average.getAverage());
     }
 
     @Override

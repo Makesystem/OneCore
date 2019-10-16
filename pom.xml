@@ -21,7 +21,14 @@
         </repository>
     </repositories>
     
-    <dependencies>
+    <dependencies>  
+        
+        <!-- https://mvnrepository.com/artifact/org.glassfish.jersey.core/jersey-server -->
+        <dependency>
+            <groupId>org.glassfish.jersey.core</groupId>
+            <artifactId>jersey-server</artifactId>
+            <version>2.29.1</version>
+        </dependency>
         
         <dependency>
             <groupId>com.thetransactioncompany</groupId>
@@ -39,13 +46,13 @@
         <dependency>
             <groupId>com.github.Makesystem</groupId>
             <artifactId>XeonCore</artifactId>
-            <version>8e7896e712</version>
+            <version>f64c650bdb</version>
         </dependency>
         
         <dependency>
             <groupId>com.github.Makesystem</groupId>
             <artifactId>OneEntity</artifactId>
-            <version>a1375e061d</version>
+            <version>208eb8ba93</version>
         </dependency>
         
     </dependencies>
