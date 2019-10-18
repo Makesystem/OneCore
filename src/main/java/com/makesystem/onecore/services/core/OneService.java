@@ -5,9 +5,9 @@
  */
 package com.makesystem.onecore.services.core;
 
+import com.makesystem.oneentity.core.types.DatabaseType;
 import com.makesystem.xeoncore.core.AbstractService;
 import com.makesystem.xeonentity.core.DatabaseSettings;
-import com.makesystem.xeonentity.core.types.DatabaseType;
 
 /**
  *

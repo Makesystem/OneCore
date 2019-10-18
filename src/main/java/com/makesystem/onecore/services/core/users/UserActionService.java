@@ -11,10 +11,10 @@ import com.makesystem.onecore.services.core.OneService;
 import com.makesystem.onecore.services.core.OneUser;
 import com.makesystem.oneentity.core.types.Action;
 import com.makesystem.oneentity.core.types.ActionStatus;
+import com.makesystem.oneentity.core.types.DatabaseType;
 import com.makesystem.oneentity.services.users.storage.UserAction;
 import com.makesystem.pidgey.interfaces.Snippet;
 import com.makesystem.pidgey.lang.ThrowableHelper;
-import com.makesystem.xeonentity.core.types.DatabaseType;
 
 /**
  *
