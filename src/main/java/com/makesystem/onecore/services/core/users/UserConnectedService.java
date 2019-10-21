@@ -13,7 +13,7 @@ import com.makesystem.onecore.services.core.OneService;
 import com.makesystem.oneentity.core.nosql.Struct;
 import com.makesystem.oneentity.core.types.DatabaseType;
 import com.makesystem.oneentity.core.types.ServiceType;
-import com.makesystem.oneentity.services.users.storage.ConnectedUser;
+import com.makesystem.oneentity.services.users.storage.UserConnected;
 import java.util.Collection;
 import java.util.LinkedList;
 import org.bson.Document;
@@ -23,18 +23,18 @@ import org.bson.conversions.Bson;
  *
  * @author Richeli.vargas
  */
-public class ConnectedUserService extends OneService {
+public class UserConnectedService extends OneService {
 
-    public ConnectedUser insert(final ConnectedUser user) throws Throwable {
+    public UserConnected insert(final UserConnected user) throws Throwable {
         return run(DatabaseType.ONE, (final MongoConnection mongoConnection) -> {
-            mongoConnection.setOperationAlias(OperationAlias.CONNECTED_USER__INSERT);
+            mongoConnection.setOperationAlias(OperationAlias.USER_CONNECTED__INSERT);
             return mongoConnection.getQuery().insertOneAndRetrive(user);
         });
     }
 
-    public void delete(final ConnectedUser user) throws Throwable {
+    public void delete(final UserConnected user) throws Throwable {
         run(DatabaseType.ONE, (final MongoConnection mongoConnection) -> {
-            mongoConnection.setOperationAlias(OperationAlias.CONNECTED_USER__DELETE);
+            mongoConnection.setOperationAlias(OperationAlias.USER_CONNECTED__DELETE);
             mongoConnection.getQuery().delete(user);
             return Void;
         });
@@ -42,38 +42,38 @@ public class ConnectedUserService extends OneService {
 
     public void delete(final SimpleObjectId userId) throws Throwable {
         run(DatabaseType.ONE, (final MongoConnection mongoConnection) -> {
-            mongoConnection.setOperationAlias(OperationAlias.CONNECTED_USER__DELETE);
-            mongoConnection.getQuery().deleteMany(ConnectedUser.class, new Document(Struct.CONNECTED_USERS__USER, userId));
+            mongoConnection.setOperationAlias(OperationAlias.USER_CONNECTED__DELETE);
+            mongoConnection.getQuery().deleteMany(UserConnected.class, new Document(Struct.USERS_CONNECTED__USER, userId));
             return Void;
         });
     }
 
     public void delete(final String serverHost) throws Throwable {
         run(DatabaseType.ONE, (final MongoConnection mongoConnection) -> {
-            mongoConnection.setOperationAlias(OperationAlias.CONNECTED_USER__DELETE);
-            mongoConnection.getQuery().deleteMany(ConnectedUser.class, new Document(Struct.CONNECTED_USERS__SERVER_HOST, serverHost));
+            mongoConnection.setOperationAlias(OperationAlias.USER_CONNECTED__DELETE);
+            mongoConnection.getQuery().deleteMany(UserConnected.class, new Document(Struct.USERS_CONNECTED__SERVER_HOST, serverHost));
             return Void;
         });
     }
 
     public void clear() throws Throwable {
         run(DatabaseType.ONE, (final MongoConnection mongoConnection) -> {
-            mongoConnection.setOperationAlias(OperationAlias.CONNECTED_USER__CLEAR);
-            mongoConnection.getMongoDatabase(Struct.CONNECTED_USERS__TABLE_NAME).drop();
+            mongoConnection.setOperationAlias(OperationAlias.USER_CONNECTED__CLEAR);
+            mongoConnection.getMongoDatabase(Struct.USERS_CONNECTED__TABLE_NAME).drop();
             return Void;
         });
     }
 
     public int count() throws Throwable {
         return run(DatabaseType.ONE, (final MongoConnection mongoConnection) -> {
-            mongoConnection.setOperationAlias(OperationAlias.CONNECTED_USER__COUNT);
-            return (int) mongoConnection.getQuery().count(ConnectedUser.class, new Document());
+            mongoConnection.setOperationAlias(OperationAlias.USER_CONNECTED__COUNT);
+            return (int) mongoConnection.getQuery().count(UserConnected.class, new Document());
         });
     }
 
-    public Collection<ConnectedUser> find(final String user, final String customer, final ServiceType service) throws Throwable {
+    public Collection<UserConnected> find(final String user, final String customer, final ServiceType service) throws Throwable {
         return run(DatabaseType.ONE, (final MongoConnection mongoConnection) -> {
-            mongoConnection.setOperationAlias(OperationAlias.CONNECTED_USER__FIND);
+            mongoConnection.setOperationAlias(OperationAlias.USER_CONNECTED__FIND);
 
             // ///////////////////////////////////////////////////////////////////////////
             // Create the query
@@ -83,15 +83,15 @@ public class ConnectedUserService extends OneService {
             final Collection<Bson> filters = new LinkedList<>();
 
             if (user != null && !user.trim().isEmpty()) {
-                filters.add(queryBuilder.equal(Struct.CONNECTED_USERS__USER, user));
+                filters.add(queryBuilder.equal(Struct.USERS_CONNECTED__USER, user));
             }
 
             if (customer != null && !customer.trim().isEmpty()) {
-                filters.add(queryBuilder.equal(Struct.CONNECTED_USERS__CUSTOMER, customer));
+                filters.add(queryBuilder.equal(Struct.USERS_CONNECTED__CUSTOMER, customer));
             }
 
             if (service != null) {
-                filters.add(queryBuilder.equal(Struct.CONNECTED_USERS__SERVICE, service));
+                filters.add(queryBuilder.equal(Struct.USERS_CONNECTED__SERVICE, service));
             }
 
             final Bson filter = queryBuilder.and(filters.stream().toArray(Bson[]::new));
@@ -103,8 +103,8 @@ public class ConnectedUserService extends OneService {
             // ///////////////////////////////////////////////////////////////////////////
             // Execute
             // ///////////////////////////////////////////////////////////////////////////                    
-            final Collection<ConnectedUser> connections
-                    = mongoConnection.getQuery().find(ConnectedUser.class, findOptions);
+            final Collection<UserConnected> connections
+                    = mongoConnection.getQuery().find(UserConnected.class, findOptions);
 
             return connections;
         });

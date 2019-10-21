@@ -6,7 +6,7 @@
 package com.makesystem.onecore.services.websocket;
 
 import com.makesystem.mwc.websocket.server.SessionData;
-import com.makesystem.onecore.services.core.users.ConnectedUserService;
+import com.makesystem.onecore.services.core.users.UserConnectedService;
 import com.makesystem.oneentity.core.types.Action;
 import com.makesystem.pidgey.interfaces.AsyncCallback;
 import com.makesystem.pidgey.json.ObjectMapperJRE;
@@ -65,7 +65,7 @@ public class OneConsumer {
 
     protected <D> void one__connected_user__count(final D data, final AsyncCallback<String> callback) throws Throwable {
 
-        final ConnectedUserService service = new ConnectedUserService();
+        final UserConnectedService service = new UserConnectedService();
 
         callback.onSuccess(ObjectMapperJRE.write(service.count()));
     }

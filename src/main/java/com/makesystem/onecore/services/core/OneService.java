@@ -20,11 +20,11 @@ public class OneService extends AbstractService {
         public static final String USER__FIND_BY__LOGIN_AND_PASSWORD    = "USER__FIND_BY__LOGIN_AND_PASSWORD";
         public static final String USER__INSERT                         = "USER__INSERT";
         // Connected User
-        public static final String CONNECTED_USER__INSERT               = "CONNECTED_USER__INSERT";
-        public static final String CONNECTED_USER__DELETE               = "CONNECTED_USER__DELETE";
-        public static final String CONNECTED_USER__CLEAR                = "CONNECTED_USER__CLEAR";        
-        public static final String CONNECTED_USER__FIND                 = "CONNECTED_USER__LIST";       
-        public static final String CONNECTED_USER__COUNT                = "CONNECTED_USER__COUNT";
+        public static final String USER_CONNECTED__INSERT               = "USER_CONNECTED__INSERT";
+        public static final String USER_CONNECTED__DELETE               = "USER_CONNECTED__DELETE";
+        public static final String USER_CONNECTED__CLEAR                = "USER_CONNECTED__CLEAR";        
+        public static final String USER_CONNECTED__FIND                 = "USER_CONNECTED__LIST";       
+        public static final String USER_CONNECTED__COUNT                = "USER_CONNECTED__COUNT";
         // User Action
         public static final String USER_ACTION__INSERT                  = "USER_ACTION__INSERT";
         public static final String USER_ACTION__UPDATE                  = "USER_ACTION__UPDATE";

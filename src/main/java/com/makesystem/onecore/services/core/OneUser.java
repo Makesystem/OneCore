@@ -5,7 +5,7 @@
  */
 package com.makesystem.onecore.services.core;
 
-import com.makesystem.oneentity.services.users.storage.ConnectedUser;
+import com.makesystem.oneentity.services.users.storage.UserConnected;
 import com.makesystem.oneentity.services.users.storage.User;
 import java.io.Serializable;
 import java.util.Collection;
@@ -22,7 +22,7 @@ public class OneUser implements Serializable {
     private final String localIp;
     private final String publicIp;
 
-    private final Collection<ConnectedUser> connections = new ConcurrentLinkedQueue<>();
+    private final Collection<UserConnected> connections = new ConcurrentLinkedQueue<>();
 
     public OneUser(User user, String localIp, String publicIp) {
         this.user = user;
@@ -34,11 +34,11 @@ public class OneUser implements Serializable {
         return user;
     }
 
-    public Collection<ConnectedUser> getConnections() {
+    public Collection<UserConnected> getConnections() {
         return connections;
     }
 
-    public ConnectedUser getConnection(final String sessionId) {
+    public UserConnected getConnection(final String sessionId) {
         if (sessionId == null) {
             return null;
         }
@@ -47,7 +47,7 @@ public class OneUser implements Serializable {
                 .findAny().orElse(null);
     }
 
-    public boolean remove(final ConnectedUser connection) {
+    public boolean remove(final UserConnected connection) {
         return connections.remove(connection);
     }
 

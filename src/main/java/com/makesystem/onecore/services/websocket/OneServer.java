@@ -9,14 +9,14 @@ import com.makesystem.mwc.websocket.server.SessionData;
 import com.makesystem.mwi.websocket.CloseReason;
 import com.makesystem.onecore.services.core.OneProperties;
 import com.makesystem.onecore.services.core.OneUser;
-import com.makesystem.onecore.services.core.users.ConnectedUserService;
+import com.makesystem.onecore.services.core.users.UserConnectedService;
 import com.makesystem.onecore.services.core.users.UserActionService;
 import com.makesystem.onecore.services.core.users.UserService;
 import com.makesystem.oneentity.core.types.Action;
 import com.makesystem.oneentity.core.types.OneCloseCodes;
 import com.makesystem.oneentity.core.types.ServiceType;
 import com.makesystem.oneentity.services.OneServices.Access;
-import com.makesystem.oneentity.services.users.storage.ConnectedUser;
+import com.makesystem.oneentity.services.users.storage.UserConnected;
 import com.makesystem.oneentity.services.users.storage.User;
 import com.makesystem.pidgey.interfaces.AsyncCallback;
 import com.makesystem.pidgey.json.ObjectMapperJRE;
@@ -50,7 +50,7 @@ public class OneServer extends AbstractServerSocket {
         public static final String NO_THROWABLE = "NO_THROWABLE";
     }
 
-    private final ConnectedUserService connectedUserService;
+    private final UserConnectedService connectedUserService;
     private final UserService userService;
     private final UserActionService userActionService;
 
@@ -58,7 +58,7 @@ public class OneServer extends AbstractServerSocket {
 
     public OneServer() {
         super(2, 2, 20, 2);
-        connectedUserService = new ConnectedUserService();
+        connectedUserService = new UserConnectedService();
         userService = new UserService();
         userActionService = new UserActionService();
         consumer = new OneConsumer();
@@ -146,7 +146,7 @@ public class OneServer extends AbstractServerSocket {
                 // /////////////////////////////////////////////////////////////
                 // Create connection register
                 // /////////////////////////////////////////////////////////////
-                final ConnectedUser connectedUser = new ConnectedUser();
+                final UserConnected connectedUser = new UserConnected();
                 connectedUser.setSessionId(sessionData.getSession().getId());
                 connectedUser.setUser(user.getId());
                 connectedUser.setCustomer(null);
@@ -200,7 +200,7 @@ public class OneServer extends AbstractServerSocket {
             // /////////////////////////////////////////////////////////////////
             // Remove connection register
             // /////////////////////////////////////////////////////////////////
-            final ConnectedUser connection = user.getConnection(sessionData.getSession().getId());
+            final UserConnected connection = user.getConnection(sessionData.getSession().getId());
             if (connection != null) {
                 try {
                     connectedUserService.delete(connection);
