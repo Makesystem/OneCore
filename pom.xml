@@ -52,7 +52,7 @@
         <dependency>
             <groupId>com.github.Makesystem</groupId>
             <artifactId>OneEntity</artifactId>
-            <version>fb927cddf4</version>
+            <version>a68e388218</version>
         </dependency>
         
     </dependencies>
