@@ -18,7 +18,7 @@ import javax.ws.rs.core.Application;
 public class ApplicationConfig extends Application {
 
     static {
-        TimeZone.setDefault(TimeZone.getTimeZone("America/Sao_Paulo"));
+        TimeZone.setDefault(TimeZone.getTimeZone("America/Sao_Paulo"));        
     }
 
     @Override

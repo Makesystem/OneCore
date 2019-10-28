@@ -3,6 +3,7 @@ import com.makesystem.mwc.websocket.client.WebSocketJRE;
 import com.makesystem.mwi.types.Protocol;
 import com.makesystem.pidgey.console.Console;
 import com.makesystem.pidgey.console.ConsoleColor;
+import com.makesystem.pidgey.security.MD5;
 import com.makesystem.pidgey.tester.AbstractTester;
 import java.util.Date;
 
@@ -17,7 +18,7 @@ import java.util.Date;
  */
 public class WebSocketClient_Tester extends AbstractTester {
 
-    static final Protocol PROTOCOL = Protocol.HTTPS;
+    static final Protocol PROTOCOL = Protocol.HTTP;
     static final String HOST;
     static final int PORT;
 
@@ -44,7 +45,7 @@ public class WebSocketClient_Tester extends AbstractTester {
     @Override
     protected void preExecution() {
 
-        websocketClient = new WebSocketJRE(PROTOCOL, HOST, PORT, "one/one_door");
+        websocketClient = new WebSocketJRE(PROTOCOL, HOST, PORT, "one/access");
     }
 
     @Override
@@ -59,11 +60,12 @@ public class WebSocketClient_Tester extends AbstractTester {
         websocketClient.addOnCloseHandler(closeReason -> Console.log("{cc}On close: " + closeReason.getCloseCode().getCode(), ConsoleColor.PURPLE));
         websocketClient.addOnMessageHandler(message -> {
             Console.log("{cc}On message received: " + message, ConsoleColor.CYAN);
-            websocketClient.close();
+            //websocketClient.close();
         });
         websocketClient.addOnErrorHandler(exception -> Console.log("{cc}On error: " + exception, ConsoleColor.RED));
 
-        websocketClient.connect("meu_login", "minha_senha", 10);
+        websocketClient.connect("admin", MD5.toMD5("admin"));
+        
 
     }
 

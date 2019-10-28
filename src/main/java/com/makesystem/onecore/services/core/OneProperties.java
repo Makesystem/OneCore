@@ -35,10 +35,7 @@ public final class OneProperties implements ServletContextListener {
     public static final SystemProperty<String> DATABASE__PASSWORD = new SystemProperty("one__db__password", "unknow");
     public static final SystemProperty<ConnectionType> DATABASE__TYPE = new SystemProperty("one__db__type", ConnectionType.MONGO);
     public static final SystemProperty<Integer> DATABASE__POOL_SIZE = new SystemProperty("one__db__pool_size", 100);
-    public static final SystemProperty<String> SERVER_NAME = new SystemProperty("one__server_name", "no_name");
-    public static final SystemProperty<String> INNER_HTTP__HOST = new SystemProperty("one__inner_http__host", "127.0.0.1");
-    public static final SystemProperty<Integer> INNER_HTTP__PORT = new SystemProperty("one__inner_http__port", 80);
-    public static final SystemProperty<Integer> INNER_HTTP__SECURE_PORT = new SystemProperty("one__inner_http__secure_port", 443);
+    public static final SystemProperty<String> SERVER_NAME = new SystemProperty("one__server_name", "no_name");    
     public static final SystemProperty<Integer> WEBSOCKET_SERVER__TIMEOUT = new SystemProperty("one__websocket_server__timeout", WebClient.SESSION__DEFAULT_TIMEOUT);
 
     public OneProperties() {
@@ -58,42 +55,7 @@ public final class OneProperties implements ServletContextListener {
     @SuppressWarnings("CallToPrintStackTrace")
     private static void loadSystemProperties() {
 
-        final boolean hasHttpHost = System.getProperty(INNER_HTTP__HOST.getProperty()) != null;
-        final boolean hasHttpPort = System.getProperty(INNER_HTTP__PORT.getProperty()) != null;
-        final boolean hasHttpSecurePort = System.getProperty(INNER_HTTP__SECURE_PORT.getProperty()) != null;
         final boolean hasServerName = System.getProperty(SERVER_NAME.getProperty()) != null;
-
-        if (!hasHttpPort || !hasHttpSecurePort) {
-
-            try {
-
-                final XmlDocument document = DomainXml.getDocument();
-
-                final XmlElement httpListener1 = DomainXml.getHttpListener1(document);
-                final String httpListener1_port = httpListener1.getAttribute(DomainXml.Attributes.PORT);
-
-                final XmlElement httpListener2 = DomainXml.getHttpListener1(document);
-                final String httpListener2_port = httpListener2.getAttribute(DomainXml.Attributes.PORT);
-
-                if (ObjectHelper.isNotNull(httpListener1_port)
-                        && ObjectHelper.isNotEmpty(httpListener1_port)) {
-                    final Integer value = Integer.valueOf(httpListener1_port);
-                    INNER_HTTP__PORT.setValue(value);
-                    INNER_HTTP__SECURE_PORT.setValue(value);
-                }
-
-                if (ObjectHelper.isNotNull(httpListener2_port)
-                        && ObjectHelper.isNotEmpty(httpListener2_port)) {
-                    final Integer value = Integer.valueOf(httpListener2_port);
-                    INNER_HTTP__SECURE_PORT.setValue(value);
-                }
-
-            } catch (@SuppressWarnings("UseSpecificCatch") final Throwable ignore) {
-                // Ignore
-                ignore.printStackTrace();
-            }
-
-        }
 
         if (!hasServerName) {
             try {
@@ -105,19 +67,7 @@ public final class OneProperties implements ServletContextListener {
             }
         }
 
-        if (!hasHttpHost) {
-            final IpAddress ipAddress = new IpAddressJRE();
-
-            try {                
-                INNER_HTTP__HOST.setValue(ipAddress.getLocal());
-                callUpdateDomainXml();
-            } catch (IOException throwable) {                
-                throwable.printStackTrace();
-            }
-
-        } else {
-            callUpdateDomainXml();
-        }
+        callUpdateDomainXml();        
 
     }
 
@@ -159,9 +109,6 @@ public final class OneProperties implements ServletContextListener {
         writeSystemProperty(domain, OneProperties.DATABASE__TYPE);
         writeSystemProperty(domain, OneProperties.DATABASE__POOL_SIZE);
         writeSystemProperty(domain, OneProperties.SERVER_NAME);
-        writeSystemProperty(domain, OneProperties.INNER_HTTP__HOST);
-        writeSystemProperty(domain, OneProperties.INNER_HTTP__PORT);
-        writeSystemProperty(domain, OneProperties.INNER_HTTP__SECURE_PORT);
         writeSystemProperty(domain, OneProperties.WEBSOCKET_SERVER__TIMEOUT);
 
         // /////////////////////////////////////////////////////////////////////

@@ -5,6 +5,8 @@
  */
 package com.makesystem.onecore.services.websocket;
 
+import com.makesystem.mwc.websocket.server.DefaultEndpointConfig;
+import com.makesystem.mwc.websocket.server.RequestData;
 import com.makesystem.mwc.websocket.server.SessionData;
 import com.makesystem.mwi.websocket.CloseReason;
 import com.makesystem.onecore.services.core.OneProperties;
@@ -30,14 +32,13 @@ import com.mongodb.MongoClientException;
 import com.mongodb.MongoTimeoutException;
 import java.sql.SQLException;
 import javax.websocket.EndpointConfig;
-import javax.websocket.Session;
 import javax.websocket.server.ServerEndpoint;
 
 /**
  *
  * @author Richeli.vargas
  */
-@ServerEndpoint(Access.PATH)
+@ServerEndpoint(value = Access.PATH, configurator = DefaultEndpointConfig.class)
 public class OneServer extends AbstractServerSocket {
 
     public static interface Tags {
@@ -62,6 +63,8 @@ public class OneServer extends AbstractServerSocket {
         userService = new UserService();
         userActionService = new UserActionService();
         consumer = new OneConsumer();
+
+        System.out.println("------------------------------ Creating... ----------------------------------");
     }
 
     @Override
@@ -74,30 +77,11 @@ public class OneServer extends AbstractServerSocket {
         OneProperties.WEBSOCKET_SERVER__TIMEOUT.setValue(timeout);
     }
 
-    @Override
-    protected String getInnerHost() {
-        return OneProperties.INNER_HTTP__HOST.getValue();
-    }
-
-    @Override
-    protected Integer getInnerPort() {
-        return OneProperties.INNER_HTTP__PORT.getValue();
-    }
-
-    @Override
-    protected String getClientHost(final Session session) {
-        return session.getPathParameters().get(Access.Attributes.PUBLIC_IP);
-    }
-
-    @Override
-    protected Integer getClientPort(final Session session) {
-        return null;
-    }
 
     @Override
     protected final void onStartUp() {
         try {
-            connectedUserService.delete(OneProperties.INNER_HTTP__HOST.getValue());
+            connectedUserService.delete(OneProperties.SERVER_NAME.getValue());
         } catch (final Throwable throwable) {
             onError(null, new TaggedException(Tags.ON_STARTUP, throwable));
         }
@@ -108,17 +92,20 @@ public class OneServer extends AbstractServerSocket {
 
         final long startAction = System.currentTimeMillis();
 
+        // Request data from ServletRequest
+        final RequestData requestData = sessionData.getRequestData();
+
         // Client        
         final String loginOrEmail = sessionData.getParameters().getString(Access.Attributes.LOGIN);
         final String password = sessionData.getParameters().getString(Access.Attributes.PASSWORD);
-        final String customer = sessionData.getParameters().getString(Access.Attributes.CUSTOMER);
-        final String localIp = sessionData.getParameters().getString(Access.Attributes.LOCAL_IP);
-        final String publicIp = sessionData.getParameters().getString(Access.Attributes.PUBLIC_IP);
+        final String customer = null;
+        final String localIp = requestData.getRemoteHost();
+        final String publicIp = requestData.getRemoteHost();
 
         //Server
         final String serverName = OneProperties.SERVER_NAME.getValue();
-        final String httpHost = OneProperties.INNER_HTTP__HOST.getValue();
-        final Integer httpPort = OneProperties.INNER_HTTP__PORT.getValue();
+        final String httpHost = requestData.getServerHost();
+        final Integer httpPort = requestData.getServerPort();
 
         try {
 
@@ -234,7 +221,7 @@ public class OneServer extends AbstractServerSocket {
 
                     // Create a Action to register on database
                     final AsyncCallback<String> callback = new AsyncCallback<String>() {
-                        
+
                         @Override
                         public void onSuccess(final String response) {
                             sendResponse(MessageType.RESPONSE_SUCCESS, response);
@@ -289,7 +276,7 @@ public class OneServer extends AbstractServerSocket {
             logError.setWhen(System.currentTimeMillis());
 
             if (sessionData != null) {
-                logError.setCustomer(sessionData.getParameters().getString(Access.Attributes.CUSTOMER));
+                //logError.setCustomer(sessionData.getParameters().getString(Access.Attributes.CUSTOMER));
 
                 final OneUser oneUser = (OneUser) sessionData.getData();
                 if (oneUser != null

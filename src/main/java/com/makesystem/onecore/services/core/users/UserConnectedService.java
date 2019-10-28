@@ -48,10 +48,10 @@ public class UserConnectedService extends OneService {
         });
     }
 
-    public void delete(final String serverHost) throws Throwable {
+    public void delete(final String serverName) throws Throwable {
         run(DatabaseType.ONE, (final MongoConnection mongoConnection) -> {
             mongoConnection.setOperationAlias(OperationAlias.USER_CONNECTED__DELETE);
-            mongoConnection.getQuery().deleteMany(UserConnected.class, new Document(Struct.USERS_CONNECTED__SERVER_HOST, serverHost));
+            mongoConnection.getQuery().deleteMany(UserConnected.class, new Document(Struct.USERS_CONNECTED__SERVER_NAME, serverName));
             return Void;
         });
     }
