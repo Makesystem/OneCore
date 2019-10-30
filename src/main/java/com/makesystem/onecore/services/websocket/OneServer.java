@@ -6,20 +6,18 @@
 package com.makesystem.onecore.services.websocket;
 
 import com.makesystem.mwc.websocket.server.DefaultEndpointConfig;
-import com.makesystem.mwc.websocket.server.RequestData;
+
 import com.makesystem.mwc.websocket.server.SessionData;
+import com.makesystem.mwi.exceptions.RequestException;
 import com.makesystem.mwi.websocket.CloseReason;
 import com.makesystem.onecore.services.core.OneProperties;
 import com.makesystem.onecore.services.core.OneUser;
-import com.makesystem.onecore.services.core.users.UserConnectedService;
+import com.makesystem.onecore.services.core.access.LoginCtrl;
 import com.makesystem.onecore.services.core.users.UserActionService;
-import com.makesystem.onecore.services.core.users.UserService;
 import com.makesystem.oneentity.core.types.Action;
 import com.makesystem.oneentity.core.types.OneCloseCodes;
 import com.makesystem.oneentity.core.types.ServiceType;
 import com.makesystem.oneentity.services.OneServices.Access;
-import com.makesystem.oneentity.services.users.storage.UserConnected;
-import com.makesystem.oneentity.services.users.storage.User;
 import com.makesystem.pidgey.interfaces.AsyncCallback;
 import com.makesystem.pidgey.json.ObjectMapperJRE;
 import com.makesystem.pidgey.lang.ThrowableHelper;
@@ -51,20 +49,16 @@ public class OneServer extends AbstractServerSocket {
         public static final String NO_THROWABLE = "NO_THROWABLE";
     }
 
-    private final UserConnectedService connectedUserService;
-    private final UserService userService;
+    private final LoginCtrl loginCtrl;
     private final UserActionService userActionService;
 
     private final OneConsumer consumer;
 
     public OneServer() {
         super(2, 2, 20, 2);
-        connectedUserService = new UserConnectedService();
-        userService = new UserService();
+        loginCtrl = new LoginCtrl();
         userActionService = new UserActionService();
         consumer = new OneConsumer();
-
-        System.out.println("------------------------------ Creating... ----------------------------------");
     }
 
     @Override
@@ -77,11 +71,10 @@ public class OneServer extends AbstractServerSocket {
         OneProperties.WEBSOCKET_SERVER__TIMEOUT.setValue(timeout);
     }
 
-
     @Override
     protected final void onStartUp() {
         try {
-            connectedUserService.delete(OneProperties.SERVER_NAME.getValue());
+            loginCtrl.doStartUp();
         } catch (final Throwable throwable) {
             onError(null, new TaggedException(Tags.ON_STARTUP, throwable));
         }
@@ -90,80 +83,23 @@ public class OneServer extends AbstractServerSocket {
     @Override
     protected void onOpen(final SessionData sessionData, final EndpointConfig config) {
 
-        final long startAction = System.currentTimeMillis();
-
-        // Request data from ServletRequest
-        final RequestData requestData = sessionData.getRequestData();
-
-        // Client        
-        final String loginOrEmail = sessionData.getParameters().getString(Access.Attributes.LOGIN);
-        final String password = sessionData.getParameters().getString(Access.Attributes.PASSWORD);
-        final String customer = null;
-        final String localIp = requestData.getRemoteHost();
-        final String publicIp = requestData.getRemoteHost();
-
-        //Server
-        final String serverName = OneProperties.SERVER_NAME.getValue();
-        final String httpHost = requestData.getServerHost();
-        final Integer httpPort = requestData.getServerPort();
-
         try {
 
-            // Find user by ((login or e-mail) and password)
-            final User user = userService.find(loginOrEmail, password);
+            // /////////////////////////////////////////////////////////////////
+            // Call login rules
+            // /////////////////////////////////////////////////////////////////
+            final OneUser oneUser = loginCtrl.doLogin(sessionData);
 
-            // Create a message to send for the client
+            // /////////////////////////////////////////////////////////////////
+            // Send the user data to client
+            // /////////////////////////////////////////////////////////////////
             final Message message = new Message();
             message.setService(ServiceType.ONE.toString());
             message.setAction(Action.ONE__LOGIN.toString());
+            message.setType(MessageType.RESPONSE_SUCCESS);
+            message.setData(ObjectMapperJRE.write(oneUser.getUser()));
 
-            if (user == null) {
-
-                // 
-                final int code = OneCloseCodes.LOGIN_OR_PASSWORD_IS_INVALID.getCode();
-                final CloseReason closeReason = buildReason(code, "Login or e-mail is wrong");
-
-                // User not found
-                sessionData.close(closeReason);
-
-            } else {
-
-                final OneUser oneUser = new OneUser(user, localIp, publicIp);
-
-                // /////////////////////////////////////////////////////////////
-                // Create connection register
-                // /////////////////////////////////////////////////////////////
-                final UserConnected connectedUser = new UserConnected();
-                connectedUser.setSessionId(sessionData.getSession().getId());
-                connectedUser.setUser(user.getId());
-                connectedUser.setCustomer(null);
-                connectedUser.setPublicIp(publicIp);
-                connectedUser.setLocalIp(localIp);
-                connectedUser.setServerName(serverName);
-                connectedUser.setServerHost(httpHost);
-                connectedUser.setServerPort(httpPort.toString());
-                connectedUser.setService(ServiceType.ONE);
-                connectedUser.setInsertionDate(startAction);
-
-                oneUser.getConnections().add(connectedUserService.insert(connectedUser));
-
-                // /////////////////////////////////////////////////////////////
-                // Set session User
-                // /////////////////////////////////////////////////////////////
-                sessionData.setData(oneUser);
-
-                // /////////////////////////////////////////////////////////////
-                // Send the user data to client
-                // /////////////////////////////////////////////////////////////
-                message.setType(MessageType.RESPONSE_SUCCESS);
-                message.setData(ObjectMapperJRE.write(user));
-                sessionData.sendObject(message);
-
-                // /////////////////////////////////////////////////////////////
-                // Save login action
-                // /////////////////////////////////////////////////////////////
-                userActionService.insertLoginAction(oneUser, startAction);
-            }
+            sessionData.sendObject(message);
 
         } catch (final Throwable throwable) {
 
@@ -172,40 +108,19 @@ public class OneServer extends AbstractServerSocket {
             final CloseReason reason = buildReason(reasonCode, reasonPhrase);
             sessionData.close(reason);
 
-            throw new TaggedException(Tags.ON_OPEN, throwable);
+            if (!(throwable instanceof RequestException)) {
+                throw new TaggedException(Tags.ON_OPEN, throwable);
+            }
+
         }
     }
 
     @Override
     protected void onClose(final SessionData sessionData, final CloseReason closeReason) {
-
-        final OneUser user = sessionData.getData();
-        if (user != null) {
-
-            final long startAction = System.currentTimeMillis();
-
-            // /////////////////////////////////////////////////////////////////
-            // Remove connection register
-            // /////////////////////////////////////////////////////////////////
-            final UserConnected connection = user.getConnection(sessionData.getSession().getId());
-            if (connection != null) {
-                try {
-                    connectedUserService.delete(connection);
-                } catch (final Throwable throwable) {
-                    onError(sessionData, new TaggedException(Tags.ON_CLOSE, throwable));
-                } finally {
-                    user.remove(connection);
-                }
-            }
-
-            try {
-                // /////////////////////////////////////////////////////////////
-                // Save login action
-                // /////////////////////////////////////////////////////////////
-                userActionService.insertLoginAction(user, startAction);
-            } catch (final Throwable throwable) {
-                onError(sessionData, new TaggedException(Tags.ON_CLOSE, throwable));
-            }
+        try {
+            loginCtrl.doLogoff(sessionData, closeReason);
+        } catch (final Throwable throwable) {
+            onError(sessionData, new TaggedException(Tags.ON_CLOSE, throwable));
         }
     }
 
@@ -338,7 +253,8 @@ public class OneServer extends AbstractServerSocket {
 
     @Override
     protected Message decodeMessage(final String string) throws Throwable {
-        return ObjectMapperJRE.read(string, Message.class);
+        return ObjectMapperJRE.read(string, Message.class
+        );
     }
 
     @Override
@@ -352,7 +268,9 @@ public class OneServer extends AbstractServerSocket {
             return OneCloseCodes.UNKNOW_ERROR.getCode();
         }
 
-        if (throwable instanceof MongoTimeoutException) {
+        if (throwable instanceof RequestException) {
+            return ((RequestException) throwable).getStatusCode();
+        } else if (throwable instanceof MongoTimeoutException) {
             return OneCloseCodes.DATABASE_IS_NOT_ACCESSIBLE.getCode();
         } else if (throwable instanceof MongoClientException) {
             return OneCloseCodes.UNKNOW_DATABASE_ERROR.getCode();
