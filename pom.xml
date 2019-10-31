@@ -46,7 +46,7 @@
         <dependency>
             <groupId>com.github.Makesystem</groupId>
             <artifactId>XeonCore</artifactId>
-            <version>2b67aff4f1</version>
+            <version>87201eda18</version>
         </dependency>
         
         <dependency>

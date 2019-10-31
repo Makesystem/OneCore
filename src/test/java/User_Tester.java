@@ -3,6 +3,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.makesystem.onecore.services.core.OneProperties;
 import com.makesystem.onecore.services.core.users.UserService;
 import com.makesystem.oneentity.services.users.storage.User;
+import com.makesystem.pidgey.console.Console;
+import com.makesystem.pidgey.console.ConsoleColor;
 import com.makesystem.pidgey.security.MD5;
 import com.makesystem.pidgey.tester.AbstractTester;
 import com.makesystem.xeonentity.core.types.UserType;
@@ -32,7 +34,7 @@ public class User_Tester extends AbstractTester {
 
     @Override
     protected void execution() {
-        insertMany();
+        find();
     }
 
     void insertOne() {
@@ -77,12 +79,25 @@ public class User_Tester extends AbstractTester {
         }
         final UserService userService = new UserService();
         try {
-            userService.insert(users);
+           // userService.insert(users);
         } catch (Throwable ex) {
             ex.printStackTrace();
         }
 
     }
+    
+     void find() {
+
+        final UserService userService = new UserService();
+        try {
+            final Collection<User> users = userService.find(".6@makesystem.com");
+            Console.log("Found users: {cc}{i}", ConsoleColor.BLUE, users.size());
+        } catch (Throwable ex) {
+            ex.printStackTrace();
+        }
+
+    }
+
 
     @Override
     protected void posExecution() {

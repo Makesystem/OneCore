@@ -18,7 +18,11 @@ public class OneService extends AbstractService {
     protected static interface OperationAlias {
         // User
         public static final String USER__FIND_BY__LOGIN_AND_PASSWORD    = "USER__FIND_BY__LOGIN_AND_PASSWORD";
+        public static final String USER__IS_DOCUMENT_AVALIABLE          = "USER__IS_DOCUMENT_AVALIABLE";
+        public static final String USER__IS_LOGIN_AVALIABLE             = "USER__IS_LOGIN_AVALIABLE";
+        public static final String USER__IS_EMAIL_AVALIABLE             = "USER__IS_EMAIL_AVALIABLE";
         public static final String USER__INSERT                         = "USER__INSERT";
+        public static final String USER__FIND                           = "USER__FIND";
         // Connected User
         public static final String USER_CONNECTED__INSERT               = "USER_CONNECTED__INSERT";
         public static final String USER_CONNECTED__DELETE               = "USER_CONNECTED__DELETE";
@@ -28,6 +32,10 @@ public class OneService extends AbstractService {
         // User Action
         public static final String USER_ACTION__INSERT                  = "USER_ACTION__INSERT";
         public static final String USER_ACTION__UPDATE                  = "USER_ACTION__UPDATE";
+        // User
+        public static final String CUSTOMER__IS_DOCUMENT_AVALIABLE      = "CUSTOMER__IS_DOCUMENT_AVALIABLE";
+        public static final String CUSTOMER__INSERT                     = "CUSTOMER__INSERT";
+        public static final String CUSTOMER__FIND                       = "CUSTOMER__FIND";
     }
     
     public OneService() {
