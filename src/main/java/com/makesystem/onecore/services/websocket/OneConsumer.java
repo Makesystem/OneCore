@@ -6,8 +6,11 @@
 package com.makesystem.onecore.services.websocket;
 
 import com.makesystem.mwc.websocket.server.SessionData;
+import com.makesystem.onecore.services.core.OneRequestService;
+import com.makesystem.onecore.services.core.OneUser;
 import com.makesystem.onecore.services.core.users.UserConnectedService;
 import com.makesystem.oneentity.core.types.Action;
+import com.makesystem.oneentity.services.request.runnable.RequestData;
 import com.makesystem.pidgey.interfaces.AsyncCallback;
 import com.makesystem.pidgey.json.ObjectMapperJRE;
 import com.makesystem.pidgey.lang.NumberHelper;
@@ -30,16 +33,24 @@ public class OneConsumer {
         try {
 
             switch (Action.valueOf(message.getAction())) {
+                case ONE__REQUEST_SERVICE:
+                    one__request_service(sessionData, message.getData(), callback);
+                    break;
                 case ONE__ECHO:
                     one__echo(message.getData(), callback);
+                    break;
                 case ONE__CURRENT_TIMESTAMP:
                     one__current_timestamp(message.getData(), callback);
+                    break;
                 case MANAGEMENT__SERVER_AVERAGE:
                     management__server_average(message.getData(), callback);
+                    break;
                 case MANAGEMENT__DATABASE_AVERAGE:
                     management__database_average(message.getData(), callback);
+                    break;
                 case MANAGEMENT__ALIAS_AVERAGE:
                     management__alias_average(message.getData(), callback);
+                    break;
                 default:
                     throw new IllegalArgumentException("Unknow action: " + message.getAction());
             }
@@ -50,6 +61,20 @@ public class OneConsumer {
     }
 
     /**
+     * 
+     * @param <D>
+     * @param sessionData
+     * @param data
+     * @param callback 
+     * @throws Throwable 
+     */
+    protected <D> void one__request_service(final SessionData sessionData, final D data, final AsyncCallback<String> callback) throws Throwable {        
+        final OneUser user = sessionData.getData();
+        final RequestData request = ObjectMapperJRE.read(data.toString(), RequestData.class);        
+        OneRequestService.getInstance().request(user, request, callback);
+    }
+    
+    /**
      *
      * @param <D>
      * @param data
@@ -59,17 +84,35 @@ public class OneConsumer {
         callback.onSuccess(String.valueOf(data));
     }
 
+    /**
+     * 
+     * @param <D>
+     * @param data
+     * @param callback 
+     */
     protected <D> void one__current_timestamp(final D data, final AsyncCallback<String> callback) {
         callback.onSuccess(String.valueOf(System.currentTimeMillis()));
     }
 
+    /**
+     * 
+     * @param <D>
+     * @param data
+     * @param callback
+     * @throws Throwable 
+     */
     protected <D> void one__connected_user__count(final D data, final AsyncCallback<String> callback) throws Throwable {
-
-        final UserConnectedService service = new UserConnectedService();
-
+        final UserConnectedService service = UserConnectedService.getInstance();
         callback.onSuccess(ObjectMapperJRE.write(service.count()));
     }
 
+    /**
+     * 
+     * @param <D>
+     * @param data
+     * @param callback
+     * @throws Throwable 
+     */
     protected <D> void management__server_average(final D data, final AsyncCallback<String> callback) throws Throwable {
 
         final long openAtMax = System.currentTimeMillis();

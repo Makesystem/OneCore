@@ -31,10 +31,16 @@ public class LoginCtrl {
     private final UserService userService;
     private final UserActionService userActionService;
 
-    public LoginCtrl() {
-        this.connectedUserService = new UserConnectedService();
-        this.userService = new UserService();
-        this.userActionService = new UserActionService();
+    private static final LoginCtrl INSTANCE = new LoginCtrl();
+    
+    public static LoginCtrl getInstance(){
+        return INSTANCE;
+    }
+    
+    private LoginCtrl() {
+        this.connectedUserService = UserConnectedService.getInstance();
+        this.userService = UserService.getInstance();
+        this.userActionService = UserActionService.getInstance();
     }
     
     public void doStartUp() throws Throwable {
@@ -74,9 +80,6 @@ public class LoginCtrl {
                     "Login or e-mail is wrong");
         }
 
-        final OneUser oneUser = new OneUser(user, localIp, publicIp);
-
-        
         // /////////////////////////////////////////////////////////////
         // Create connection register
         // /////////////////////////////////////////////////////////////
@@ -89,11 +92,16 @@ public class LoginCtrl {
         connectedUser.setServerName(serverName);
         connectedUser.setServerHost(httpHost);
         connectedUser.setServerPort(httpPort.toString());
-        connectedUser.setService(ServiceType.ONE);
+        connectedUser.setService(service);
         connectedUser.setInsertionDate(startAction);
 
-        oneUser.getConnections().add(connectedUserService.insert(connectedUser));
+        final UserConnected connection = connectedUserService.insert(connectedUser);
 
+        // /////////////////////////////////////////////////////////////
+        // Create OneUser data
+        // /////////////////////////////////////////////////////////////        
+        final OneUser oneUser = new OneUser(user, connection);
+        
         // /////////////////////////////////////////////////////////////
         // Set session User
         // /////////////////////////////////////////////////////////////
@@ -123,7 +131,7 @@ public class LoginCtrl {
         // /////////////////////////////////////////////////////////////////////
         // Remove connection register
         // /////////////////////////////////////////////////////////////////////
-        final UserConnected connection = user.getConnection(sessionData.getSession().getId());
+        final UserConnected connection = user.getConnection();
 
         try {
 
@@ -133,8 +141,6 @@ public class LoginCtrl {
             connectedUserService.delete(connection);
 
         } finally {
-
-            user.remove(connection);
 
             // /////////////////////////////////////////////////////////////
             // Save login action

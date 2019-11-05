@@ -25,6 +25,14 @@ import org.bson.conversions.Bson;
  */
 public class UserService extends OneService {
 
+    private static final UserService INSTANCE = new UserService();
+    
+    public static UserService getInstance(){
+        return INSTANCE;
+    }
+    
+    private UserService(){}
+    
     public void insert(final User user) throws Throwable {
         run(DatabaseType.ONE, (final MongoConnection mongoConnection) -> {
             mongoConnection.setOperationAlias(OperationAlias.USER__INSERT);

@@ -49,7 +49,7 @@ public class User_Tester extends AbstractTester {
         user.setPassword(MD5.toMD5("admin"));
         user.setType(UserType.MAKESYSTEM);
 
-        final UserService userService = new UserService();
+        final UserService userService = UserService.getInstance();
         try {
             userService.insert(user);
             System.out.println("AQUI");
@@ -77,7 +77,7 @@ public class User_Tester extends AbstractTester {
 
             users.add(user);
         }
-        final UserService userService = new UserService();
+        final UserService userService = UserService.getInstance();
         try {
            // userService.insert(users);
         } catch (Throwable ex) {
@@ -88,7 +88,7 @@ public class User_Tester extends AbstractTester {
     
      void find() {
 
-        final UserService userService = new UserService();
+        final UserService userService = UserService.getInstance();
         try {
             final Collection<User> users = userService.find(".6@makesystem.com");
             Console.log("Found users: {cc}{i}", ConsoleColor.BLUE, users.size());

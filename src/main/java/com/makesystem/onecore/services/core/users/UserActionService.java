@@ -22,6 +22,14 @@ import com.makesystem.pidgey.lang.ThrowableHelper;
  */
 public class UserActionService extends OneService {
 
+    private static final UserActionService INSTANCE = new UserActionService();
+    
+    public static UserActionService getInstance(){
+        return INSTANCE;
+    }
+    
+    private UserActionService(){}
+    
     public void insertLoginAction(final OneUser user, final long startAction) throws Throwable {
         final UserAction userAction = new UserAction();
         userAction.setAction(Action.ONE__LOGIN);
