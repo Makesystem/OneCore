@@ -12,6 +12,7 @@ import com.makesystem.onecore.services.core.OneService;
 import com.makesystem.oneentity.core.nosql.Struct;
 import com.makesystem.oneentity.core.types.DatabaseType;
 import com.makesystem.oneentity.services.users.storage.User;
+import com.makesystem.pidgey.lang.StringHelper;
 import com.makesystem.xeonentity.core.types.UserType;
 import com.mongodb.client.model.FindOneAndUpdateOptions;
 import java.util.Collection;
@@ -26,13 +27,14 @@ import org.bson.conversions.Bson;
 public class UserService extends OneService {
 
     private static final UserService INSTANCE = new UserService();
-    
-    public static UserService getInstance(){
+
+    public static UserService getInstance() {
         return INSTANCE;
     }
-    
-    private UserService(){}
-    
+
+    private UserService() {
+    }
+
     public void insert(final User user) throws Throwable {
         run(DatabaseType.ONE, (final MongoConnection mongoConnection) -> {
             mongoConnection.setOperationAlias(OperationAlias.USER__INSERT);
@@ -201,19 +203,23 @@ public class UserService extends OneService {
             // ///////////////////////////////////////////////////////////////////////////
             // Create the query
             // ///////////////////////////////////////////////////////////////////////////
-            final MongoQueryBuilder queryBuilder = new MongoQueryBuilder();
-
-            final Bson document = queryBuilder.contains(Struct.USERS__DOCUMENT, text);
-            final Bson firstName = queryBuilder.contains(Struct.USERS__FIRST_NAME, text);
-            final Bson lastName = queryBuilder.contains(Struct.USERS__LAST_NAME, text);
-            final Bson login = queryBuilder.contains(Struct.USERS__LOGIN, text);
-            final Bson email = queryBuilder.contains(Struct.USERS__EMAIL, text);
-
-            final Bson filter = queryBuilder.or(document, firstName, lastName, login, email);
-
             final FindOptions findOptions = new FindOptions();
-            findOptions.setFilter(filter);
 
+            if (!StringHelper.isBlank(text)) {
+                
+                final MongoQueryBuilder queryBuilder = new MongoQueryBuilder();
+
+                final Bson document = queryBuilder.contains(Struct.USERS__DOCUMENT, text);
+                final Bson firstName = queryBuilder.contains(Struct.USERS__FIRST_NAME, text);
+                final Bson lastName = queryBuilder.contains(Struct.USERS__LAST_NAME, text);
+                final Bson login = queryBuilder.contains(Struct.USERS__LOGIN, text);
+                final Bson email = queryBuilder.contains(Struct.USERS__EMAIL, text);
+
+                final Bson filter = queryBuilder.or(document, firstName, lastName, login, email);
+
+                findOptions.setFilter(filter);
+                
+            }
             // ///////////////////////////////////////////////////////////////////////////
             // Execute
             // ///////////////////////////////////////////////////////////////////////////                    

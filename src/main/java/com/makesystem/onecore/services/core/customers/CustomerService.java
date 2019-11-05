@@ -12,6 +12,7 @@ import com.makesystem.onecore.services.core.OneService;
 import com.makesystem.oneentity.core.nosql.Struct;
 import com.makesystem.oneentity.core.types.DatabaseType;
 import com.makesystem.oneentity.services.customers.storage.Customer;
+import com.makesystem.pidgey.lang.StringHelper;
 import com.mongodb.client.model.FindOneAndUpdateOptions;
 import java.util.Collection;
 import java.util.Objects;
@@ -32,7 +33,7 @@ public class CustomerService extends OneService {
             // Create the query
             // /////////////////////////////////////////////////////////////////
             final MongoQueryBuilder queryBuilder = new MongoQueryBuilder();
-            
+
             // /////////////////////////////////////////////////////////////////
             // Create the filter
             // /////////////////////////////////////////////////////////////////
@@ -61,16 +62,16 @@ public class CustomerService extends OneService {
                     .findOneAndUpdate(Customer.class, filter, setOnInsert, options);
 
             // New customer was has been entered
-            if(customerAlreadyRegistered == null){
-                return Void;    
+            if (customerAlreadyRegistered == null) {
+                return Void;
             }
-            
+
             if (Objects.equals(customer.getDocument(), customerAlreadyRegistered.getDocument())) {
                 throw new IllegalArgumentException("Document '" + customer.getDocument() + "' is already in use");
             }
 
             return Void;
-            
+
         });
     }
 
@@ -82,7 +83,7 @@ public class CustomerService extends OneService {
             // Create the query
             // /////////////////////////////////////////////////////////////////
             final MongoQueryBuilder queryBuilder = new MongoQueryBuilder();
-            
+
             // /////////////////////////////////////////////////////////////////
             // Create the filter
             // /////////////////////////////////////////////////////////////////
@@ -102,17 +103,20 @@ public class CustomerService extends OneService {
             // ///////////////////////////////////////////////////////////////////////////
             // Create the query
             // ///////////////////////////////////////////////////////////////////////////
-            final MongoQueryBuilder queryBuilder = new MongoQueryBuilder();
-
-            final Bson document = queryBuilder.contains(Struct.CUSTOMERS__DOCUMENT, text);
-            final Bson corporateName = queryBuilder.contains(Struct.CUSTOMERS__CORPORATE_NAME, text);
-            final Bson fancyName = queryBuilder.contains(Struct.CUSTOMERS__FANCY_NAME, text);
-            
-            final Bson filter = queryBuilder.or(document, corporateName, fancyName);
-
             final FindOptions findOptions = new FindOptions();
-            findOptions.setFilter(filter);
 
+            if (!StringHelper.isBlank(text)) {
+                
+                final MongoQueryBuilder queryBuilder = new MongoQueryBuilder();
+
+                final Bson document = queryBuilder.contains(Struct.CUSTOMERS__DOCUMENT, text);
+                final Bson corporateName = queryBuilder.contains(Struct.CUSTOMERS__CORPORATE_NAME, text);
+                final Bson fancyName = queryBuilder.contains(Struct.CUSTOMERS__FANCY_NAME, text);
+
+                final Bson filter = queryBuilder.or(document, corporateName, fancyName);
+
+                findOptions.setFilter(filter);
+            }
             // ///////////////////////////////////////////////////////////////////////////
             // Execute
             // ///////////////////////////////////////////////////////////////////////////                    
