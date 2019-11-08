@@ -35,8 +35,9 @@ public class OneRequestService {
                 requestOneService(user, request, callback);
                 break;
             default:
+                throw new IllegalArgumentException("Service not supported: " + user.getService());
                 // Do a post request
-                break;
+                //break;
         }
 
     }
@@ -61,7 +62,8 @@ public class OneRequestService {
                 final String filter = request.getParameters().get(OneServices.Users.Find.Attributes.FILTER);
                 final UserService service = UserService.getInstance();
                 final Collection<User> found = service.find(filter);
-                callback.onSuccess(ObjectMapperJRE.write(found));
+                final String response = ObjectMapperJRE.write(found);
+                callback.onSuccess(response);
             }
             break;
 

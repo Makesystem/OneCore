@@ -85,7 +85,7 @@ public class UserService extends OneService {
 
             // New user was has been entered
             if (userAlreadyRegistered == null) {
-                return Void;
+                return;
             }
 
             if (Objects.equals(user.getLogin(), userAlreadyRegistered.getLogin())) {
@@ -99,8 +99,6 @@ public class UserService extends OneService {
             if (Objects.equals(user.getDocument(), userAlreadyRegistered.getDocument())) {
                 throw new IllegalArgumentException("Document '" + user.getDocument() + "' is already in use");
             }
-
-            return Void;
 
         });
     }

@@ -94,7 +94,6 @@ public class OneServer extends AbstractServerSocket {
             // Send the user data to client
             // /////////////////////////////////////////////////////////////////
             final Message message = new Message();
-            message.setService(oneUser.getService().toString());
             message.setAction(Action.ONE__LOGIN.toString());
             message.setType(MessageType.RESPONSE_SUCCESS);
             message.setData(ObjectMapperJRE.write(oneUser.getUser()));
@@ -152,7 +151,6 @@ public class OneServer extends AbstractServerSocket {
                             // Create a Message to send to the client
                             final Message response = new Message(message.getId());
                             response.setAction(message.getAction());
-                            response.setService(message.getService());
                             response.setType(messageType);
                             response.setData(data);
                             sessionData.sendObject(response);
@@ -201,7 +199,7 @@ public class OneServer extends AbstractServerSocket {
                 }
             }
 
-            logError.setService(ServiceType.ONE);
+            logError.setService(ServiceType.ONE.toString());
 
             final String message;
             final String stackTrace;

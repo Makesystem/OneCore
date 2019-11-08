@@ -63,14 +63,12 @@ public class CustomerService extends OneService {
 
             // New customer was has been entered
             if (customerAlreadyRegistered == null) {
-                return Void;
+                return;
             }
 
             if (Objects.equals(customer.getDocument(), customerAlreadyRegistered.getDocument())) {
                 throw new IllegalArgumentException("Document '" + customer.getDocument() + "' is already in use");
             }
-
-            return Void;
 
         });
     }

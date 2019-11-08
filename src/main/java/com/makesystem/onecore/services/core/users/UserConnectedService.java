@@ -49,7 +49,6 @@ public class UserConnectedService extends OneService {
         run(DatabaseType.ONE, (final MongoConnection mongoConnection) -> {
             mongoConnection.setOperationAlias(OperationAlias.USER_CONNECTED__DELETE);
             mongoConnection.getQuery().delete(user);
-            return Void;
         });
     }
 
@@ -62,7 +61,6 @@ public class UserConnectedService extends OneService {
         run(DatabaseType.ONE, (final MongoConnection mongoConnection) -> {
             mongoConnection.setOperationAlias(OperationAlias.USER_CONNECTED__DELETE);
             mongoConnection.getQuery().deleteMany(UserConnected.class, new Document(Struct.USERS_CONNECTED__USER, userId));
-            return Void;
         });
     }
 
@@ -75,7 +73,6 @@ public class UserConnectedService extends OneService {
         run(DatabaseType.ONE, (final MongoConnection mongoConnection) -> {
             mongoConnection.setOperationAlias(OperationAlias.USER_CONNECTED__DELETE);
             mongoConnection.getQuery().deleteMany(UserConnected.class, new Document(Struct.USERS_CONNECTED__SERVER_NAME, serverName));
-            return Void;
         });
     }
 
@@ -83,7 +80,6 @@ public class UserConnectedService extends OneService {
         run(DatabaseType.ONE, (final MongoConnection mongoConnection) -> {
             mongoConnection.setOperationAlias(OperationAlias.USER_CONNECTED__CLEAR);
             mongoConnection.getMongoDatabase(Struct.USERS_CONNECTED__TABLE_NAME).drop();
-            return Void;
         });
     }
 
