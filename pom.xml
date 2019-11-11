@@ -60,7 +60,7 @@
         <dependency>
             <groupId>com.github.Makesystem</groupId>
             <artifactId>OneEntity</artifactId>
-            <version>f049df807d</version>
+            <version>bef4faea53</version>
         </dependency>
         
     </dependencies>
