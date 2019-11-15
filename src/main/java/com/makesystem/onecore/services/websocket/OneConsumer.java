@@ -116,7 +116,7 @@ public class OneConsumer {
     protected <D> void management__server_average(final D data, final AsyncCallback<String> callback) throws Throwable {
 
         final long openAtMax = System.currentTimeMillis();
-        final long openAtMin = openAtMax - NumberHelper.toMillis(1, TimeUnit.HOURS);
+        final long openAtMin = openAtMax - NumberHelper.toMillis(1, TimeUnit.DAYS);
 
         final StatisticsService service = new StatisticsService();
         final Collection<ServerAvg> result = service.getServerAvg(openAtMin, openAtMax);
@@ -127,7 +127,7 @@ public class OneConsumer {
     protected <D> void management__database_average(final D data, final AsyncCallback<String> callback) throws Throwable {
 
         final long openAtMax = System.currentTimeMillis();
-        final long openAtMin = openAtMax - NumberHelper.toMillis(1, TimeUnit.HOURS);
+        final long openAtMin = openAtMax - NumberHelper.toMillis(1, TimeUnit.DAYS);
 
         final StatisticsService service = new StatisticsService();
         final Collection<DatabaseAvg> result = service.getDatabaseAvg(openAtMin, openAtMax);
@@ -139,7 +139,7 @@ public class OneConsumer {
 
         final String database = data.toString();
         final long openAtMax = System.currentTimeMillis();
-        final long openAtMin = openAtMax - NumberHelper.toMillis(1, TimeUnit.HOURS);
+        final long openAtMin = openAtMax - NumberHelper.toMillis(1, TimeUnit.DAYS);
 
         final StatisticsService service = new StatisticsService();
         final Collection<AliasAvg> result = service.getAliasAvg(database, openAtMin, openAtMax);
