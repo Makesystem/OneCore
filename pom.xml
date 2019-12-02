@@ -6,7 +6,7 @@
     <artifactId>OneCore</artifactId>
     <version>1.0.0-SNAPSHOT</version>
     <packaging>war</packaging>
-
+    
     <name>OneCore</name>
 
     <properties>
@@ -16,8 +16,7 @@
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
         <failOnMissingWebXml>false</failOnMissingWebXml>
-        <jakartaee>8.0</jakartaee>
-        
+        <jakartaee>8.0</jakartaee>        
     </properties>
     
     <repositories>
@@ -37,6 +36,13 @@
     
     <dependencies>  
         
+        <!-- https://mvnrepository.com/artifact/org.apache.maven/maven-model -->
+        <dependency>
+            <groupId>org.apache.maven</groupId>
+            <artifactId>maven-model</artifactId>
+            <version>3.6.3</version>
+        </dependency>
+
         <!-- https://mvnrepository.com/artifact/org.glassfish.jersey.core/jersey-server -->
         <dependency>
             <groupId>org.glassfish.jersey.core</groupId>
@@ -58,15 +64,15 @@
         </dependency>
         
         <dependency>
-	    <groupId>com.github.makesystem</groupId>
-	    <artifactId>XeonCore</artifactId>
-	    <version>1.1.7</version>
-	</dependency>
+            <groupId>com.github.makesystem</groupId>
+            <artifactId>XeonCore</artifactId>
+            <version>c822b60901</version>
+        </dependency>
         
         <dependency>
             <groupId>com.github.Makesystem</groupId>
             <artifactId>OneEntity</artifactId>
-            <version>875dbc5dd6</version>
+            <version>b4d6a0d888</version>
         </dependency>
         
     </dependencies>

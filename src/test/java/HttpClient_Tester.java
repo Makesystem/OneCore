@@ -1,4 +1,5 @@
 
+import com.makesystem.mwc.HttpHelper;
 import com.makesystem.mwc.http.client.HttpClient;
 import com.makesystem.mwc.http.client.properties.GetProperties;
 import com.makesystem.mwc.http.client.properties.PostProperties;
@@ -64,7 +65,7 @@ public class HttpClient_Tester extends AbstractTester {
 
     @Override
     protected void execution() {
-        postTest();
+        //postTest();
         getTest();
         //performanceTest();
         close();
@@ -90,10 +91,18 @@ public class HttpClient_Tester extends AbstractTester {
 
         final NameValuePair data = new BasicNameValuePair(GetEcho.Attributes.DATA, "echo");
 
-        final GetProperties properties = new GetProperties(PROTOCOL, HOST, PORT, GetEcho.CONSUMER);
-        properties.setAttributes(data);
+        final GetProperties properties = new GetProperties(PROTOCOL, HOST, PORT, Version.CONSUMER);
+        //properties.setAttributes(data);
 
         try {
+
+            final String _url = properties.getBaseUrl();
+            final String _path = properties.getMethodPath();
+            final String _params = properties.getAttributes();
+
+            final String url = HttpHelper.buildUrl(_url, _path, _params);
+            System.out.println(url);
+
             final String result = httpClient.doGet(properties);
             Console.log("post result: {s}", result);
         } catch (Throwable throwable) {

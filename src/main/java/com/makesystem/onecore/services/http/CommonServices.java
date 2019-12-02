@@ -6,6 +6,7 @@
 package com.makesystem.onecore.services.http;
 
 import com.makesystem.mwc.http.server.AbstractServiceServlet;
+import com.makesystem.onecore.services.core.OneVersion;
 import javax.ejb.Stateless;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.FormParam;
@@ -30,6 +31,15 @@ import org.glassfish.jersey.server.ManagedAsync;
 @Path(Commons.PATH)
 public class CommonServices extends AbstractServiceServlet {
 
+    @GET
+    @Path(Version.PATH)
+    @Produces(MediaType.TEXT_PLAIN)
+    @ManagedAsync
+    public void version(
+            final @Suspended AsyncResponse asyncResponse) {
+        asyncResponse.resume(Response.ok(OneVersion.get()).build());
+    }
+    
     @POST
     @Path(PostPing.PATH)
     @Produces(MediaType.TEXT_PLAIN)
