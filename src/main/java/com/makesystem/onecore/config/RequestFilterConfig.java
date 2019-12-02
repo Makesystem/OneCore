@@ -18,7 +18,8 @@ import javax.servlet.annotation.WebFilter;
 @WebFilter(urlPatterns = {"/*", ""}, asyncSupported = true)
 public class RequestFilterConfig extends AbstractRequestFilter {
 
-    public RequestFilterConfig() {        
+    public RequestFilterConfig() {                
+        registerPublicMethod(Version.NAME);
         registerPublicMethod(PostPing.NAME);
         registerPublicMethod(GetPing.NAME);
         registerPublicMethod(PostEcho.NAME);
