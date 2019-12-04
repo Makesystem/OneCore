@@ -5,7 +5,8 @@
  */
 package com.makesystem.onecore.config;
 
-import com.makesystem.onecore.services.http.CommonServices;
+import com.makesystem.onecore.services.http.CommonsServices;
+import com.makesystem.onecore.services.http.InternalsServices;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.TimeZone;
@@ -25,7 +26,8 @@ public class ApplicationConfig extends Application {
     public Set<Class<?>> getClasses() {
 
         final Set<Class<?>> resources = new HashSet<>();
-        resources.add(CommonServices.class);
+        resources.add(CommonsServices.class);
+        resources.add(InternalsServices.class);
 
         return resources;
     }

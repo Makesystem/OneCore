@@ -29,7 +29,7 @@ import org.glassfish.jersey.server.ManagedAsync;
  */
 @Stateless
 @Path(Commons.PATH)
-public class CommonServices extends AbstractServiceServlet {
+public class CommonsServices extends AbstractServiceServlet {
 
     @GET
     @Path(Version.PATH)

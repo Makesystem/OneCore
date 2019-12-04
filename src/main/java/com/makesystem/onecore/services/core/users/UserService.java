@@ -15,6 +15,7 @@ import com.makesystem.oneentity.services.users.storage.User;
 import com.makesystem.pidgey.lang.StringHelper;
 import com.makesystem.xeonentity.core.types.UserType;
 import com.mongodb.client.model.FindOneAndUpdateOptions;
+import com.mongodb.client.model.TextSearchOptions;
 import java.util.Collection;
 import java.util.Objects;
 import org.bson.Document;
@@ -206,14 +207,11 @@ public class UserService extends OneService {
             if (!StringHelper.isBlank(text)) {
                 
                 final MongoQueryBuilder queryBuilder = new MongoQueryBuilder();
-
-                final Bson document = queryBuilder.contains(Struct.USERS__DOCUMENT, text);
-                final Bson firstName = queryBuilder.contains(Struct.USERS__FIRST_NAME, text);
-                final Bson lastName = queryBuilder.contains(Struct.USERS__LAST_NAME, text);
-                final Bson login = queryBuilder.contains(Struct.USERS__LOGIN, text);
-                final Bson email = queryBuilder.contains(Struct.USERS__EMAIL, text);
-
-                final Bson filter = queryBuilder.or(document, firstName, lastName, login, email);
+                
+                final TextSearchOptions options = new TextSearchOptions()
+                        .caseSensitive(Boolean.FALSE)
+                        .diacriticSensitive(Boolean.FALSE);
+                final Bson filter = queryBuilder.text(text, options);
 
                 findOptions.setFilter(filter);
                 

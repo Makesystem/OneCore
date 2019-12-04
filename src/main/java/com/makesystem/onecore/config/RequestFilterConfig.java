@@ -6,6 +6,7 @@
 package com.makesystem.onecore.config;
 
 import com.makesystem.oneentity.services.OneServices.Commons.*;
+import com.makesystem.oneentity.services.OneServices.Internals.*;
 import com.makesystem.xeoncore.core.AbstractRequestFilter;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
@@ -24,6 +25,9 @@ public class RequestFilterConfig extends AbstractRequestFilter {
         registerPublicMethod(GetPing.NAME);
         registerPublicMethod(PostEcho.NAME);
         registerPublicMethod(GetEcho.NAME);
+        /* For tests */
+        /* IT MUST BE REMOVED */
+        registerPublicMethod(Upgrade.NAME);
     }
 
     @Override
