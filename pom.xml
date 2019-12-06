@@ -16,7 +16,7 @@
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
         <failOnMissingWebXml>false</failOnMissingWebXml>
-        <jakartaee>8.0</jakartaee>        
+        <jakartaee>8.0.1</jakartaee>        
     </properties>
     
     <repositories>
@@ -36,11 +36,12 @@
     
     <dependencies>  
         
-        <!-- https://mvnrepository.com/artifact/org.apache.maven/maven-model -->
+        <!-- https://mvnrepository.com/artifact/javax/javaee-api -->
         <dependency>
-            <groupId>org.apache.maven</groupId>
-            <artifactId>maven-model</artifactId>
-            <version>3.6.3</version>
+            <groupId>javax</groupId>
+            <artifactId>javaee-web-api</artifactId>
+            <version>${jakartaee}</version>
+            <scope>provided</scope>            
         </dependency>
 
         <!-- https://mvnrepository.com/artifact/org.glassfish.jersey.core/jersey-server -->
@@ -50,6 +51,7 @@
             <version>2.29.1</version>
         </dependency>
         
+        <!-- https://mvnrepository.com/artifact/com.thetransactioncompany/cors-filter -->
         <dependency>
             <groupId>com.thetransactioncompany</groupId>
             <artifactId>cors-filter</artifactId>
@@ -57,22 +59,15 @@
         </dependency>
         
         <dependency>
-            <groupId>javax</groupId>
-            <artifactId>javaee-web-api</artifactId>
-            <version>${jakartaee}</version>
-            <scope>provided</scope>            
-        </dependency>
-        
-        <dependency>
             <groupId>com.github.makesystem</groupId>
             <artifactId>XeonCore</artifactId>
-            <version>1.1.16</version>
+            <version>1.1.17</version>
         </dependency>
         
         <dependency>
             <groupId>com.github.Makesystem</groupId>
             <artifactId>OneEntity</artifactId>
-            <version>5583b4d970</version>
+            <version>97cba44a46</version>
         </dependency>
         
     </dependencies>
