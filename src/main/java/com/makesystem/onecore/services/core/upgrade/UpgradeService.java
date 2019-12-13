@@ -6,25 +6,29 @@
 package com.makesystem.onecore.services.core.upgrade;
 
 import com.makesystem.mdbc.architectures.mongo.MongoConnection;
-import com.makesystem.onecore.services.core.OneService;
+import com.makesystem.onecore.services.core.OneProperties;
 import com.makesystem.oneentity.core.nosql.Struct;
 import com.makesystem.oneentity.core.types.DatabaseType;
 import com.makesystem.oneentity.services.customers.storage.Customer;
 import com.makesystem.oneentity.services.users.storage.User;
 import com.makesystem.oneentity.services.users.storage.UserAction;
 import com.makesystem.oneentity.services.users.storage.UserConnected;
+import com.makesystem.xeoncore.core.AbstractUpgradeService;
+import com.makesystem.xeoncore.core.BasicUserData;
 import com.makesystem.xeoncore.utils.IndexesUtils;
+import com.makesystem.xeonentity.core.DatabaseSettings;
 import com.mongodb.client.model.IndexModel;
 import com.mongodb.client.model.IndexOptions;
 import com.mongodb.client.model.Indexes;
-import java.util.concurrent.atomic.AtomicBoolean;
 import org.bson.conversions.Bson;
 
 /**
  *
  * @author riche
  */
-public class UpgradeService extends OneService {
+public class UpgradeService extends AbstractUpgradeService {
+
+    private static final long serialVersionUID = -6725193683799153230L;
 
     private static final UpgradeService INSTANCE = new UpgradeService();
 
@@ -32,46 +36,35 @@ public class UpgradeService extends OneService {
         return INSTANCE;
     }
 
-    private final AtomicBoolean upgrading = new AtomicBoolean(false);
-    
     private final com.makesystem.xeoncore.services.management.UpgradeService managementUpgradeService
             = new com.makesystem.xeoncore.services.management.UpgradeService();
-    
+
     private UpgradeService() {
+        super(new DatabaseSettings(
+                OneProperties.DATABASE__HOST.getValue(),
+                OneProperties.DATABASE__PORT.getValue(),
+                OneProperties.DATABASE__NAME.getValue(),
+                OneProperties.DATABASE__USER.getValue(),
+                OneProperties.DATABASE__PASSWORD.getValue(),
+                OneProperties.DATABASE__TYPE.getValue(),
+                DatabaseType.ONE,
+                OneProperties.DATABASE__POOL_SIZE.getValue()));
     }
-    
-    public void upgrade() throws Throwable {
 
-        /*
-         * Control to prevent two upgrades from occurring at the same time 
-         */
-        if (upgrading.getAndSet(true)) {
-            return;
-        }
-
+    @Override
+    public void upgradeImpl(final BasicUserData basicUserData) throws Throwable {
+        
         try {
-
-            /*
-             * Upgrate Management Database 
-             */
-            managementUpgradeService.upgrade();
-
-            /*
-             * Upgrate One Database 
-             */
-            runTransactional(DatabaseType.ONE, (final MongoConnection mongoConnection) -> {
-                createUserIndexes(mongoConnection);
-                createUserActionIndexes(mongoConnection);
-                createUserConnectedIndexes(mongoConnection);
-                createCustomerIndexes(mongoConnection);
-            });
-
-        } finally {
-            /*
-             * Liberar para a próxima atualização
-             */
-            upgrading.set(false);
+            managementUpgradeService.upgradeImpl(basicUserData);
+        } catch (final Throwable ignore) {
         }
+        
+        runTransactional(DatabaseType.ONE, basicUserData, (final MongoConnection mongoConnection) -> {
+            createUserIndexes(mongoConnection);
+            createUserActionIndexes(mongoConnection);
+            createUserConnectedIndexes(mongoConnection);
+            createCustomerIndexes(mongoConnection);
+        });
     }
 
     /**
