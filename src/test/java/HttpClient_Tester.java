@@ -10,7 +10,8 @@ import com.makesystem.pidgey.lang.Average;
 import com.makesystem.pidgey.monitor.Monitor;
 import com.makesystem.pidgey.monitor.MonitorResult;
 import com.makesystem.pidgey.tester.AbstractTester;
-import com.makesystem.pidgey.thread.ThreadPool;
+import com.makesystem.pidgey.thread.Executors;
+import com.makesystem.pidgey.thread.ThreadPoolExecutor;
 import java.util.stream.IntStream;
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
@@ -120,7 +121,7 @@ public class HttpClient_Tester extends AbstractTester {
         properties.setAttributes(data);
 
         final Average<String> average = new Average<>("Post Test");
-        final ThreadPool pool = new ThreadPool(100);
+        final ThreadPoolExecutor pool = Executors.Cached.get();
 
         IntStream.range(0, 10000).forEach(index
                 -> pool.execute(() -> {
@@ -134,7 +135,7 @@ public class HttpClient_Tester extends AbstractTester {
                     average.increase(result.getDuration());
                 }));
 
-        pool.waitFinish();
+        pool.await();
         Console.log("Calls: {i} ~ {i}ms / call", average.getCount(), average.getAverage());
     }
 
