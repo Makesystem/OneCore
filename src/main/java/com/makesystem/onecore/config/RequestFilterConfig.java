@@ -19,6 +19,8 @@ import javax.servlet.annotation.WebFilter;
 @WebFilter(urlPatterns = {"/*", ""}, asyncSupported = true)
 public class RequestFilterConfig extends AbstractRequestFilter {
 
+    private static final long serialVersionUID = -916802795208061995L;
+
     public RequestFilterConfig() {                
         registerPublicMethod(Version.NAME);
         registerPublicMethod(PostPing.NAME);

@@ -19,6 +19,7 @@ import com.makesystem.xeonentity.core.websocket.Message;
 import com.makesystem.xeonentity.services.management.runnable.AliasAvg;
 import com.makesystem.xeonentity.services.management.runnable.DatabaseAvg;
 import com.makesystem.xeonentity.services.management.runnable.ServerAvg;
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.concurrent.TimeUnit;
 
@@ -26,7 +27,9 @@ import java.util.concurrent.TimeUnit;
  *
  * @author Richeli.vargas
  */
-public class OneConsumer {
+public class OneConsumer implements Serializable {
+
+    private static final long serialVersionUID = -4887024963585713701L;
 
     public <D> void consumer(final SessionData sessionData, final Message message, final AsyncCallback<String> callback) {
 

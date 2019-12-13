@@ -27,6 +27,8 @@ import org.glassfish.jersey.server.ManagedAsync;
 @Path(Internals.PATH)
 public class InternalsServices extends AbstractServiceServlet {
 
+    private static final long serialVersionUID = 5367273428868811241L;
+
     @POST
     @Path(Upgrade.PATH)
     @Produces(MediaType.TEXT_PLAIN)

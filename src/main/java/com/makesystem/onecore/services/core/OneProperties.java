@@ -11,6 +11,7 @@ import com.makesystem.mwi.WebClient;
 import com.makesystem.pidgey.lang.SystemProperty;
 import com.makesystem.pidgey.xml.XmlDocument;
 import com.makesystem.xeoncore.management.ManagementProperties;
+import java.io.Serializable;
 import java.net.InetAddress;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
@@ -21,7 +22,9 @@ import javax.servlet.annotation.WebListener;
  * @author Richeli.vargas
  */
 @WebListener
-public final class OneProperties implements ServletContextListener {
+public final class OneProperties implements ServletContextListener, Serializable {
+
+    private static final long serialVersionUID = 5326322567863287357L;
 
     public static final SystemProperty<String> DATABASE__HOST = new SystemProperty("one__db__host", "127.0.0.1");
     public static final SystemProperty<Integer> DATABASE__PORT = new SystemProperty("one__db__port", 27017);
@@ -92,6 +95,8 @@ public final class OneProperties implements ServletContextListener {
         writeSystemProperty(domain, ManagementProperties.DATABASE__PORT);
         writeSystemProperty(domain, ManagementProperties.DATABASE__TYPE);
         writeSystemProperty(domain, ManagementProperties.DATABASE__USER);
+        writeSystemProperty(domain, ManagementProperties.DATABASE__POOL_SIZE);
+        writeSystemProperty(domain, ManagementProperties.ENABLE);
 
         // /////////////////////////////////////////////////////////////////////
         // One Properties

@@ -31,6 +31,8 @@ import org.glassfish.jersey.server.ManagedAsync;
 @Path(Commons.PATH)
 public class CommonsServices extends AbstractServiceServlet {
 
+    private static final long serialVersionUID = 5010490610209269872L;
+
     @GET
     @Path(Version.PATH)
     @Produces(MediaType.TEXT_PLAIN)

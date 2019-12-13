@@ -26,6 +26,7 @@ import org.bson.conversions.Bson;
 public class UserConnectedService extends OneService {
 
     private static final UserConnectedService INSTANCE = new UserConnectedService();
+    private static final long serialVersionUID = -5011006719892456554L;
     
     public static UserConnectedService getInstance(){
         return INSTANCE;

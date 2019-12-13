@@ -11,13 +11,16 @@ import com.makesystem.oneentity.services.request.runnable.RequestData;
 import com.makesystem.oneentity.services.users.storage.User;
 import com.makesystem.pidgey.interfaces.AsyncCallback;
 import com.makesystem.pidgey.json.ObjectMapperJRE;
+import java.io.Serializable;
 import java.util.Collection;
 
 /**
  *
  * @author riche
  */
-public class OneRequestService {
+public class OneRequestService implements Serializable {
+
+    private static final long serialVersionUID = -9074912698818250240L;
 
     private static final OneRequestService INSTANCE = new OneRequestService();
 

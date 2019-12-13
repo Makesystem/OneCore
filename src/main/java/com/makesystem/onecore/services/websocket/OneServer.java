@@ -39,6 +39,8 @@ import javax.websocket.server.ServerEndpoint;
 @ServerEndpoint(value = Access.PATH, configurator = DefaultEndpointConfig.class)
 public class OneServer extends AbstractServerSocket {
 
+    private static final long serialVersionUID = 3022211504300298241L;
+
     public static interface Tags {
 
         public static final String ON_STARTUP = "ON_STARTUP";

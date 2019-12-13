@@ -15,6 +15,8 @@ import com.makesystem.xeonentity.core.DatabaseSettings;
  */
 public class OneService extends AbstractService {
 
+    private static final long serialVersionUID = 7694509191783532577L;
+
     protected static interface OperationAlias {
         // User
         public static final String USER__FIND_BY__LOGIN_AND_PASSWORD    = "USER__FIND_BY__LOGIN_AND_PASSWORD";
