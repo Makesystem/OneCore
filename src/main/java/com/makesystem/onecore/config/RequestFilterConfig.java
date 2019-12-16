@@ -8,9 +8,11 @@ package com.makesystem.onecore.config;
 import com.makesystem.oneentity.services.OneServices.Commons.*;
 import com.makesystem.oneentity.services.OneServices.Internals.*;
 import com.makesystem.xeoncore.core.AbstractRequestFilter;
+import com.makesystem.xeoncore.core.BasicUserData;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.annotation.WebFilter;
+import javax.servlet.http.HttpServletRequest;
 
 /**
  *
@@ -19,7 +21,7 @@ import javax.servlet.annotation.WebFilter;
 @WebFilter(urlPatterns = {"/*", ""}, asyncSupported = true)
 public class RequestFilterConfig extends AbstractRequestFilter {
 
-    private static final long serialVersionUID = -916802795208061995L;
+    private static final long serialVersionUID = -916802795208062995L;
 
     public RequestFilterConfig() {                
         registerPublicMethod(Version.NAME);
@@ -45,4 +47,10 @@ public class RequestFilterConfig extends AbstractRequestFilter {
         return true;
     }
 
+    @Override
+    protected BasicUserData getUserData(final HttpServletRequest httpServletRequest, final String sessionId) {
+        return null;
+    }
+
+    
 }
