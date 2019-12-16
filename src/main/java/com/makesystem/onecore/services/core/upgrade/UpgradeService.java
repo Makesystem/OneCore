@@ -14,7 +14,7 @@ import com.makesystem.oneentity.services.users.storage.User;
 import com.makesystem.oneentity.services.users.storage.UserAction;
 import com.makesystem.oneentity.services.users.storage.UserConnected;
 import com.makesystem.xeoncore.core.AbstractUpgradeService;
-import com.makesystem.xeoncore.core.BasicUserData;
+import com.makesystem.xeoncore.core.BasicRequestIdentification;
 import com.makesystem.xeoncore.utils.IndexesUtils;
 import com.makesystem.xeonentity.core.DatabaseSettings;
 import com.mongodb.client.model.IndexModel;
@@ -52,14 +52,14 @@ public class UpgradeService extends AbstractUpgradeService {
     }
 
     @Override
-    public void upgradeImpl(final BasicUserData basicUserData) throws Throwable {
+    public void upgradeImpl(final BasicRequestIdentification identification) throws Throwable {
         
         try {
-            managementUpgradeService.upgradeImpl(basicUserData);
+            managementUpgradeService.upgradeImpl(identification);
         } catch (final Throwable ignore) {
         }
         
-        runTransactional(DatabaseType.ONE, basicUserData, (final MongoConnection mongoConnection) -> {
+        runTransactional(DatabaseType.ONE, identification, (final MongoConnection mongoConnection) -> {
             createUserIndexes(mongoConnection);
             createUserActionIndexes(mongoConnection);
             createUserConnectedIndexes(mongoConnection);

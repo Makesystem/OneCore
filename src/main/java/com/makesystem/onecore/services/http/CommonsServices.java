@@ -6,6 +6,7 @@
 package com.makesystem.onecore.services.http;
 
 import com.makesystem.mwc.http.server.AbstractServiceServlet;
+import com.makesystem.mwc.util.helper.ServletHelper;
 import com.makesystem.onecore.services.core.OneVersion;
 import javax.ejb.Stateless;
 import javax.ws.rs.Consumes;
@@ -40,6 +41,15 @@ public class CommonsServices extends AbstractServiceServlet {
     public void version(
             final @Suspended AsyncResponse asyncResponse) {
         asyncResponse.resume(Response.ok(OneVersion.get()).build());
+    }
+    
+    @GET
+    @Path(GetIp.PATH)
+    @Produces(MediaType.TEXT_PLAIN)
+    @ManagedAsync
+    public void getIp(
+            final @Suspended AsyncResponse asyncResponse) {
+        asyncResponse.resume(Response.ok(ServletHelper.getRemoteHost(httpServletRequest)).build());
     }
     
     @POST

@@ -22,6 +22,7 @@ import com.makesystem.pidgey.interfaces.AsyncCallback;
 import com.makesystem.pidgey.json.ObjectMapperJRE;
 import com.makesystem.pidgey.lang.ThrowableHelper;
 import com.makesystem.xeoncore.core.AbstractServerSocket;
+import com.makesystem.xeoncore.core.BasicRequestIdentification;
 import com.makesystem.xeonentity.core.exceptions.TaggedException;
 import com.makesystem.xeonentity.core.types.MessageType;
 import com.makesystem.xeonentity.core.websocket.Message;
@@ -280,5 +281,23 @@ public class OneServer extends AbstractServerSocket {
             return getCloseReasonFor(throwable.getCause());
         }
 
+    }
+    
+    @Override
+    protected BasicRequestIdentification getRequestIdentification(final SessionData requestData) {
+        
+        final OneUser oneUser = requestData.getData();
+        final String customer = oneUser.getConnection().getCustomer().getHexString();
+        final String user = oneUser.getConnection().getUser().getHexString();
+        final String apiKey = requestData.getRequestData().getApiKey();
+        final ServiceType service = oneUser.getService();
+        
+        final BasicRequestIdentification identification = new BasicRequestIdentification();
+        identification.setCustomer(customer);
+        identification.setUser(user);
+        identification.setApiKey(apiKey);
+        identification.setServiceType(service);
+        
+        return identification;
     }
 }

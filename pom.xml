@@ -4,7 +4,7 @@
 
     <groupId>com.makesystem</groupId>
     <artifactId>OneCore</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
+    <version>1.0.0-Beta1</version>
     <packaging>war</packaging>
     
     <name>OneCore</name>
@@ -61,13 +61,13 @@
         <dependency>
             <groupId>com.github.makesystem</groupId>
             <artifactId>XeonCore</artifactId>
-            <version>1.1.22</version>
+            <version>1.1.25</version>
         </dependency>
         
         <dependency>
             <groupId>com.github.Makesystem</groupId>
             <artifactId>OneEntity</artifactId>
-            <version>ebc7abf297</version>
+            <version>ff21a5ae18</version>
         </dependency>
         
     </dependencies>

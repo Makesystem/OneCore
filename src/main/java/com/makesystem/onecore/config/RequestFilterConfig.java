@@ -5,14 +5,14 @@
  */
 package com.makesystem.onecore.config;
 
+import com.makesystem.mwc.http.server.RequestData;
 import com.makesystem.oneentity.services.OneServices.Commons.*;
 import com.makesystem.oneentity.services.OneServices.Internals.*;
 import com.makesystem.xeoncore.core.AbstractRequestFilter;
-import com.makesystem.xeoncore.core.BasicUserData;
+import com.makesystem.xeoncore.core.BasicRequestIdentification;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.annotation.WebFilter;
-import javax.servlet.http.HttpServletRequest;
 
 /**
  *
@@ -48,9 +48,8 @@ public class RequestFilterConfig extends AbstractRequestFilter {
     }
 
     @Override
-    protected BasicUserData getUserData(final HttpServletRequest httpServletRequest, final String sessionId) {
+    protected BasicRequestIdentification getRequestIdentification(final RequestData requestData) {
         return null;
     }
-
     
 }
