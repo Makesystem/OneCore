@@ -25,6 +25,7 @@ public class RequestFilterConfig extends AbstractRequestFilter {
 
     public RequestFilterConfig() {                
         registerPublicMethod(Version.NAME);
+        registerPublicMethod(GetIp.NAME);
         registerPublicMethod(PostPing.NAME);
         registerPublicMethod(GetPing.NAME);
         registerPublicMethod(PostEcho.NAME);
