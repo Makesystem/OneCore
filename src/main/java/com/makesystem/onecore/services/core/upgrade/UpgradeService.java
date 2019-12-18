@@ -59,7 +59,7 @@ public class UpgradeService extends AbstractUpgradeService {
         } catch (final Throwable ignore) {
         }
         
-        runTransactional(DatabaseType.ONE, identification, (final MongoConnection mongoConnection) -> {
+        runTransactional(identification, (final MongoConnection mongoConnection) -> {
             createUserIndexes(mongoConnection);
             createUserActionIndexes(mongoConnection);
             createUserConnectedIndexes(mongoConnection);

@@ -16,7 +16,7 @@ import java.io.Serializable;
  */
 public class OneUser implements Serializable {
 
-    private static final long serialVersionUID = 2156783345418452690L;
+    private static final long serialVersionUID = 2156783345418452691L;
 
     private final User user;
     private final UserConnected connection;

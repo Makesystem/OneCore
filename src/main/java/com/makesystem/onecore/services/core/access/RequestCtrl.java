@@ -5,10 +5,14 @@
  */
 package com.makesystem.onecore.services.core.access;
 
+import java.io.Serializable;
+
 /**
  *
  * @author riche
  */
-public class RequestCtrl {
+public class RequestCtrl implements Serializable {
+
+    private static final long serialVersionUID = 420478287368882642L;
     
 }

@@ -10,7 +10,6 @@ import com.makesystem.mdbc.architectures.mongo.MongoQueryBuilder;
 import com.makesystem.mdbc.architectures.mongo.model.FindOptions;
 import com.makesystem.onecore.services.core.OneService;
 import com.makesystem.oneentity.core.nosql.Struct;
-import com.makesystem.oneentity.core.types.DatabaseType;
 import com.makesystem.oneentity.services.users.storage.User;
 import com.makesystem.pidgey.lang.StringHelper;
 import com.makesystem.xeonentity.core.types.UserType;
@@ -27,6 +26,8 @@ import org.bson.conversions.Bson;
  */
 public class UserService extends OneService {
 
+    private static final long serialVersionUID = -5551634350488712507L;
+
     private static final UserService INSTANCE = new UserService();
 
     public static UserService getInstance() {
@@ -37,7 +38,7 @@ public class UserService extends OneService {
     }
 
     public void insert(final User user) throws Throwable {
-        run(DatabaseType.ONE, (final MongoConnection mongoConnection) -> {
+        run((final MongoConnection mongoConnection) -> {
             mongoConnection.setOperationAlias(OperationAlias.USER__INSERT);
 
             final boolean isUser = Objects.equals(user.getType(), UserType.CUSTOMER);
@@ -105,7 +106,7 @@ public class UserService extends OneService {
     }
 
     public boolean documentAvaliable(final String document) throws Throwable {
-        return run(DatabaseType.ONE, (final MongoConnection mongoConnection) -> {
+        return run((final MongoConnection mongoConnection) -> {
             mongoConnection.setOperationAlias(OperationAlias.USER__IS_DOCUMENT_AVALIABLE);
 
             // /////////////////////////////////////////////////////////////////
@@ -126,7 +127,7 @@ public class UserService extends OneService {
     }
 
     public boolean loginAvaliable(final String login) throws Throwable {
-        return run(DatabaseType.ONE, (final MongoConnection mongoConnection) -> {
+        return run((final MongoConnection mongoConnection) -> {
             mongoConnection.setOperationAlias(OperationAlias.USER__IS_LOGIN_AVALIABLE);
 
             // /////////////////////////////////////////////////////////////////
@@ -143,7 +144,7 @@ public class UserService extends OneService {
     }
 
     public boolean emailAvaliable(final String email) throws Throwable {
-        return run(DatabaseType.ONE, (final MongoConnection mongoConnection) -> {
+        return run((final MongoConnection mongoConnection) -> {
             mongoConnection.setOperationAlias(OperationAlias.USER__IS_EMAIL_AVALIABLE);
 
             // ///////////////////////////////////////////////////////////////////////////
@@ -164,7 +165,7 @@ public class UserService extends OneService {
     }
 
     public User find(final String loginOrEmail, final String password) throws Throwable {
-        return run(DatabaseType.ONE, (final MongoConnection mongoConnection) -> {
+        return run((final MongoConnection mongoConnection) -> {
             mongoConnection.setOperationAlias(OperationAlias.USER__FIND_BY__LOGIN_AND_PASSWORD);
 
             // /////////////////////////////////////////////////////////////////
@@ -196,7 +197,7 @@ public class UserService extends OneService {
     }
 
     public Collection<User> find(final String text) throws Throwable {
-        return run(DatabaseType.ONE, (final MongoConnection mongoConnection) -> {
+        return run((final MongoConnection mongoConnection) -> {
             mongoConnection.setOperationAlias(OperationAlias.USER__FIND);
 
             // ///////////////////////////////////////////////////////////////////////////
@@ -205,16 +206,16 @@ public class UserService extends OneService {
             final FindOptions findOptions = new FindOptions();
 
             if (!StringHelper.isBlank(text)) {
-                
+
                 final MongoQueryBuilder queryBuilder = new MongoQueryBuilder();
-                
+
                 final TextSearchOptions options = new TextSearchOptions()
                         .caseSensitive(Boolean.FALSE)
                         .diacriticSensitive(Boolean.FALSE);
                 final Bson filter = queryBuilder.text(text, options);
 
                 findOptions.setFilter(filter);
-                
+
             }
             // ///////////////////////////////////////////////////////////////////////////
             // Execute

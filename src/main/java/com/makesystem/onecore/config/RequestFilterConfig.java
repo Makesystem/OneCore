@@ -5,11 +5,9 @@
  */
 package com.makesystem.onecore.config;
 
-import com.makesystem.mwc.http.server.RequestData;
 import com.makesystem.oneentity.services.OneServices.Commons.*;
 import com.makesystem.oneentity.services.OneServices.Internals.*;
 import com.makesystem.xeoncore.core.AbstractRequestFilter;
-import com.makesystem.xeoncore.core.BasicRequestIdentification;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.annotation.WebFilter;
@@ -21,7 +19,7 @@ import javax.servlet.annotation.WebFilter;
 @WebFilter(urlPatterns = {"/*", ""}, asyncSupported = true)
 public class RequestFilterConfig extends AbstractRequestFilter {
 
-    private static final long serialVersionUID = -916802795208062995L;
+    private static final long serialVersionUID = -916802795218162995L;
 
     public RequestFilterConfig() {                
         registerPublicMethod(Version.NAME);
@@ -46,11 +44,6 @@ public class RequestFilterConfig extends AbstractRequestFilter {
     @Override
     protected boolean allowRequest(final ServletRequest servletRequest, final ServletResponse servletResponse) {
         return true;
-    }
-
-    @Override
-    protected BasicRequestIdentification getRequestIdentification(final RequestData requestData) {
-        return null;
     }
     
 }

@@ -5,6 +5,7 @@
  */
 package com.makesystem.onecore.services.websocket;
 
+import com.makesystem.mdbi.nosql.SimpleObjectId;
 import com.makesystem.mwc.websocket.server.DefaultEndpointConfig;
 
 import com.makesystem.mwc.websocket.server.SessionData;
@@ -18,6 +19,7 @@ import com.makesystem.oneentity.core.types.Action;
 import com.makesystem.oneentity.core.types.OneCloseCodes;
 import com.makesystem.oneentity.core.types.ServiceType;
 import com.makesystem.oneentity.services.OneServices.Access;
+import com.makesystem.oneentity.services.users.storage.UserConnected;
 import com.makesystem.pidgey.interfaces.AsyncCallback;
 import com.makesystem.pidgey.json.ObjectMapperJRE;
 import com.makesystem.pidgey.lang.ThrowableHelper;
@@ -40,7 +42,7 @@ import javax.websocket.server.ServerEndpoint;
 @ServerEndpoint(value = Access.PATH, configurator = DefaultEndpointConfig.class)
 public class OneServer extends AbstractServerSocket {
 
-    private static final long serialVersionUID = 3022211504300298241L;
+    private static final long serialVersionUID = 3022211504301278241L;
 
     public static interface Tags {
 
@@ -284,12 +286,18 @@ public class OneServer extends AbstractServerSocket {
     }
     
     @Override
-    protected BasicRequestIdentification getRequestIdentification(final SessionData requestData) {
+    public BasicRequestIdentification getRequestIdentification(final SessionData sessionData) {
         
-        final OneUser oneUser = requestData.getData();
-        final String customer = oneUser.getConnection().getCustomer().getHexString();
-        final String user = oneUser.getConnection().getUser().getHexString();
-        final String apiKey = requestData.getRequestData().getApiKey();
+        final OneUser oneUser = sessionData.getData();
+        final UserConnected connection = oneUser.getConnection();
+        
+        final SimpleObjectId customerId = connection == null ? null : connection.getCustomer();        
+        final String customer = customerId == null ? null : customerId.getHexString();
+        
+        final SimpleObjectId userId = connection == null ? null : connection.getUser();
+        final String user = userId == null ? null : userId.getHexString();
+        
+        final String apiKey = sessionData.getRequestData().getApiKey();
         final ServiceType service = oneUser.getService();
         
         final BasicRequestIdentification identification = new BasicRequestIdentification();

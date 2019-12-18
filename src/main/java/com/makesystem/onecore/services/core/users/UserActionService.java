@@ -11,7 +11,6 @@ import com.makesystem.onecore.services.core.OneService;
 import com.makesystem.onecore.services.core.OneUser;
 import com.makesystem.oneentity.core.types.Action;
 import com.makesystem.oneentity.core.types.ActionStatus;
-import com.makesystem.oneentity.core.types.DatabaseType;
 import com.makesystem.oneentity.services.users.storage.UserAction;
 import com.makesystem.pidgey.interfaces.Snippet;
 import com.makesystem.pidgey.lang.ThrowableHelper;
@@ -21,6 +20,8 @@ import com.makesystem.pidgey.lang.ThrowableHelper;
  * @author Richeli.vargas
  */
 public class UserActionService extends OneService {
+
+    private static final long serialVersionUID = 2176453190818836647L;
 
     private static final UserActionService INSTANCE = new UserActionService();
     
@@ -57,14 +58,14 @@ public class UserActionService extends OneService {
     }
 
     public void insert(final UserAction action) throws Throwable {
-        run(DatabaseType.ONE, (final MongoConnection mongoConnection) -> {
+        run((final MongoConnection mongoConnection) -> {
             mongoConnection.setOperationAlias(OperationAlias.USER_ACTION__INSERT);
             mongoConnection.getQuery().insertOneAndRetrive(action);
         });
     }
 
     public UserAction update(final UserAction action) throws Throwable {
-        return run(DatabaseType.ONE, (final MongoConnection mongoConnection) -> {
+        return run((final MongoConnection mongoConnection) -> {
             mongoConnection.setOperationAlias(OperationAlias.USER_ACTION__UPDATE);
             mongoConnection.getQuery().replaceOne(action);
             return action;

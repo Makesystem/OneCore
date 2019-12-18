@@ -20,7 +20,7 @@ import java.util.Collection;
  */
 public class OneRequestService implements Serializable {
 
-    private static final long serialVersionUID = -9074912698818250240L;
+    private static final long serialVersionUID = -9074912698818251240L;
 
     private static final OneRequestService INSTANCE = new OneRequestService();
 

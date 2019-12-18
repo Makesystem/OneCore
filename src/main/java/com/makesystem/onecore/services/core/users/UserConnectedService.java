@@ -11,7 +11,6 @@ import com.makesystem.mdbc.architectures.mongo.model.FindOptions;
 import com.makesystem.mdbi.nosql.SimpleObjectId;
 import com.makesystem.onecore.services.core.OneService;
 import com.makesystem.oneentity.core.nosql.Struct;
-import com.makesystem.oneentity.core.types.DatabaseType;
 import com.makesystem.oneentity.core.types.ServiceType;
 import com.makesystem.oneentity.services.users.storage.UserConnected;
 import java.util.Collection;
@@ -25,8 +24,9 @@ import org.bson.conversions.Bson;
  */
 public class UserConnectedService extends OneService {
 
-    private static final UserConnectedService INSTANCE = new UserConnectedService();
     private static final long serialVersionUID = -5011006719892456554L;
+
+    private static final UserConnectedService INSTANCE = new UserConnectedService();
     
     public static UserConnectedService getInstance(){
         return INSTANCE;
@@ -35,7 +35,7 @@ public class UserConnectedService extends OneService {
     private UserConnectedService(){}
     
     public UserConnected insert(final UserConnected user) throws Throwable {
-        return run(DatabaseType.ONE, (final MongoConnection mongoConnection) -> {
+        return run((final MongoConnection mongoConnection) -> {
             mongoConnection.setOperationAlias(OperationAlias.USER_CONNECTED__INSERT);
             return mongoConnection.getQuery().insertOneAndRetrive(user);
         });
@@ -47,7 +47,7 @@ public class UserConnectedService extends OneService {
             return;
         }
 
-        run(DatabaseType.ONE, (final MongoConnection mongoConnection) -> {
+        run((final MongoConnection mongoConnection) -> {
             mongoConnection.setOperationAlias(OperationAlias.USER_CONNECTED__DELETE);
             mongoConnection.getQuery().delete(user);
         });
@@ -59,7 +59,7 @@ public class UserConnectedService extends OneService {
             return;
         }
 
-        run(DatabaseType.ONE, (final MongoConnection mongoConnection) -> {
+        run((final MongoConnection mongoConnection) -> {
             mongoConnection.setOperationAlias(OperationAlias.USER_CONNECTED__DELETE);
             mongoConnection.getQuery().deleteMany(UserConnected.class, new Document(Struct.USERS_CONNECTED__USER, userId));
         });
@@ -71,28 +71,28 @@ public class UserConnectedService extends OneService {
             return;
         }
 
-        run(DatabaseType.ONE, (final MongoConnection mongoConnection) -> {
+        run((final MongoConnection mongoConnection) -> {
             mongoConnection.setOperationAlias(OperationAlias.USER_CONNECTED__DELETE);
             mongoConnection.getQuery().deleteMany(UserConnected.class, new Document(Struct.USERS_CONNECTED__SERVER_NAME, serverName));
         });
     }
 
     public void clear() throws Throwable {
-        run(DatabaseType.ONE, (final MongoConnection mongoConnection) -> {
+        run((final MongoConnection mongoConnection) -> {
             mongoConnection.setOperationAlias(OperationAlias.USER_CONNECTED__CLEAR);
             mongoConnection.getMongoDatabase(Struct.USERS_CONNECTED__TABLE_NAME).drop();
         });
     }
 
     public int count() throws Throwable {
-        return run(DatabaseType.ONE, (final MongoConnection mongoConnection) -> {
+        return run((final MongoConnection mongoConnection) -> {
             mongoConnection.setOperationAlias(OperationAlias.USER_CONNECTED__COUNT);
             return (int) mongoConnection.getQuery().count(UserConnected.class, new Document());
         });
     }
 
     public Collection<UserConnected> find(final String user, final String customer, final ServiceType service) throws Throwable {
-        return run(DatabaseType.ONE, (final MongoConnection mongoConnection) -> {
+        return run((final MongoConnection mongoConnection) -> {
             mongoConnection.setOperationAlias(OperationAlias.USER_CONNECTED__FIND);
 
             // ///////////////////////////////////////////////////////////////////////////

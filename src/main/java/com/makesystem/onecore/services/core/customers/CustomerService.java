@@ -10,7 +10,6 @@ import com.makesystem.mdbc.architectures.mongo.MongoQueryBuilder;
 import com.makesystem.mdbc.architectures.mongo.model.FindOptions;
 import com.makesystem.onecore.services.core.OneService;
 import com.makesystem.oneentity.core.nosql.Struct;
-import com.makesystem.oneentity.core.types.DatabaseType;
 import com.makesystem.oneentity.services.customers.storage.Customer;
 import com.makesystem.pidgey.lang.StringHelper;
 import com.mongodb.client.model.FindOneAndUpdateOptions;
@@ -25,8 +24,10 @@ import org.bson.conversions.Bson;
  */
 public class CustomerService extends OneService {
 
+    private static final long serialVersionUID = 3280480478921947416L;
+
     public void insert(final Customer customer) throws Throwable {
-        run(DatabaseType.ONE, (final MongoConnection mongoConnection) -> {
+        run((final MongoConnection mongoConnection) -> {
             mongoConnection.setOperationAlias(OperationAlias.CUSTOMER__INSERT);
 
             // /////////////////////////////////////////////////////////////////
@@ -74,7 +75,7 @@ public class CustomerService extends OneService {
     }
 
     public boolean documentAvaliable(final String document) throws Throwable {
-        return run(DatabaseType.ONE, (final MongoConnection mongoConnection) -> {
+        return run((final MongoConnection mongoConnection) -> {
             mongoConnection.setOperationAlias(OperationAlias.CUSTOMER__IS_DOCUMENT_AVALIABLE);
 
             // /////////////////////////////////////////////////////////////////
@@ -95,7 +96,7 @@ public class CustomerService extends OneService {
     }
 
     public Collection<Customer> find(final String text) throws Throwable {
-        return run(DatabaseType.ONE, (final MongoConnection mongoConnection) -> {
+        return run((final MongoConnection mongoConnection) -> {
             mongoConnection.setOperationAlias(OperationAlias.CUSTOMER__FIND);
 
             // ///////////////////////////////////////////////////////////////////////////
@@ -104,7 +105,7 @@ public class CustomerService extends OneService {
             final FindOptions findOptions = new FindOptions();
 
             if (!StringHelper.isBlank(text)) {
-                
+
                 final MongoQueryBuilder queryBuilder = new MongoQueryBuilder();
 
                 final Bson document = queryBuilder.contains(Struct.CUSTOMERS__DOCUMENT, text);

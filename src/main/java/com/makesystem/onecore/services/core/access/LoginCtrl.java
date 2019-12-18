@@ -20,12 +20,15 @@ import com.makesystem.oneentity.core.types.ServiceType;
 import com.makesystem.oneentity.services.OneServices;
 import com.makesystem.oneentity.services.users.storage.User;
 import com.makesystem.oneentity.services.users.storage.UserConnected;
+import java.io.Serializable;
 
 /**
  *
  * @author riche
  */
-public class LoginCtrl {
+public class LoginCtrl implements Serializable {
+
+    private static final long serialVersionUID = -3681774837747314029L;
 
     private final UserConnectedService connectedUserService;
     private final UserService userService;

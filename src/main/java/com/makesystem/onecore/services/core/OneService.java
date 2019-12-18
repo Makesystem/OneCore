@@ -6,16 +6,16 @@
 package com.makesystem.onecore.services.core;
 
 import com.makesystem.oneentity.core.types.DatabaseType;
-import com.makesystem.xeoncore.core.AbstractService;
+import com.makesystem.xeoncore.core.DefaultService;
 import com.makesystem.xeonentity.core.DatabaseSettings;
 
 /**
  *
  * @author Richeli.vargas
  */
-public class OneService extends AbstractService {
+public class OneService extends DefaultService {
 
-    private static final long serialVersionUID = 7694509191783532577L;
+    private static final long serialVersionUID = 7694509191783532177L;
 
     protected static interface OperationAlias {
         // User

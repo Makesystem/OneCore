@@ -29,7 +29,7 @@ import java.util.concurrent.TimeUnit;
  */
 public class OneConsumer implements Serializable {
 
-    private static final long serialVersionUID = -4887024963585713701L;
+    private static final long serialVersionUID = -4887024963585713711L;
 
     public <D> void consumer(final SessionData sessionData, final Message message, final AsyncCallback<String> callback) {
 

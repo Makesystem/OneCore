@@ -26,15 +26,15 @@ public final class OneProperties implements ServletContextListener, Serializable
 
     private static final long serialVersionUID = 5326322567863287357L;
 
-    public static final SystemProperty<String> DATABASE__HOST = new SystemProperty("one__db__host", "127.0.0.1");
-    public static final SystemProperty<Integer> DATABASE__PORT = new SystemProperty("one__db__port", 27017);
-    public static final SystemProperty<String> DATABASE__NAME = new SystemProperty("one__db__name", "one");
-    public static final SystemProperty<String> DATABASE__USER = new SystemProperty("one__db__user", "unknow");
-    public static final SystemProperty<String> DATABASE__PASSWORD = new SystemProperty("one__db__password", "unknow");
-    public static final SystemProperty<ConnectionType> DATABASE__TYPE = new SystemProperty("one__db__type", ConnectionType.MONGO);
-    public static final SystemProperty<Integer> DATABASE__POOL_SIZE = new SystemProperty("one__db__pool_size", 100);
-    public static final SystemProperty<String> SERVER_NAME = new SystemProperty("one__server_name", "no_name");    
-    public static final SystemProperty<Integer> WEBSOCKET_SERVER__TIMEOUT = new SystemProperty("one__websocket_server__timeout", WebClient.SESSION__DEFAULT_TIMEOUT);
+    public static final SystemProperty<String>          DATABASE__HOST              = new SystemProperty("one__db__host",                   "192.168.2.10");
+    public static final SystemProperty<Integer>         DATABASE__PORT              = new SystemProperty("one__db__port",                   27017);
+    public static final SystemProperty<String>          DATABASE__NAME              = new SystemProperty("one__db__name",                   "one");
+    public static final SystemProperty<String>          DATABASE__USER              = new SystemProperty("one__db__user",                   "unknow");
+    public static final SystemProperty<String>          DATABASE__PASSWORD          = new SystemProperty("one__db__password",               "unknow");
+    public static final SystemProperty<ConnectionType>  DATABASE__TYPE              = new SystemProperty("one__db__type",                   ConnectionType.MONGO);
+    public static final SystemProperty<Integer>         DATABASE__POOL_SIZE         = new SystemProperty("one__db__pool_size",              10);
+    public static final SystemProperty<String>          SERVER_NAME                 = new SystemProperty("one__server_name",                "no_name");    
+    public static final SystemProperty<Integer>         WEBSOCKET_SERVER__TIMEOUT   = new SystemProperty("one__websocket_server__timeout",  WebClient.SESSION__DEFAULT_TIMEOUT);
 
     public OneProperties() {
     }
@@ -90,11 +90,11 @@ public final class OneProperties implements ServletContextListener, Serializable
         // Management Properties
         // /////////////////////////////////////////////////////////////////////
         writeSystemProperty(domain, ManagementProperties.DATABASE__HOST);
-        writeSystemProperty(domain, ManagementProperties.DATABASE__NAME);
-        writeSystemProperty(domain, ManagementProperties.DATABASE__PASSWORD);
         writeSystemProperty(domain, ManagementProperties.DATABASE__PORT);
-        writeSystemProperty(domain, ManagementProperties.DATABASE__TYPE);
+        writeSystemProperty(domain, ManagementProperties.DATABASE__NAME);
         writeSystemProperty(domain, ManagementProperties.DATABASE__USER);
+        writeSystemProperty(domain, ManagementProperties.DATABASE__PASSWORD);
+        writeSystemProperty(domain, ManagementProperties.DATABASE__TYPE);
         writeSystemProperty(domain, ManagementProperties.DATABASE__POOL_SIZE);
         writeSystemProperty(domain, ManagementProperties.ENABLE);
 
